@@ -1,0 +1,18 @@
+# IDEs
+.idea/
+*.code-workspace
+
+# Package Managers
+vendor/
+node_modules/
+
+# Misc.
+.DS_Store/
+
+# Build
+drupal/
+backup/
+supervisord.log
+.docker.env
+.env
+drupal-local-settings.php

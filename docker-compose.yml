@@ -1,0 +1,46 @@
+version: "3"
+services:
+  app:
+    image: og-d8-www
+    container_name: og-d8-www
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
+    depends_on:
+      - postgres
+    env_file:
+      - .docker.env
+    environment:
+      CONTAINER_ROLE: app
+    volumes:
+      - .:/var/www/html
+      - ./docker/config/nginx/certs/:/usr/share/certs/
+      - ~/.gitconfig:/etc/gitconfig
+    ports:
+      - 443:443
+      - 80:80
+  postgres:
+    container_name: og-d8-postgres
+    image: postgres:9.3
+    volumes:
+      - postgres:/var/lib/postgres
+    environment:
+      POSTGRES_DB: og_d8_local
+      POSTGRES_USER: homestead
+      POSTGRES_PASSWORD: secret
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - 15438:5432
+  mailhog:
+    container_name: og-d8-mailhog
+    image: mailhog/mailhog:v1.0.0
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+volumes:
+  postgres:
+    driver: "local"
