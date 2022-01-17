@@ -18,10 +18,15 @@ if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
 
   # import the database
   echo "--- Import the database from the pg_dump backup"
-  pg_restore -v --host=postgres --username=homestead --file='../backup/db.pgdump'
+  echo "------ TODO: import database..."
+  #pg_restore -v --host=postgres --username=homestead --file='../backup/db.pgdump'
 
   # unzip the site
-  echo "--- Pulling OG repository"
+  echo "--- Pulling OG repository from https://github.com/open-data/opengov.git"
+  git init
+  git config --global init.defaultBranch master
+  git config pull.ff only
+  git remote add origin https://github.com/open-data/opengov.git
   git pull https://github.com/open-data/opengov.git
 
   echo "--- Copy Drupal settings file"
