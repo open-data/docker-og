@@ -3,11 +3,12 @@
 // @codingStandardsIgnoreFile
 
 $databases['default']['default'] = [
-    'driver'    => 'local',
+    'driver'    => 'pgsql',
     'database'  => 'og_d8_local',
     'username'  => 'homestead',
     'password'  => 'secret',
     'host'      => 'localhost',
+    'port'      => '15438',
 ];
   
 

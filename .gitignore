@@ -16,3 +16,4 @@ supervisord.log
 .docker.env
 .env
 drupal-local-settings.php
+pgrestore.log

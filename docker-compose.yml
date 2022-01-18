@@ -11,20 +11,30 @@ services:
         GROUP_ID: ${GROUP_ID:-0}
     depends_on:
       - postgres
+    links:
+      - postgres
     env_file:
       - .docker.env
     environment:
       CONTAINER_ROLE: app
+      PGHOST: postgres
+      PGDATABASE: og_d8_local
+      PGUSER: homestead
+      PGPASSWORD: secret
+      SSH_AUTH_SOCK: /ssh-agent
+      PATH: '$PATH:/var/www/html/drupal/vendor/bin'
     volumes:
       - .:/var/www/html
       - ./docker/config/nginx/certs/:/usr/share/certs/
       - ~/.gitconfig:/etc/gitconfig
+      - ~/.ssh:/var/www/html/.ssh
+      - $SSH_AUTH_SOCK:/ssh-agent
     ports:
       - 443:443
       - 80:80
   postgres:
     container_name: og-d8-postgres
-    image: postgres:9.3
+    image: postgres:9.6
     restart: always
     volumes:
       - postgres:/var/lib/postgres

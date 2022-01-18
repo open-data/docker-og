@@ -28,6 +28,8 @@ RUN apt-get update -yqq \
         libpq-dev \
         nano \
         vim \
+        memcached \
+        libmemcached-tools \
     && docker-php-ext-configure intl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
@@ -40,10 +42,6 @@ RUN apt-get update -yqq \
 RUN curl -sS https://getcomposer.org/installer | php \
         && mv composer.phar /usr/local/bin/ \
         && ln -s /usr/local/bin/composer.phar /usr/local/bin/composer
-
-RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
-        && chmod +x wp-cli.phar \
-        && mv wp-cli.phar /usr/local/bin/wp
 
 # PHP
 ADD docker/config/php/conf.d/*.ini /usr/local/etc/php/conf.d/
@@ -75,7 +73,7 @@ ARG GROUP_ID
 RUN if [ ${USER_ID:-0} -ne 0 ] && [ ${GROUP_ID:-0} -ne 0 ]; then \
     userdel -f www-data &&\
     if getent group www-data ; then groupdel www-data; fi &&\
-    groupadd -g ${GROUP_ID} www-data &&\
+    getent group www-data || groupadd -g ${GROUP_ID} www-data &&\
     useradd -l -u ${USER_ID} -g www-data www-data &&\
     install -d -m 0755 -o www-data -g www-data /home/www-data &&\
     chown --changes --silent --no-dereference --recursive \
