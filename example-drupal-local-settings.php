@@ -4,13 +4,33 @@
 
 $databases['default']['default'] = [
     'driver'    => 'pgsql',
+    'namespace' => 'Drupal\\Core\\Database\\Driver\\pgsql',
     'database'  => 'og_d8_local',
     'username'  => 'homestead',
     'password'  => 'secret',
-    'host'      => 'localhost',
-    'port'      => '15438',
+    'host'      => 'postgres',
+    'port'      => '5432',
 ];
-  
+
+$settings['hash_salt'] = 'this-is-a-totally-legitimate-hash';
+
+$settings['config_sync_directory'] = '/var/www/html/drupal/html/sites/default/sync';
+
+$settings['file_private_path'] = '/var/www/html/drupal/html/sites/default/private-files';
+
+/**
+ * Config override for Search API Solr
+ */
+$config['search_api.server.pd_core_ati']['backend_config']['connector_config']['host'] = 'solr';
+$config['search_api.server.pd_core_contracts']['backend_config']['connector_config']['host'] = 'solr';
+$config['search_api.server.pd_core_grants']['backend_config']['connector_config']['host'] = 'solr';
+$config['search_api.server.pd_core_hospitalityq']['backend_config']['connector_config']['host'] = 'solr';
+$config['search_api.server.pd_core_inventory']['backend_config']['connector_config']['host'] = 'solr';
+$config['search_api.server.pd_core_reclassification']['backend_config']['connector_config']['host'] = 'solr';
+$config['search_api.server.pd_core_travela']['backend_config']['connector_config']['host'] = 'solr';
+$config['search_api.server.pd_core_travelq']['backend_config']['connector_config']['host'] = 'solr';
+$config['search_api.server.pd_core_wrongdoing']['backend_config']['connector_config']['host'] = 'solr';
+$config['search_api.server.drupal_content']['backend_config']['connector_config']['host'] = 'solr';
 
 /**
  * @file

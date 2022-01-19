@@ -11,8 +11,10 @@ services:
         GROUP_ID: ${GROUP_ID:-0}
     depends_on:
       - postgres
+      - solr
     links:
       - postgres
+      - solr
     env_file:
       - .docker.env
     environment:
@@ -37,7 +39,7 @@ services:
     image: postgres:9.6
     restart: always
     volumes:
-      - postgres:/var/lib/postgres
+      - ./postgres:/var/lib/postgresql/data
       - ./docker/config/postgres/:/docker-entrypoint-initdb.d/
     environment:
       POSTGRES_DB: og_d8_local
@@ -46,6 +48,14 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - 15438:5432
+  solr:
+    container_name: og-solr
+    image: solr
+    restart: always
+    volumes:
+      - ./solr:/opt/solr/server/solr
+    ports:
+      - 8981:8983
   mailhog:
     container_name: og-d8-mailhog
     image: mailhog/mailhog:v1.0.0
@@ -55,4 +65,6 @@ services:
 
 volumes:
   postgres:
+    driver: "local"
+  solr:
     driver: "local"

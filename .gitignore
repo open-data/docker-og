@@ -17,3 +17,5 @@ supervisord.log
 .env
 drupal-local-settings.php
 pgrestore.log
+postgres/
+solr/
