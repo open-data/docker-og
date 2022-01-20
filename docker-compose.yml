@@ -1,8 +1,8 @@
 version: "3"
 services:
   drupal:
-    image: og-d8-www
-    container_name: og-d8-www
+    image: og-drupal
+    container_name: og-drupal
     build:
       context: .
       dockerfile: docker/Dockerfile
@@ -18,34 +18,68 @@ services:
     env_file:
       - .docker.env
     environment:
-      CONTAINER_ROLE: app
+      CONTAINER_ROLE: drupal
       PGHOST: postgres
-      PGDATABASE: og_d8_local
+      PGDATABASE: og_drupal_local
       PGUSER: homestead
       PGPASSWORD: secret
       SSH_AUTH_SOCK: /ssh-agent
       PATH: '$PATH:/var/www/html/drupal/vendor/bin'
     volumes:
       - .:/var/www/html
-      - ./docker/config/nginx/certs/:/usr/share/certs/
+      - ./docker/config/nginx/certs:/usr/share/certs
       - ~/.gitconfig:/etc/gitconfig
       - ~/.ssh:/var/www/html/.ssh
       - $SSH_AUTH_SOCK:/ssh-agent
     ports:
       - 443:443
       - 80:80
+  # ckan:
+  #   container_name: og-ckan
+  #   image: openknowledge/ckan-base:2.8
+  #   build:
+  #     context: .
+  #     args:
+  #       USER_ID: ${USER_ID:-0}
+  #       GROUP_ID: ${GROUP_ID:-0}
+  #   depends_on:
+  #     - postgres
+  #     - solr
+  #   links:
+  #     - postgres
+  #     - solr
+  #   env_file:
+  #     - .docker.env
+  #   environment:
+  #     CONTAINER_ROLE: ckan
+  #     PGHOST: postgres
+  #     PGDATABASE: og_ckan_local
+  #     PGUSER: homestead
+  #     PGPASSWORD: secret
+  #     SSH_AUTH_SOCK: /ssh-agent
+  #   volumes:
+  #     - .:/var/www/html
+  #     - ./docker/config/nginx/certs:/usr/share/certs
+  #     - ~/.gitconfig:/etc/gitconfig
+  #     - ~/.ssh:/var/www/html/.ssh
+  #     - $SSH_AUTH_SOCK:/ssh-agent
+  #   ports:
+  #     - 5001:5000
   postgres:
-    container_name: og-d8-postgres
+    container_name: og-postgres
     image: postgres:9.6
     restart: always
     volumes:
       - ./postgres:/var/lib/postgresql/data
-      - ./docker/config/postgres/:/docker-entrypoint-initdb.d/
+      - ./docker/config/postgres:/docker-entrypoint-initdb.d
     environment:
-      POSTGRES_DB: og_d8_local
+      POSTGRES_DB: og_drupal_local
       POSTGRES_USER: homestead
       POSTGRES_PASSWORD: secret
       POSTGRES_HOST_AUTH_METHOD: trust
+    env_file:
+      - .docker.env
+    user: "${USER_ID:-0}:${GROUP_ID:-0}"
     ports:
       - 15438:5432
   solr:
@@ -57,7 +91,7 @@ services:
     ports:
       - 8981:8983
   mailhog:
-    container_name: og-d8-mailhog
+    container_name: og-mailhog
     image: mailhog/mailhog:v1.0.0
     ports:
       - "1025:1025"

@@ -35,26 +35,43 @@
    * If you need to, change your user and group to match the user and group your WSL2 user or Linux/Mac user employs:
       1. `id` <- this should get your current user ID and group ID in WSL2 or whatever shell you're using. If you're using WSL2 and only ever made your default user, it will likely be `1000`
 1. Create a folder in the root of this repository called `backup`, in it, place the following files:
-   1. `db.pgdump` <- the database backup for the Drupal site.
-   1. `files.tgz` <- the compressed folder of the public files from the Drupal site.
+   1. `drupal_db.pgdump` <- the database backup for the Drupal site.
+   1. `drupal_files.tgz` <- the compressed folder of the public files from the Drupal site.
 1. Create a folder in the root of this repository called `postgres`. This folder will hold the data for imported databases to persist during Docker container restarts.
 1. Create a folder in the root of this repository called `solr`. This folder will hold the data for imported indices to persist during Docker container restarts.
 
-## Build & Install
+## Build
 
 1. Build the container: `docker-compose build`
    * The initial build will take a long time.
-   * You may receive some errors which can be disregarded unless your build fails.
-   * A scenario that may happen is that the build will say it fails because of a final error message of your group ID already existing, this can be ignored.
-1. Bring up the app and detach the shell: `docker-compose up -d`
+1. Bring up the app and detach the shell: `docker-compose up -d` to make sure that all the containers can start correctly.
+   * The initial up may take a long time.
+   * To stop all the containers: `docker-compose down`
+
+## Installation
+
+### Databases
+
+Though there is an initialization script to create the databases on the initial up of the `postgres` container, this script only runs once. After you have built the containers once, this script will no longer run. To fix any issues with missing databases, users, or password:
+
+1. Bring up the Drupal docker container: `docker-compose up -d drupal`
 1. Open a shell into the container: `docker-compose exec drupal bash`
 1. Change permissions of this file so you can run it as a bash script: `chmod 775 install-local.sh`
 1. Run the install script: `./install-local.sh`
-   * Select what you want to install:
+   1. Select `Databases (fixes missing databases, privileges, and users)`
+
+### Drupal
+
+1. Bring up the Drupal docker container: `docker-compose up -d drupal`
+1. Open a shell into the container: `docker-compose exec drupal bash`
+1. Change permissions of this file so you can run it as a bash script: `chmod 775 install-local.sh`
+1. Run the install script: `./install-local.sh`
+   1. Select `Drupal`
+   1. Select what you want to install for Drupal:
       * `SSH (Required for Repositories)`: will install and configure the ssh command along with the ssh-agent and keys.
-      * `Database`: will destroy the current database and import a fresh one from `backup/db.pgdump`
+      * `Database`: will destroy the current database and import a fresh one from `backup/drupal_db.pgdump`
       * `Repositories`: will destroy all files inside of the `drupal` directory and pull all required repositories related to Drupal.
-      * `Local Files`: will destroy all Drupal local files and extract the directory from `backup/files.tgz`.
+      * `Local Files`: will destroy all Drupal local files and extract the directory from `backup/drupal_files.tgz`.
       * `Set File Permissions (also creates missing directories)`: will download default settings files, copy `drupal-local-settings.php` create the private files directory, and set the correct file and directory ownerships and permissions.
       * `Create Local User`: will create a local admin user for Drupal.
       * `All`: will execute all of the above, use this for first time install or if you wish to re-install everything.
@@ -63,5 +80,12 @@
    1. Username: `admin.local`
    1. Password: `12345678`
 
+### CKAN
+
+1. Bring up the CKAN docker container: `docker-compose up -d ckan`
+1. Open a shell into the container: `docker-compose exec ckan bash`
+1. Change permissions of this file so you can run it as a bash script: `chmod 775 install-local.sh`
+1. Run the install script: `./install-local.sh`
+   1. Select `CKAN`
    
    

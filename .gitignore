@@ -11,10 +11,12 @@ node_modules/
 
 # Build
 drupal/
+ckan/
 backup/
 supervisord.log
 .docker.env
 .env
+.ssh/
 drupal-local-settings.php
 pgrestore.log
 postgres/

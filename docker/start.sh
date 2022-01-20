@@ -22,7 +22,7 @@ echo "The Environment is $env"
 
 echo "The role is $role..."
 
-if [ "$role" = "app" ]; then
+if [ "$role" = "drupal" ]; then
     ln -sf /etc/supervisor/conf.d-available/app.conf /etc/supervisor/conf.d/app.conf
     ln -s /etc/nginx/sites-available/mailhog /etc/nginx/sites-enabled/
     service nginx reload
