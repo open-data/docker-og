@@ -12,6 +12,8 @@ node_modules/
 # Build
 drupal/
 ckan/
+!docker/drupal/
+!docker/ckan/
 backup/
 supervisord.log
 .docker.env

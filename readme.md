@@ -56,7 +56,7 @@ Though there is an initialization script to create the databases on the initial 
 
 1. Bring up the Drupal docker container: `docker-compose up -d drupal`
 1. Open a shell into the container: `docker-compose exec drupal bash`
-1. Change permissions of this file so you can run it as a bash script: `chmod 775 install-local.sh`
+1. Change permissions of this file (if not already done) so you can run it as a bash script: `chmod 775 install-local.sh`
 1. Run the install script: `./install-local.sh`
    1. Select `Databases (fixes missing databases, privileges, and users)`
 
@@ -64,7 +64,7 @@ Though there is an initialization script to create the databases on the initial 
 
 1. Bring up the Drupal docker container: `docker-compose up -d drupal`
 1. Open a shell into the container: `docker-compose exec drupal bash`
-1. Change permissions of this file so you can run it as a bash script: `chmod 775 install-local.sh`
+1. Change permissions of this file (if not already done) so you can run it as a bash script: `chmod 775 install-local.sh`
 1. Run the install script: `./install-local.sh`
    1. Select `Drupal`
    1. Select what you want to install for Drupal:
@@ -84,8 +84,9 @@ Though there is an initialization script to create the databases on the initial 
 
 1. Bring up the CKAN docker container: `docker-compose up -d ckan`
 1. Open a shell into the container: `docker-compose exec ckan bash`
-1. Change permissions of this file so you can run it as a bash script: `chmod 775 install-local.sh`
+1. Change permissions of this file (if not already done) so you can run it as a bash script: `chmod 775 install-local.sh`
 1. Run the install script: `./install-local.sh`
    1. Select `CKAN`
+   1. Select what you want to install for CKAN:
    
    

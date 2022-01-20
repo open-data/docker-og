@@ -26,6 +26,8 @@ if [ "$role" = "drupal" ]; then
     ln -sf /etc/supervisor/conf.d-available/app.conf /etc/supervisor/conf.d/app.conf
     ln -s /etc/nginx/sites-available/mailhog /etc/nginx/sites-enabled/
     service nginx reload
+elif [ "$role" = "ckan" ]; then
+    echo 'Doing something in the ckan start script...'
 elif [ "$role" = "scheduler" ]; then
     ln -sf /etc/supervisor/conf.d-available/scheduler.conf /etc/supervisor/conf.d/scheduler.conf
     # while [ true ]

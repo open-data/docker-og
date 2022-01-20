@@ -14,18 +14,23 @@ EOL='\n'
 SPACER='\n\n'
 INDENT='    '
 
-# namespace flags
+# core flags
 installDrupal='false'
 installCKAN='false'
 installDatabases='false'
 
 # drupal flags
-installSSH='false'
-installDB='false'
-installRepos='false'
-installFiles='false'
-installFilePermissions='false'
-installLocalUser='false'
+installSSH_Drupal='false'
+installDB_Drupal='false'
+installRepos_Drupal='false'
+installFiles_Drupal='false'
+installFilePermissions_Drupal='false'
+installLocalUser_Drupal='false'
+
+# ckan flags
+installSSH_CKAN='false'
+installDB_CKAN='false'
+installRepos_CKAN='false'
 
 # general flags
 exitScript='false'
@@ -61,42 +66,49 @@ function install_drupal {
 
     # "SSH (Required for Repositories)"
     (0) 
-      installSSH='true'
+      exitScript='false'
+      installSSH_Drupal='true'
       ;;
 
     # "Database"
     (1) 
-      installDB='true'
+      exitScript='false'
+      installDB_Drupal='true'
       ;;
 
     # "Repositories"
     (2) 
-      installRepos='true'
+      exitScript='false'
+      installRepos_Drupal='true'
       ;;
 
     # "Local Files"
     (3)
-      installFiles='true'
+      exitScript='false'
+      installFiles_Drupal='true'
       ;;
 
     # "Set File Permissions (also creates missing directories)"
     (4)
-      installFilePermissions='true'
+      exitScript='false'
+      installFilePermissions_Drupal='true'
       ;;
 
     # "Create Local User"
     (5)
-      installLocalUser='true'
+      exitScript='false'
+      installLocalUser_Drupal='true'
       ;;
 
     # "All"
     (6) 
-      installSSH='true'
-      installDB='true'
-      installRepos='true'
-      installFiles='true'
-      installFilePermissions='true'
-      installLocalUser='true'
+      exitScript='false'
+      installSSH_Drupal='true'
+      installDB_Drupal='true'
+      installRepos_Drupal='true'
+      installFiles_Drupal='true'
+      installFilePermissions_Drupal='true'
+      installLocalUser_Drupal='true'
       ;;
 
     # "Exit"
@@ -114,17 +126,17 @@ function install_drupal {
     #
     # Confirm Drupal database destruction
     #
-    if [[ $installDB == "true" ]]; then
+    if [[ $installDB_Drupal == "true" ]]; then
 
       read -r -p $'\n\n\033[0;31m    Are you sure you want delete the existing Drupal database and import a fresh copy? [y/N]:\033[0;0m    ' response
 
       if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
 
-        installDB='true'
+        installDB_Drupal='true'
 
       else
 
-        installDB='false'
+        installDB_Drupal='false'
 
       fi
 
@@ -136,17 +148,17 @@ function install_drupal {
     #
     # Confirm Drupal repo destruction
     #
-    if [[ $installRepos == "true" ]]; then
+    if [[ $installRepos_Drupal == "true" ]]; then
 
       read -r -p $'\n\n\033[0;31m    Are you sure you want delete the existing Drupal directory and pull fast-forwarded repositories? [y/N]:\033[0;0m    ' response
 
       if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
 
-        installRepos='true'
+        installRepos_Drupal='true'
 
       else
 
-        installRepos='false'
+        installRepos_Drupal='false'
 
       fi
 
@@ -158,17 +170,17 @@ function install_drupal {
     #
     # Confirm Drupal local file destruction
     #
-    if [[ $installFiles == "true" ]]; then
+    if [[ $installFiles_Drupal == "true" ]]; then
 
       read -r -p $'\n\n\033[0;31m    Are you sure you want delete the existing Drupal public files and import from the tar ball? [y/N]:\033[0;0m    ' response
 
       if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
 
-        installFiles='true'
+        installFiles_Drupal='true'
 
       else
 
-        installFiles='false'
+        installFiles_Drupal='false'
 
       fi
 
@@ -180,7 +192,7 @@ function install_drupal {
     #
     # Install and configure SSH and Agent
     #
-    if [[ $installSSH == "true" ]]; then
+    if [[ $installSSH_Drupal == "true" ]]; then
 
       # install SSH
       printf "${SPACER}${Cyan}${INDENT}Install SSH for GIT use${NC}${SPACER}"
@@ -203,7 +215,7 @@ function install_drupal {
     #
     # Destroy and re-import the Drupal database
     #
-    if [[ $installDB == "true" ]]; then
+    if [[ $installDB_Drupal == "true" ]]; then
 
       printf "${SPACER}${Cyan}${INDENT}Drop the DB if it exists and then recreate it blank/clean${NC}${SPACER}"
       psql -eb --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_d8_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
@@ -220,9 +232,9 @@ function install_drupal {
     #
     # Pull Drupal Core repo, Drupal profile repo, and Drupal theme repo
     #
-    if [[ $installRepos == "true" ]]; then
+    if [[ $installRepos_Drupal == "true" ]]; then
 
-      if [[ $installSSH != "true" ]]; then
+      if [[ $installSSH_Drupal != "true" ]]; then
 
         # check for SSH agent
         printf "${SPACER}${Cyan}${INDENT}Check if SSH Agent is installed and configured${NC}${SPACER}"
@@ -312,7 +324,7 @@ function install_drupal {
     #
     # Install Local Files
     #
-    if [[ $installFiles == "true" ]]; then
+    if [[ $installFiles_Drupal == "true" ]]; then
 
       printf "${SPACER}${Cyan}${INDENT}Extract public files from backup${NC}${SPACER}"
       # create default sites directory
@@ -340,7 +352,7 @@ function install_drupal {
     #
     # Set file and directory ownership and permissions
     #
-    if [[ $installFilePermissions == "true" ]]; then
+    if [[ $installFilePermissions_Drupal == "true" ]]; then
 
       printf "${SPACER}${Cyan}${INDENT}Download Drupal default settings file${NC}${SPACER}"
       cd /var/www/html/drupal/html/sites
@@ -483,7 +495,7 @@ function install_drupal {
     #
     # Create Drupal admin user
     #
-    if [[ $installLocalUser == "true" ]]; then
+    if [[ $installLocalUser_Drupal == "true" ]]; then
 
       if [[ -x "$(command -v drush)" ]]; then
 
@@ -540,7 +552,173 @@ function install_drupal {
 #
 function install_ckan {
 
-  echo 'TODO: installation script for CKAN...';
+  printf "${SPACER}${Cyan}${INDENT}Select what to install for CKAN:${NC}${SPACER}"
+
+  # Options for the user to select from
+  options=(
+    "SSH (Required for Repositories)" 
+    "Database" 
+    "Repositories" 
+    "All" 
+    "Exit"
+  )
+
+  # IMPORTANT: select_option will return the index of the options and not the value.
+  select_option "${options[@]}"
+  opt=$?
+
+  case $opt in
+
+    # "SSH (Required for Repositories)"
+    (0) 
+      exitScript='false'
+      installSSH_CKAN='true'
+      ;;
+
+    # "Database"
+    (1) 
+      exitScript='false'
+      installDB_CKAN='true'
+      ;;
+
+    # "Repositories"
+    (2) 
+      exitScript='false'
+      installRepos_CKAN='true'
+      ;;
+
+    # "All"
+    (3) 
+      exitScript='false'
+      installSSH_CKAN='true'
+      installDB_CKAN='true'
+      installRepos_CKAN='true'
+      ;;
+
+    # "Exit"
+    (4)
+      exitScript='true'
+      ;;
+
+  esac
+
+  #
+  # Run Script
+  #
+  if [[ $exitScript != "true" ]]; then
+
+    #
+    # Confirm CKAN database destruction
+    #
+    if [[ $installDB_CKAN == "true" ]]; then
+
+      read -r -p $'\n\n\033[0;31m    Are you sure you want delete the existing CKAN database and import a fresh copy? [y/N]:\033[0;0m    ' response
+
+      if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+
+        installDB_CKAN='true'
+
+      else
+
+        installDB_CKAN='false'
+
+      fi
+
+    fi
+    # END
+    # Confirm CKAN database destruction
+    # END
+
+    #
+    # Confirm CKAN repo destruction
+    #
+    if [[ $installRepos_CKAN == "true" ]]; then
+
+      read -r -p $'\n\n\033[0;31m    Are you sure you want delete the existing CKAN directory and pull fast-forwarded repositories? [y/N]:\033[0;0m    ' response
+
+      if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+
+        installRepos_CKAN='true'
+
+      else
+
+        installRepos_CKAN='false'
+
+      fi
+
+    fi
+    # END
+    # Confirm CKAN repo destruction
+    # END
+
+    #
+    # Install and configure SSH and Agent
+    #
+    if [[ $installSSH_CKAN == "true" ]]; then
+
+      # install SSH
+      printf "${SPACER}${Cyan}${INDENT}Install SSH for GIT use${NC}${SPACER}"
+      which ssh || apt install ssh -y
+
+      # set strict host checking to false
+      printf "${SPACER}${Cyan}${INDENT}Set strict SSH host checking to false${NC}${SPACER}"
+      echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Set StrictHostKeyChecking to no: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Set StrictHostKeyChecking to no: FAIL${NC}${EOL}"
+      fi
+
+    fi
+    # END
+    # Install and configure SSH and Agent
+    # END
+
+    #
+    # Destroy and re-import database
+    #
+    if [[ $installDB_CKAN == "true" ]]; then
+
+    fi
+    # END
+    # Destroy and re-import database
+    # END
+
+    #
+    # Destroy and pull fast-forwarded repositories
+    #
+    if [[ $installRepos_CKAN == "true" ]]; then
+
+      if [[ $installSSH_CKAN == "true" ]]; then
+
+        # install SSH
+        printf "${SPACER}${Cyan}${INDENT}Install SSH for GIT use${NC}${SPACER}"
+        which ssh || apt install ssh -y
+
+        # set strict host checking to false
+        printf "${SPACER}${Cyan}${INDENT}Set strict SSH host checking to false${NC}${SPACER}"
+        echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
+        if [[ $? -eq 0 ]]; then
+          printf "${Green}${INDENT}${INDENT}Set StrictHostKeyChecking to no: OK${NC}${EOL}"
+        else
+          printf "${Red}${INDENT}${INDENT}Set StrictHostKeyChecking to no: FAIL${NC}${EOL}"
+        fi
+
+      fi
+
+    fi
+    # END
+    # Destroy and pull fast-forwarded repositories
+    # END
+
+  else
+
+    printf "${SPACER}${Yellow}${INDENT}Exiting install script...${NC}${SPACER}"
+
+  fi
+  # END
+  # Run Script
+  # END
 
 }
 # END
@@ -671,20 +849,24 @@ case $opt in
 
   # "Drupal"
   (0) 
+    exitScript='false'
     installDrupal='true'
     ;;
 
   # "CKAN"
   (1) 
+    exitScript='false'
     installCKAN='true'
     ;;
 
   (2)
+    exitScript='false'
     installDatabases='true'
     ;;
 
   # "All"
   (3) 
+    exitScript='false'
     installDrupal='true'
     installCKAN='true'
     installDatabases='true'

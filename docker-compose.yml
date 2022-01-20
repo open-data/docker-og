@@ -5,7 +5,7 @@ services:
     container_name: og-drupal
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/drupal/Dockerfile
       args:
         USER_ID: ${USER_ID:-0}
         GROUP_ID: ${GROUP_ID:-0}
@@ -34,37 +34,38 @@ services:
     ports:
       - 443:443
       - 80:80
-  # ckan:
-  #   container_name: og-ckan
-  #   image: openknowledge/ckan-base:2.8
-  #   build:
-  #     context: .
-  #     args:
-  #       USER_ID: ${USER_ID:-0}
-  #       GROUP_ID: ${GROUP_ID:-0}
-  #   depends_on:
-  #     - postgres
-  #     - solr
-  #   links:
-  #     - postgres
-  #     - solr
-  #   env_file:
-  #     - .docker.env
-  #   environment:
-  #     CONTAINER_ROLE: ckan
-  #     PGHOST: postgres
-  #     PGDATABASE: og_ckan_local
-  #     PGUSER: homestead
-  #     PGPASSWORD: secret
-  #     SSH_AUTH_SOCK: /ssh-agent
-  #   volumes:
-  #     - .:/var/www/html
-  #     - ./docker/config/nginx/certs:/usr/share/certs
-  #     - ~/.gitconfig:/etc/gitconfig
-  #     - ~/.ssh:/var/www/html/.ssh
-  #     - $SSH_AUTH_SOCK:/ssh-agent
-  #   ports:
-  #     - 5001:5000
+  ckan:
+    container_name: og-ckan
+    image: openknowledge/ckan-base:2.8
+    build:
+      context: .
+      dockerfile: docker/ckan/Dockerfile
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
+    depends_on:
+      - postgres
+      - solr
+    links:
+      - postgres
+      - solr
+    env_file:
+      - .docker.env
+    environment:
+      CONTAINER_ROLE: ckan
+      PGHOST: postgres
+      PGDATABASE: og_ckan_local
+      PGUSER: homestead
+      PGPASSWORD: secret
+      SSH_AUTH_SOCK: /ssh-agent
+    volumes:
+      - .:/var/www/html
+      - ./docker/config/nginx/certs:/usr/share/certs
+      - ~/.gitconfig:/etc/gitconfig
+      - ~/.ssh:/var/www/html/.ssh
+      - $SSH_AUTH_SOCK:/ssh-agent
+    ports:
+      - 5001:5000
   postgres:
     container_name: og-postgres
     image: postgres:9.6
