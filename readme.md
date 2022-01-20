@@ -1,4 +1,4 @@
-# Local WordPress Setup for Open Government Drupal 8 Site
+# Local Docker Setup for Open Government Portal
 
 ## Prerequisites
 
@@ -47,13 +47,18 @@
    * You may receive some errors which can be disregarded unless your build fails.
    * A scenario that may happen is that the build will say it fails because of a final error message of your group ID already existing, this can be ignored.
 1. Bring up the app and detach the shell: `docker-compose up -d`
-1. Open a shell into the container: `docker-compose exec app bash`
+1. Open a shell into the container: `docker-compose exec drupal bash`
 1. Change permissions of this file so you can run it as a bash script: `chmod 775 install-local.sh`
 1. Run the install script: `./install-local.sh`
    * Select what you want to install:
       * `SSH (Required for Repositories)`: will install and configure the ssh command along with the ssh-agent and keys.
       * `Database`: will destroy the current database and import a fresh one from `backup/db.pgdump`
-      * `Repositories`: will destroy all files inside of the `drupal` directory and pull all required repositories, download default settings files, copy `drupal-local-settings.php`, export the public files directory from `backup/files.tgz`, create the private files directory, set the correct file and directory ownerships and permissions, and create a local admin user for Drupal.
+      * `Repositories`: will destroy all files inside of the `drupal` directory and pull all required repositories related to Drupal.
+      * `Local Files`: will destroy all Drupal local files and extract the directory from `backup/files.tgz`.
+      * `Set File Permissions (also creates missing directories)`: will download default settings files, copy `drupal-local-settings.php` create the private files directory, and set the correct file and directory ownerships and permissions.
+      * `Create Local User`: will create a local admin user for Drupal.
+      * `All`: will execute all of the above, use this for first time install or if you wish to re-install everything.
+      * `Exit`: will exit the installation script.
 1. Login here: `https://open.local/en/user/login`
    1. Username: `admin.local`
    1. Password: `12345678`

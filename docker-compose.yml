@@ -1,6 +1,6 @@
 version: "3"
 services:
-  app:
+  drupal:
     image: og-d8-www
     container_name: og-d8-www
     build:
