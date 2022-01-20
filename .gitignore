@@ -19,3 +19,4 @@ drupal-local-settings.php
 pgrestore.log
 postgres/
 solr/
+docker/config/nginx/certs/*.pem
