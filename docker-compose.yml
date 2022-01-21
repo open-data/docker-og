@@ -59,6 +59,7 @@ services:
       PGPASSWORD: secret
       SSH_AUTH_SOCK: /ssh-agent
     volumes:
+      - ./docker/config/ckan:/docker-entrypoint.d
       - .:/var/www/html
       - ./docker/config/nginx/certs:/usr/share/certs
       - ~/.gitconfig:/etc/gitconfig
@@ -86,9 +87,23 @@ services:
   solr:
     container_name: og-solr
     image: solr
-    restart: always
+    #restart: always
+    #TODO: figure out how to use mkcert to generate a trusted p12 cert...and then maybe use openssl to extract the pem chain from it...
     volumes:
+      - ./docker/config/solr/certs:/opt/solr/server/certs
+      - ./docker/config/solr/certs/solr.keystore.jks:/etc/solr.keystore.jks
       - ./solr:/opt/solr/server/solr
+    environment:
+      - SOLR_SSL_ENABLED=true
+      - SOLR_SSL_KEY_STORE=/etc/solr.keystore.jks
+      - SOLR_SSL_KEY_STORE_PASSWORD=secret
+      - SOLR_SSL_TRUST_STORE=/etc/solr.keystore.jks
+      - SOLR_SSL_TRUST_STORE_PASSWORD=secret
+      - SOLR_SSL_NEED_CLIENT_AUTH=false
+      - SOLR_SSL_WANT_CLIENT_AUTH=false
+      - SOLR_SSL_CHECK_PEER_NAME=true
+      - SOLR_SSL_KEY_STORE_TYPE=JKS
+      - SOLR_SSL_TRUST_STORE_TYPE=JKS
     ports:
       - 8981:8983
   mailhog:

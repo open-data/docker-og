@@ -10,17 +10,19 @@ node_modules/
 .DS_Store/
 
 # Build
-drupal/
-ckan/
-!docker/drupal/
-!docker/ckan/
-backup/
+/*.1
+/drupal/
+/ckan/
+/solr/
+/postgres/
+/backup/
 supervisord.log
-.docker.env
-.env
-.ssh/
+/.docker.env
+/.env
+/.ssh/
 drupal-local-settings.php
 pgrestore.log
-postgres/
-solr/
-docker/config/nginx/certs/*.pem
+/docker/config/nginx/certs/*.pem
+/docker/config/solr/certs/*.pem
+/docker/config/solr/certs/*.jks
+/docker/config/solr/certs/*.p12

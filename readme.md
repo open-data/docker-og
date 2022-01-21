@@ -23,14 +23,24 @@
 1. Create the following hosts file entries:
     1. `127.0.0.1 open.local`
     1. `127.0.0.1 mailhog.local`
-1. Use [mkcert](https://github.com/FiloSottile/mkcert) to make a certificate for nginx, if you're using Windows with WSL2, makes sure to make the certificates in Powershell running as an Administrator, not within WSL2:
-   1. `mkcert open.local`
-      1. Copy the cert to `docker/config/nginx/certs/open.local.pem`
-         * IMPORTANT: make sure the file name is the same as above.
-      1. Copy the private key to `docker/config/nginx/certs/open.local-key.pem`
-         * IMPORTANT: make sure the file name is the same as above.
+1. Use [mkcert](https://github.com/FiloSottile/mkcert) to make a certificate for nginx(Drupal), if you're using Windows with WSL2, makes sure to make the certificates in Powershell running as an Administrator, not within WSL2:
+   1. cd inside of the `docker/config/nginx/certs` directory.
+   1. Generate the pem chain: `mkcert -cert-file open.local.pem -key-file open.local-key.pem open.local`
+1. Generate keystores and certs for Solr SSL:
+   1. cd inside of the `docker/config/solr/certs` directory.
+   1. Generate JKS keystore: `keytool -genkeypair -alias solr -keyalg RSA -keysize 2048 -keypass secret -storepass secret -validity 9999 -keystore solr.keystore.jks -ext SAN=DNS:localhost,IP:127.0.0.1,IP:192.168.1.3 -dname "CN=localhost, OU=Organizational Unit, O=Organization, L=Location, ST=State, C=Country"`
+   1. Generate P12 keystore from JKS keystore: `keytool -importkeystore -srckeystore solr.keystore.jks -destkeystore solr.keystore.p12 -srcstoretype jks -deststoretype pkcs12`
+      1. You will be prompted a few times for a password, use the password from the first command: `secret`.
+   1. Generate pem chain from P12 keysotre: 
+      1. Generate private key: `openssl pkcs12 -in solr.keystore.p12 -out solr-key.pem -nodes -nocerts`
+         1. You will be prompted for a password, use the password from the first command: `secret`.
+         1. The outputted file will contain some lines like "Bag Attributes...Key Attributes...", edit the file and delete these lines
+      1. Generate certificate: `openssl pkcs12 -in solr.keystore.p12 -out solr.pem -nokeys`
+         1. You will be prompted for a password, use the password from the first command: `secret`.
+         1. The outputted file will contain some lines like "Bag Attributes...Key Attributes...", edit the file and delete these lines
 1. Copy `.docker.env.example` to `.docker.env`
 1. Copy `example-drupal-local-settings.php` to `drupal-local-settings.php`
+1. Copy `example-ckan.ini` to `ckan.ini`
 1. Copy `.env.example` to `.env`
    * If you need to, change your user and group to match the user and group your WSL2 user or Linux/Mac user employs:
       1. `id` <- this should get your current user ID and group ID in WSL2 or whatever shell you're using. If you're using WSL2 and only ever made your default user, it will likely be `1000`
@@ -88,5 +98,11 @@ Though there is an initialization script to create the databases on the initial 
 1. Run the install script: `./install-local.sh`
    1. Select `CKAN`
    1. Select what you want to install for CKAN:
+      * `SSH (Required for Repositories)`: will install and configure the ssh command along with the ssh-agent and keys.
+      * `Database`: will destroy the current database and import a fresh one from `backup/ckan_db.pgdump`
+      * `Repositories`: will destroy all files inside of the `ckan` directory and pull all required repositories related to CKAN.
+      * `Set File Permissions`: will set the correct file and directory ownerships and permissions.
+      * `All`: will execute all of the above, use this for first time install or if you wish to re-install everything.
+      * `Exit`: will exit the installation script.
    
    

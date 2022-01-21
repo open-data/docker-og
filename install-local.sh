@@ -31,6 +31,7 @@ installLocalUser_Drupal='false'
 installSSH_CKAN='false'
 installDB_CKAN='false'
 installRepos_CKAN='false'
+installFilePermissions_CKAN='false'
 
 # general flags
 exitScript='false'
@@ -218,7 +219,7 @@ function install_drupal {
     if [[ $installDB_Drupal == "true" ]]; then
 
       printf "${SPACER}${Cyan}${INDENT}Drop the DB if it exists and then recreate it blank/clean${NC}${SPACER}"
-      psql -eb --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_d8_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
+      psql -eb --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_drupal_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
 
       # import the database
       echo "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup${SPACER}"
@@ -559,6 +560,7 @@ function install_ckan {
     "SSH (Required for Repositories)" 
     "Database" 
     "Repositories" 
+    "Set File Permissions" 
     "All" 
     "Exit"
   )
@@ -587,16 +589,23 @@ function install_ckan {
       installRepos_CKAN='true'
       ;;
 
+    # "Set File Permissions"
+    (3)
+      exitScript='false'
+      installFilePermissions_CKAN='true'
+      ;;
+
     # "All"
-    (3) 
+    (4) 
       exitScript='false'
       installSSH_CKAN='true'
       installDB_CKAN='true'
       installRepos_CKAN='true'
+      installFilePermissions_CKAN='true'
       ;;
 
     # "Exit"
-    (4)
+    (5)
       exitScript='true'
       ;;
 
@@ -679,6 +688,13 @@ function install_ckan {
     #
     if [[ $installDB_CKAN == "true" ]]; then
 
+      printf "${SPACER}${Cyan}${INDENT}Drop the DB if it exists and then recreate it blank/clean${NC}${SPACER}"
+      psql -eb --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
+
+      # import the database
+      echo "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup${SPACER}"
+      #pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=$PGDATABASE --username=$PGUSER /var/www/html/backup/ckan_db.pgdump
+
     fi
     # END
     # Destroy and re-import database
@@ -689,7 +705,7 @@ function install_ckan {
     #
     if [[ $installRepos_CKAN == "true" ]]; then
 
-      if [[ $installSSH_CKAN == "true" ]]; then
+      if [[ $installSSH_CKAN != "true" ]]; then
 
         # install SSH
         printf "${SPACER}${Cyan}${INDENT}Install SSH for GIT use${NC}${SPACER}"
@@ -706,9 +722,83 @@ function install_ckan {
 
       fi
 
+      #TODO: do all of this inside of the python environment...
+
+      mkdir -p /var/www/html/ckan
+      cd /var/www/html/ckan
+
+      # nuke the entire folder
+      printf "${SPACER}${Cyan}${INDENT}Pre-nuke the existing CKAN install${NC}${SPACER}"
+      # destroy all files
+      rm -rf ./*
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Remove all files: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Remove all files: FAIL${NC}${EOL}"
+      fi
+      # destroy all hidden files
+      rm -rf ./.??*
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Remove all hidden files: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Remove all hidden files: FAIL${NC}${EOL}"
+      fi
+
+      # pull the core ckan repo
+      mkdir -p /var/www/html/ckan/core
+      cd /var/www/html/ckan/core
+      printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Core repository from git@github.com:open-data/ckan.git${NC}${SPACER}"
+      git config --global init.defaultBranch master
+      # destroy the local git repo config
+      rm -rf .git
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Remove .git: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Remove .git: FAIL (local repo may not exist)${NC}${EOL}"
+      fi
+      git init
+      git config pull.ff only
+      git remote add origin git@github.com:open-data/ckan.git
+      git pull git@github.com:open-data/ckan.git
+
+      # pull the extension ckan repo
+      mkdir -p /var/www/html/ckan/ca-ext
+      cd /var/www/html/ckan/ca-ext
+      printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Extension repository from git@github.com:open-data/ckanext-canada.git${NC}${SPACER}"
+      git config --global init.defaultBranch master
+      # destroy the local git repo config
+      rm -rf .git
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Remove .git: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Remove .git: FAIL (local repo may not exist)${NC}${EOL}"
+      fi
+      git init
+      git config pull.ff only
+      git remote add origin git@github.com:open-data/ckanext-canada.git
+      git pull git@github.com:open-data/ckanext-canada.git
+
     fi
     # END
     # Destroy and pull fast-forwarded repositories
+    # END
+
+    #
+    # Set file permissions
+    #
+    if [[ $installFilePermissions_CKAN == "true" ]]; then
+
+      # set file ownership for ckan-ext files
+      chown ckan:ckan -R /var/www/html/ckan
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Set ckan ownership to ckan:ckan: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Set ckan ownership to ckan:ckan: FAIL${NC}${EOL}"
+      fi
+
+    fi
+    # END
+    # Set file permissions
     # END
 
   else
