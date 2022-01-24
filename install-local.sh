@@ -643,7 +643,7 @@ function install_ckan {
     #
     if [[ $installRepos_CKAN == "true" ]]; then
 
-      read -r -p $'\n\n\033[0;31m    Are you sure you want delete the existing CKAN directory and pull fast-forwarded repositories? [y/N]:\033[0;0m    ' response
+      read -r -p $'\n\n\033[0;31m    Are you sure you want delete the existing CKAN directory and pull fast-forwarded repositories and install them into the Python environment? [y/N]:\033[0;0m    ' response
 
       if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
 
