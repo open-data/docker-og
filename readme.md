@@ -23,10 +23,11 @@
 1. Create the following hosts file entries:
     1. `127.0.0.1 open.local`
     1. `127.0.0.1 mailhog.local`
-1. Use [mkcert](https://github.com/FiloSottile/mkcert) to make a certificate for Drupal and solr if you're using Windows with WSL2, makes sure to make the certificates in Powershell running as an Administrator, not within WSL2:
-   * Drupal:
+    1. `127.0.0.1 ckan.open.local`
+1. Use [mkcert](https://github.com/FiloSottile/mkcert) to make a certificate for nginx(Drupal & CKAN) and solr if you're using Windows with WSL2, makes sure to make the certificates in Powershell running as an Administrator, not within WSL2:
+   * nginx(Drupal & CKAN):
       1. cd inside of the `docker/config/nginx/certs` directory.
-      1. Generate the pem chain: `mkcert -cert-file open.local.pem -key-file open.local-key.pem open.local`
+      1. Generate the pem chain: `mkcert -cert-file open.local.pem -key-file open.local-key.pem open.local ckan.open.local`
    * solr:
       1. cd inside of the `docker/config/solr/certs` directory.
       1. Generate the PKCS12 keystore: `mkcert -pkcs12 -p12-file solr.p12 127.0.0.1 localhost ::1 ::8981 ::8983`
@@ -93,6 +94,7 @@ Though there is an initialization script to create the databases on the initial 
    1. Select what you want to install for CKAN:
       * `SSH (Required for Repositories)`: will install and configure the ssh command along with the ssh-agent and keys.
       * `Database`: will destroy the current database and import a fresh one from `backup/ckan_db.pgdump`
+         * The database for CKAN is large, so importing the database will take a long time.
       * `Repositories`: will destroy all files inside of the `ckan` directory, re-grenerate the Python environment, and pull & install all required repositories related to CKAN into the Python environment.
       * `Set File Permissions`: will set the correct file and directory ownerships and permissions.
       * `All`: will execute all of the above, use this for first time install or if you wish to re-install everything.

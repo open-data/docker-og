@@ -222,7 +222,7 @@ function install_drupal {
       psql -eb --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_drupal_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
 
       # import the database
-      echo "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup${SPACER}"
+      printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup${SPACER}"
       pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=$PGDATABASE --username=$PGUSER /var/www/html/backup/drupal_db.pgdump
 
     fi
@@ -692,8 +692,8 @@ function install_ckan {
       psql -eb --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
 
       # import the database
-      echo "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup${SPACER}"
-      #pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=$PGDATABASE --username=$PGUSER /var/www/html/backup/ckan_db.pgdump
+      printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup${SPACER}"
+      pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=$PGDATABASE --username=$PGUSER /var/www/html/backup/ckan_db.pgdump
 
     fi
     # END
@@ -701,7 +701,7 @@ function install_ckan {
     # END
 
     #
-    # Destroy and pull fast-forwarded repositories
+    # Destroy and pull and install fast-forwarded repositories
     #
     if [[ $installRepos_CKAN == "true" ]]; then
 
@@ -721,8 +721,6 @@ function install_ckan {
         fi
 
       fi
-
-      #TODO: do all of this inside of the python environment...
 
       mkdir -p /var/www/html/ckan
       cd /var/www/html/ckan
@@ -744,43 +742,54 @@ function install_ckan {
         printf "${Red}${INDENT}${INDENT}Remove all hidden files: FAIL${NC}${EOL}"
       fi
 
-      # pull the core ckan repo
-      mkdir -p /var/www/html/ckan/core
-      cd /var/www/html/ckan/core
-      printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Core repository from git@github.com:open-data/ckan.git${NC}${SPACER}"
-      git config --global init.defaultBranch master
-      # destroy the local git repo config
-      rm -rf .git
+      # initialize Python environment
+      # create default environment directory
+      mkdir -p /var/www/html/ckan/default
       if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Remove .git: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Create ckan/default directory for Python environment: OK${NC}${EOL}"
       else
-        printf "${Red}${INDENT}${INDENT}Remove .git: FAIL (local repo may not exist)${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Create ckan/default directory for Python environment: FAIL${NC}${EOL}"
       fi
-      git init
-      git config pull.ff only
-      git remote add origin git@github.com:open-data/ckan.git
-      git pull git@github.com:open-data/ckan.git
+      cd /var/www/html/ckan/default
+      # set ownership
+      chown ckan:ckan -R /var/www/html/ckan
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Set ckan ownership to ckan:ckan: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Set ckan ownership to ckan:ckan: FAIL${NC}${EOL}"
+      fi
 
-      # pull the extension ckan repo
-      mkdir -p /var/www/html/ckan/ca-ext
-      cd /var/www/html/ckan/ca-ext
-      printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Extension repository from git@github.com:open-data/ckanext-canada.git${NC}${SPACER}"
-      git config --global init.defaultBranch master
-      # destroy the local git repo config
-      rm -rf .git
+      # initialize python environment
+      python3 -m venv /var/www/html/ckan/default
       if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Remove .git: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Initialize Python environment at ckan/default: OK${NC}${EOL}"
       else
-        printf "${Red}${INDENT}${INDENT}Remove .git: FAIL (local repo may not exist)${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Initialize Python environment at ckan/default: FAIL${NC}${EOL}"
       fi
-      git init
-      git config pull.ff only
-      git remote add origin git@github.com:open-data/ckanext-canada.git
-      git pull git@github.com:open-data/ckanext-canada.git
+
+      # activate python environment
+      . /var/www/html/ckan/default/bin/activate
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Activate Python environment: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Activate Python environment: FAIL${NC}${EOL}"
+      fi
+      # install setup tools
+      pip install setuptools==44.1.0
+      # update pip
+      pip install --upgrade pip
+      # set github as a trusted host
+      ssh -T git@github.com
+
+      # install ckan core into the python environment
+      printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Core repository from git@github.com:open-data/ckan.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+ssh://git@github.com/open-data/ckan.git#egg=ckan[requirements]'
+
+      #TODO: do all of this inside of the python environment...
 
     fi
     # END
-    # Destroy and pull fast-forwarded repositories
+    # Destroy and pull and install fast-forwarded repositories
     # END
 
     #

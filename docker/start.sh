@@ -26,12 +26,16 @@ echo "The role is $role"
 if [[ "$role" = "drupal" ]]; then
 
     ln -sf /etc/supervisor/conf.d-available/app.conf /etc/supervisor/conf.d/app.conf
-    ln -s /etc/nginx/sites-available/mailhog /etc/nginx/sites-enabled/
+    ln -s /etc/nginx/sites-available/open.local /etc/nginx/sites-enabled/open.local
+    ln -s /etc/nginx/sites-available/mailhog /etc/nginx/sites-enabled/mailhog
     service nginx reload
 
 elif [[ "$role" = "ckan" ]]; then
 
-    echo 'Doing something in the ckan start script...'
+    ln -sf /etc/supervisor/conf.d-available/app.conf /etc/supervisor/conf.d/app.conf
+    ln -s /etc/nginx/sites-available/ckan.open.local /etc/nginx/sites-enabled/ckan.open.local
+    ln -s /etc/nginx/sites-available/mailhog /etc/nginx/sites-enabled/mailhog
+    service nginx reload
 
 elif [[ "$role" = "scheduler" ]]; then
 
