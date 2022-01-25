@@ -16,11 +16,13 @@ node_modules/
 /solr/
 /postgres/
 /backup/
+/nginx/
 supervisord.log
 /.docker.env
 /.env
 /.ssh/
 drupal-local-settings.php
+ckan.ini
 pgrestore.log
 /docker/config/nginx/certs/*.pem
 /docker/config/solr/certs/*.pem

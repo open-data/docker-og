@@ -26,16 +26,16 @@ echo "The role is $role"
 if [[ "$role" = "drupal" ]]; then
 
     ln -sf /etc/supervisor/conf.d-available/app.conf /etc/supervisor/conf.d/app.conf
-    ln -s /etc/nginx/sites-available/open.local /etc/nginx/sites-enabled/open.local
-    ln -s /etc/nginx/sites-available/mailhog /etc/nginx/sites-enabled/mailhog
+    ln -sf /etc/nginx/sites-available/open.local /etc/nginx/sites-enabled/open.local
+    ln -sf /etc/nginx/sites-available/mailhog /etc/nginx/sites-enabled/mailhog
+    nginx -g "user ${NGINX_UNAME};"
     service nginx reload
 
 elif [[ "$role" = "ckan" ]]; then
 
-    ln -sf /etc/supervisor/conf.d-available/app.conf /etc/supervisor/conf.d/app.conf
-    ln -s /etc/nginx/sites-available/ckan.open.local /etc/nginx/sites-enabled/ckan.open.local
-    ln -s /etc/nginx/sites-available/mailhog /etc/nginx/sites-enabled/mailhog
-    service nginx reload
+    mkdir -p ${APP_ROOT}/ckan/default
+    python3 -m venv ${APP_ROOT}/ckan/default
+    . ${APP_ROOT}/ckan/default/bin/activate
 
 elif [[ "$role" = "scheduler" ]]; then
 

@@ -1,6 +1,5 @@
 FROM openknowledge/ckan-base:2.8
-
-#TODO: add any Dockerfile extensions here..
+FROM php:7.4-fpm
 
 RUN apt-get update -yqq \
     && apt-get install -y --no-install-recommends \
@@ -28,7 +27,12 @@ ADD docker/config/supervisor/conf.d/*.conf /etc/supervisor/conf.d-available/
 
 ADD docker/start.sh /usr/local/bin/start
 
-RUN chown -R ckan:ckan /var/www/html \
+# Create ckan user
+RUN useradd ckan
+
+# Create root directory
+RUN mkdir -p /srv/app
+RUN chown -R ckan:ckan /srv/app \
     && chmod +x /usr/local/bin/start
 
 ARG USER_ID

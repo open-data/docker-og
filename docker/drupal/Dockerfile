@@ -53,7 +53,9 @@ ADD docker/config/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 ADD docker/config/supervisor/conf.d/*.conf /etc/supervisor/conf.d-available/
 
 # Nginx
+ADD docker/config/nginx/nginx.conf /etc/nginx/nginx.conf
 ADD docker/config/nginx/default /etc/nginx/sites-available/default
+ADD docker/config/nginx/open.local /etc/nginx/sites-available/open.local
 ADD docker/config/nginx/mailhog /etc/nginx/sites-available/mailhog
 ADD docker/config/nginx/h5bp/ /etc/nginx/h5bp
 
@@ -62,10 +64,13 @@ ADD docker/start.sh /usr/local/bin/start
 # Create homestead user
 RUN useradd homestead
 
+# Create root directory
+RUN mkdir -p /var/www/html
 RUN chown -R www-data:www-data /var/www/html \
     && chmod +x /usr/local/bin/start \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log
+
 
 ARG USER_ID
 ARG GROUP_ID

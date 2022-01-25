@@ -30,6 +30,8 @@ installLocalUser_Drupal='false'
 # ckan flags
 installSSH_CKAN='false'
 installDB_CKAN='false'
+installDB_Registry_CKAN='false'
+installDB_Registry_DS_CKAN='false'
 installRepos_CKAN='false'
 installFilePermissions_CKAN='false'
 
@@ -219,11 +221,11 @@ function install_drupal {
     if [[ $installDB_Drupal == "true" ]]; then
 
       printf "${SPACER}${Cyan}${INDENT}Drop the DB if it exists and then recreate it blank/clean${NC}${SPACER}"
-      psql -eb --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_drupal_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
+      psql -eb --dbname=og_drupal_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_drupal_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
 
       # import the database
-      printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup${SPACER}"
-      pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=$PGDATABASE --username=$PGUSER /var/www/html/backup/drupal_db.pgdump
+      printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup${NC}${SPACER}"
+      pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=$PGDATABASE --username=$PGUSER ${APP_ROOT}/backup/drupal_db.pgdump
 
     fi
     # END
@@ -252,8 +254,8 @@ function install_drupal {
 
       fi
 
-      mkdir -p /var/www/html/drupal
-      cd /var/www/html/drupal
+      mkdir -p ${APP_ROOT}/drupal
+      cd ${APP_ROOT}/drupal
 
       # nuke the entire folder
       printf "${SPACER}${Cyan}${INDENT}Pre-nuke the existing Drupal install${NC}${SPACER}"
@@ -290,7 +292,7 @@ function install_drupal {
       # pull the profile
       printf "${SPACER}${Cyan}${INDENT}Pulling Profile repository from git@github.com:open-data/og.git${NC}${SPACER}"
       # destroy the local git repo config
-      cd /var/www/html/drupal/html/profiles/og
+      cd ${APP_ROOT}/drupal/html/profiles/og
       rm -rf .git
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Remove profiles/og/.git: OK${NC}${EOL}"
@@ -304,7 +306,7 @@ function install_drupal {
 
       # pull the theme
       printf "${SPACER}${Cyan}${INDENT}Pulling Theme repository from git@github.com:open-data/gcweb_bootstrap.git${NC}${SPACER}"
-      cd /var/www/html/drupal/html/themes/custom/gcweb
+      cd ${APP_ROOT}/drupal/html/themes/custom/gcweb
       # destroy the local git repo config
       rm -rf .git
       if [[ $? -eq 0 ]]; then
@@ -329,21 +331,21 @@ function install_drupal {
 
       printf "${SPACER}${Cyan}${INDENT}Extract public files from backup${NC}${SPACER}"
       # create default sites directory
-      mkdir -p /var/www/html/drupal/html/sites/default
+      mkdir -p ${APP_ROOT}/drupal/html/sites/default
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Create sites/default: OK${NC}${EOL}"
       else
         printf "${Red}${INDENT}${INDENT}Create sites/default: FAIL (directory may already exist)${NC}${EOL}"
       fi
       # remove default files directory
-      rm -rf /var/www/html/drupal/html/sites/default/files
+      rm -rf ${APP_ROOT}/drupal/html/sites/default/files
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Removed sites/default/files: OK${NC}${EOL}"
       else
         printf "${Red}${INDENT}${INDENT}Removed sites/default/files: FAIL (directory may not exist)${NC}${EOL}"
       fi
-      cd /var/www/html/drupal/html/sites/default
-      tar zxvf /var/www/html/backup/drupal_files.tgz
+      cd ${APP_ROOT}/drupal/html/sites/default
+      tar zxvf ${APP_ROOT}/backup/drupal_files.tgz
 
     fi
     # END
@@ -356,19 +358,19 @@ function install_drupal {
     if [[ $installFilePermissions_Drupal == "true" ]]; then
 
       printf "${SPACER}${Cyan}${INDENT}Download Drupal default settings file${NC}${SPACER}"
-      cd /var/www/html/drupal/html/sites
+      cd ${APP_ROOT}/drupal/html/sites
       # remove old settings file
-      rm -rf /var/www/html/drupal/html/sites/default.settings.php
+      rm -rf ${APP_ROOT}/drupal/html/sites/default.settings.php
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Removed sites/default.settings.php: OK${NC}${EOL}"
       else
         printf "${Red}${INDENT}${INDENT}Removed sites/default.settings.php: FAIL (file may not exist)${NC}${EOL}"
       fi
       wget https://raw.githubusercontent.com/drupal/drupal/8.8.x/sites/default/default.settings.php
-      mkdir -p /var/www/html/drupal/html/sites/default
-      cd /var/www/html/drupal/html/sites/default
+      mkdir -p ${APP_ROOT}/drupal/html/sites/default
+      cd ${APP_ROOT}/drupal/html/sites/default
       # remove old settings file
-      rm -rf /var/www/html/drupal/html/sites/default/default.settings.php
+      rm -rf ${APP_ROOT}/drupal/html/sites/default/default.settings.php
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Removed sites/default/default.settings.php: OK${NC}${EOL}"
       else
@@ -378,14 +380,14 @@ function install_drupal {
 
       printf "${SPACER}${Cyan}${INDENT}Copy Drupal settings file${NC}${SPACER}"
       # copy docker config settings.php to drupal directory
-      cp /var/www/html/drupal-local-settings.php /var/www/html/drupal/html/sites/settings.php
+      cp ${APP_ROOT}/drupal-local-settings.php ${APP_ROOT}/drupal/html/sites/settings.php
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Copied drupal-local-settings.php to sites/settings.php: OK${NC}${EOL}"
       else
         printf "${Red}${INDENT}${INDENT}Copied drupal-local-settings.php to sites/settings.php: FAIL${NC}${EOL}"
       fi
       # copy docker config settings.php to drupal directory
-      cp /var/www/html/drupal-local-settings.php /var/www/html/drupal/html/sites/default/settings.php
+      cp ${APP_ROOT}/drupal-local-settings.php ${APP_ROOT}/drupal/html/sites/default/settings.php
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Copied drupal-local-settings.php to sites/default/settings.php: OK${NC}${EOL}"
       else
@@ -394,28 +396,28 @@ function install_drupal {
 
       printf "${SPACER}${Cyan}${INDENT}Set Drupal settings file permissions${NC}${SPACER}"
       # set file permissions for settings file
-      chmod 644 /var/www/html/drupal/html/sites/settings.php
+      chmod 644 ${APP_ROOT}/drupal/html/sites/settings.php
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Set sites/settings.php perms to 644: OK${NC}${EOL}"
       else
         printf "${Red}${INDENT}${INDENT}Set sites/settings.php perms to 644: FAIL${NC}${EOL}"
       fi
       # set file permissions for default settings file
-      chmod 644 /var/www/html/drupal/html/sites/default.settings.php
+      chmod 644 ${APP_ROOT}/drupal/html/sites/default.settings.php
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Set sites/default.settings.php perms to 644: OK${NC}${EOL}"
       else
         printf "${Red}${INDENT}${INDENT}Set sites/default.settings.php to 644: FAIL${NC}${EOL}"
       fi
       # set file permissions for settings file
-      chmod 644 /var/www/html/drupal/html/sites/default/settings.php
+      chmod 644 ${APP_ROOT}/drupal/html/sites/default/settings.php
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Set sites/default/settings.php perms to 644: OK${NC}${EOL}"
       else
         printf "${Red}${INDENT}${INDENT}Set sites/default/settings.php perms to 644: FAIL${NC}${EOL}"
       fi
       # set file permissions for default settings file
-      chmod 644 /var/www/html/drupal/html/sites/default/default.settings.php
+      chmod 644 ${APP_ROOT}/drupal/html/sites/default/default.settings.php
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Set sites/default/default.settings.php perms to 644: OK${NC}${EOL}"
       else
@@ -424,7 +426,7 @@ function install_drupal {
 
       printf "${SPACER}${Cyan}${INDENT}Create config sync directory${NC}${SPACER}"
       # create drupal config sync directory
-      mkdir -p /var/www/html/drupal/html/sites/default/sync
+      mkdir -p ${APP_ROOT}/drupal/html/sites/default/sync
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Create sites/default/sync: OK${NC}${EOL}"
       else
@@ -433,21 +435,21 @@ function install_drupal {
 
       printf "${SPACER}${Cyan}${INDENT}Create private files directory${NC}${SPACER}"
       #create private files directory
-      mkdir -p /var/www/html/drupal/html/sites/default/private-files
+      mkdir -p ${APP_ROOT}/drupal/html/sites/default/private-files
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Create sites/default/private-files: OK${NC}${EOL}"
       else
         printf "${Red}${INDENT}${INDENT}Create sites/default/private-files: FAIL (directory may already exist)${NC}${EOL}"
       fi
       # add htaccess file
-      echo "Deny from all" > /var/www/html/drupal/html/sites/default/private-files/.htaccess
+      echo "Deny from all" > ${APP_ROOT}/drupal/html/sites/default/private-files/.htaccess
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Added Deny from all to private files directory: OK${NC}${EOL}"
       else
         printf "${Red}${INDENT}${INDENT}Added Deny from all to private files directory: FAIL${NC}${EOL}"
       fi
       # set file permissions of new htaccess file
-      chmod 644 /var/www/html/drupal/html/sites/default/private-files/.htaccess
+      chmod 644 ${APP_ROOT}/drupal/html/sites/default/private-files/.htaccess
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Set private directory htaccess perms to 644: OK${NC}${EOL}"
       else
@@ -456,7 +458,7 @@ function install_drupal {
 
       printf "${SPACER}${Cyan}${INDENT}Set public files permissions${NC}${SPACER}"
       # set file permissions of public files directory
-      chmod 755 /var/www/html/drupal/html/sites/default/files
+      chmod 755 ${APP_ROOT}/drupal/html/sites/default/files
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Set sites/default/files perms to 755: OK${NC}${EOL}"
       else
@@ -464,7 +466,7 @@ function install_drupal {
       fi
 
       # set file permissions of public files inner directories
-      find /var/www/html/drupal/html/sites/default/files -type d -exec chmod 755 {} \;
+      find ${APP_ROOT}/drupal/html/sites/default/files -type d -exec chmod 755 {} \;
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Set sites/default/files inner directory perms to 755: OK${NC}${EOL}"
       else
@@ -472,7 +474,7 @@ function install_drupal {
       fi
 
       # set file permissions of public files inner files
-      find /var/www/html/drupal/html/sites/default/files -type f -exec chmod 644 {} \;
+      find ${APP_ROOT}/drupal/html/sites/default/files -type f -exec chmod 644 {} \;
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Set sites/default/files inner files perms to 644: OK${NC}${EOL}"
       else
@@ -481,7 +483,7 @@ function install_drupal {
 
       printf "${SPACER}${Cyan}${INDENT}Set Drupal file ownership${NC}${SPACER}"
       # set file system ownership for the drupal directory
-      chown www-data:www-data -R /var/www/html/drupal
+      chown www-data:www-data -R ${APP_ROOT}/drupal
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Set file system ownership to www-data: OK${NC}${EOL}"
       else
@@ -501,7 +503,7 @@ function install_drupal {
       if [[ -x "$(command -v drush)" ]]; then
 
         printf "${SPACER}${Cyan}${INDENT}Set local user admin${NC}${SPACER}"
-        cd /var/www/html/drupal
+        cd ${APP_ROOT}/drupal
         drush uinf admin.local || drush user:create admin.local --mail=temp@tbs-sct.gc.ca --password=12345678
         drush urol administrator admin.local
 
@@ -558,8 +560,10 @@ function install_ckan {
   # Options for the user to select from
   options=(
     "SSH (Required for Repositories)" 
-    "Database" 
-    "Repositories" 
+    "Core Database" 
+    "Registry Database" 
+    "Registry Datastore Database" 
+    "Repositories (Installs them into Python venv)" 
     "Set File Permissions" 
     "All" 
     "Exit"
@@ -577,35 +581,49 @@ function install_ckan {
       installSSH_CKAN='true'
       ;;
 
-    # "Database"
+    # "Core Database"
     (1) 
       exitScript='false'
       installDB_CKAN='true'
       ;;
 
-    # "Repositories"
+    # "Registry Database"
     (2) 
+      exitScript='false'
+      installDB_Registry_CKAN='true'
+      ;;
+
+    # "Registry Datastore Database"
+    (3) 
+      exitScript='false'
+      installDB_Registry_DS_CKAN='true'
+      ;;
+
+    # "Repositories (Installs them into Python venv)"
+    (4) 
       exitScript='false'
       installRepos_CKAN='true'
       ;;
 
     # "Set File Permissions"
-    (3)
+    (5)
       exitScript='false'
       installFilePermissions_CKAN='true'
       ;;
 
     # "All"
-    (4) 
+    (6) 
       exitScript='false'
       installSSH_CKAN='true'
       installDB_CKAN='true'
+      installDB_Registry_CKAN='true'
+      installDB_Registry_DS_CKAN='true'
       installRepos_CKAN='true'
       installFilePermissions_CKAN='true'
       ;;
 
     # "Exit"
-    (5)
+    (7)
       exitScript='true'
       ;;
 
@@ -617,11 +635,11 @@ function install_ckan {
   if [[ $exitScript != "true" ]]; then
 
     #
-    # Confirm CKAN database destruction
+    # Confirm CKAN core database destruction
     #
     if [[ $installDB_CKAN == "true" ]]; then
 
-      read -r -p $'\n\n\033[0;31m    Are you sure you want delete the existing CKAN database and import a fresh copy? [y/N]:\033[0;0m    ' response
+      read -r -p $'\n\n\033[0;31m    Are you sure you want delete the existing CKAN Core database and import a fresh copy? [y/N]:\033[0;0m    ' response
 
       if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
 
@@ -635,7 +653,51 @@ function install_ckan {
 
     fi
     # END
-    # Confirm CKAN database destruction
+    # Confirm CKAN core database destruction
+    # END
+
+    #
+    # Confirm CKAN END database destruction
+    #
+    if [[ $installDB_Registry_CKAN == "true" ]]; then
+
+      read -r -p $'\n\n\033[0;31m    Are you sure you want delete the existing CKAN Registry database and import a fresh copy? [y/N]:\033[0;0m    ' response
+
+      if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+
+        installDB_Registry_CKAN='true'
+
+      else
+
+        installDB_Registry_CKAN='false'
+
+      fi
+
+    fi
+    # END
+    # Confirm CKAN registry database destruction
+    # END
+
+    #
+    # Confirm CKAN registry datastore database destruction
+    #
+    if [[ $installDB_Registry_DS_CKAN == "true" ]]; then
+
+      read -r -p $'\n\n\033[0;31m    Are you sure you want delete the existing CKAN Registry Datastore database and import a fresh copy? [y/N]:\033[0;0m    ' response
+
+      if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+
+        installDB_Registry_DS_CKAN='true'
+
+      else
+
+        installDB_Registry_DS_CKAN='false'
+
+      fi
+
+    fi
+    # END
+    # Confirm CKAN registry datastore database destruction
     # END
 
     #
@@ -684,20 +746,54 @@ function install_ckan {
     # END
 
     #
-    # Destroy and re-import database
+    # Destroy and re-import core database
     #
     if [[ $installDB_CKAN == "true" ]]; then
 
       printf "${SPACER}${Cyan}${INDENT}Drop the DB if it exists and then recreate it blank/clean${NC}${SPACER}"
-      psql -eb --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
+      psql -eb --dbname=og_ckan_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
 
       # import the database
-      printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup${SPACER}"
-      pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=$PGDATABASE --username=$PGUSER /var/www/html/backup/ckan_db.pgdump
+      printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup${NC}${SPACER}"
+      pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=$PGDATABASE --username=$PGUSER ${APP_ROOT}/backup/ckan_db.pgdump
 
     fi
     # END
-    # Destroy and re-import database
+    # Destroy and re-import core database
+    # END
+
+    #
+    # Destroy and re-import registry database
+    #
+    if [[ $installDB_Registry_CKAN == "true" ]]; then
+
+      printf "${SPACER}${Cyan}${INDENT}Drop the DB if it exists and then recreate it blank/clean${NC}${SPACER}"
+      psql -eb --dbname=og_ckan_registry_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_registry_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
+
+      # import the database
+      printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup${NC}${SPACER}"
+      pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=og_ckan_registry_local --username=$PGUSER ${APP_ROOT}/backup/ckan_registry_db.pgdump
+
+    fi
+    # END
+    # Destroy and re-import registry database
+    # END
+
+    #
+    # Destroy and re-import registry datastore database
+    #
+    if [[ $installDB_Registry_DS_CKAN == "true" ]]; then
+
+      printf "${SPACER}${Cyan}${INDENT}Drop the DB if it exists and then recreate it blank/clean${NC}${SPACER}"
+      psql -eb --dbname=og_ckan_registry_ds_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_registry_ds_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
+
+      # import the database
+      printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup${NC}${SPACER}"
+      pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=og_ckan_registry_ds_local --username=$PGUSER ${APP_ROOT}/backup/ckan_registry_ds_db.pgdump
+
+    fi
+    # END
+    # Destroy and re-import registry datastore database
     # END
 
     #
@@ -722,8 +818,8 @@ function install_ckan {
 
       fi
 
-      mkdir -p /var/www/html/ckan
-      cd /var/www/html/ckan
+      mkdir -p ${APP_ROOT}/ckan/default/src
+      cd ${APP_ROOT}/ckan/default/src
 
       # nuke the entire folder
       printf "${SPACER}${Cyan}${INDENT}Pre-nuke the existing CKAN install${NC}${SPACER}"
@@ -744,31 +840,23 @@ function install_ckan {
 
       # initialize Python environment
       # create default environment directory
-      mkdir -p /var/www/html/ckan/default
+      mkdir -p ${APP_ROOT}/ckan/default
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Create ckan/default directory for Python environment: OK${NC}${EOL}"
       else
         printf "${Red}${INDENT}${INDENT}Create ckan/default directory for Python environment: FAIL${NC}${EOL}"
       fi
-      cd /var/www/html/ckan/default
+      cd ${APP_ROOT}/ckan/default
       # set ownership
-      chown ckan:ckan -R /var/www/html/ckan
+      chown ckan:ckan -R ${APP_ROOT}/ckan
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Set ckan ownership to ckan:ckan: OK${NC}${EOL}"
       else
         printf "${Red}${INDENT}${INDENT}Set ckan ownership to ckan:ckan: FAIL${NC}${EOL}"
       fi
 
-      # initialize python environment
-      python3 -m venv /var/www/html/ckan/default
-      if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Initialize Python environment at ckan/default: OK${NC}${EOL}"
-      else
-        printf "${Red}${INDENT}${INDENT}Initialize Python environment at ckan/default: FAIL${NC}${EOL}"
-      fi
-
       # activate python environment
-      . /var/www/html/ckan/default/bin/activate
+      . ${APP_ROOT}/ckan/default/bin/activate
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Activate Python environment: OK${NC}${EOL}"
       else
@@ -783,9 +871,80 @@ function install_ckan {
 
       # install ckan core into the python environment
       printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Core repository from git@github.com:open-data/ckan.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/open-data/ckan.git#egg=ckan[requirements]'
+      pip install -e 'git+ssh://git@github.com/open-data/ckan.git#egg=ckan[]'
 
-      #TODO: do all of this inside of the python environment...
+      # copy python config file
+      cp ${APP_ROOT}/ckan.ini ${APP_ROOT}/ckan/default/ckan.ini
+      printf "${SPACER}${Cyan}${INDENT}Copying local CKAN config file to into Python environment${NC}${SPACER}"
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Copy ckan.ini to ckan/default.ckan.ini: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Copy ckan.ini to ckan/default.ckan.ini: FAIL${NC}${EOL}"
+      fi
+
+      # install ckanapi into the python environment
+      printf "${SPACER}${Cyan}${INDENT}Pulling CKAN API repository from git@github.com:ckan/ckanapi.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+ssh://git@github.com/ckan/ckanapi.git#egg=ckanapi[]'
+
+      # install ckan canada into the python environment
+      printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Canada repository from git@github.com:open-data/ckanext-canada.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+ssh://git@github.com/open-data/ckanext-canada.git#egg=ckanext-canada[]'
+
+      # install ckan cloud storage into the python environment
+      printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Cloud Storage repository from git@github.com:open-data/ckanext-cloudstorage.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+ssh://git@github.com/open-data/ckanext-cloudstorage.git#egg=ckanext-cloudstorage[]'
+
+      # install ckan dcat into the python environment
+      printf "${SPACER}${Cyan}${INDENT}Pulling CKAN DCat repository from git@github.com:open-data/ckanext-dcat.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+ssh://git@github.com/open-data/ckanext-dcat.git#egg=ckanext-dcat[]'
+
+      # install ckan extended activity into the python environment
+      printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Extended Activity repository from git@github.com:open-data/ckanext-extendedactivity.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+ssh://git@github.com/open-data/ckanext-extendedactivity.git#egg=ckanext-extendedactivity[]'
+
+      # install ckan extractor into the python environment
+      printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Extractor repository from git@github.com:open-data/ckanext-extractor.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+ssh://git@github.com/open-data/ckanext-extractor.git#egg=ckanext-extractor[]'
+
+      # install ckan fluent into the python environment
+      printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Fluent repository from git@github.com:ckan/ckanext-fluent.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+ssh://git@github.com/ckan/ckanext-fluent.git#egg=ckanext-fluent[]'
+
+      # install ckan recombinant into the python environment
+      printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Recombinant repository from git@github.com:open-data/ckanext-recombinant.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+ssh://git@github.com/open-data/ckanext-recombinant.git#egg=ckanext-recombinant[]'
+
+      # install ckan scheming into the python environment
+      printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Scheming repository from git@github.com:ckan/ckanext-scheming.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+ssh://git@github.com/ckan/ckanext-scheming.git#egg=ckanext-scheming[]'
+
+      # install ckan security into the python environment
+      printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Security repository from git@github.com:open-data/ckanext-security.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+ssh://git@github.com/open-data/ckanext-security.git#egg=ckanext-security[]'
+
+      # install ckan validation into the python environment
+      printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Validation repository from git@github.com:open-data/ckanext-validation.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+ssh://git@github.com/open-data/ckanext-validation.git#egg=ckanext-validation[]'
+
+      # install ckan xloader into the python environment
+      printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Xloader repository from git@github.com:open-data/ckanext-xloader.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+ssh://git@github.com/open-data/ckanext-xloader.git#egg=ckanext-xloader[]'
+
+      # decativate python environment
+      deactivate
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Deactivate Python environment: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Deactivate Python environment: FAIL${NC}${EOL}"
+      fi
+
+      # set ownership
+      chown ckan:ckan -R ${APP_ROOT}/ckan
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Set ckan ownership to ckan:ckan: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Set ckan ownership to ckan:ckan: FAIL${NC}${EOL}"
+      fi
 
     fi
     # END
@@ -798,7 +957,7 @@ function install_ckan {
     if [[ $installFilePermissions_CKAN == "true" ]]; then
 
       # set file ownership for ckan-ext files
-      chown ckan:ckan -R /var/www/html/ckan
+      chown ckan:ckan -R ${APP_ROOT}/ckan
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Set ckan ownership to ckan:ckan: OK${NC}${EOL}"
       else
@@ -834,8 +993,12 @@ function install_databases {
     ALTER USER homestead PASSWORD 'secret';
     CREATE DATABASE og_drupal_local;
     CREATE DATABASE og_ckan_local;
+    CREATE DATABASE og_ckan_registry_local;
+    CREATE DATABASE og_ckan_registry_ds_local;
     GRANT ALL PRIVILEGES ON DATABASE og_drupal_local TO homestead;
     GRANT ALL PRIVILEGES ON DATABASE og_ckan_local TO homestead;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_local TO homestead;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_ds_local TO homestead;
 EOSQL
 
 }

@@ -23,11 +23,10 @@
 1. Create the following hosts file entries:
     1. `127.0.0.1 open.local`
     1. `127.0.0.1 mailhog.local`
-    1. `127.0.0.1 ckan.open.local`
-1. Use [mkcert](https://github.com/FiloSottile/mkcert) to make a certificate for nginx(Drupal & CKAN) and solr if you're using Windows with WSL2, makes sure to make the certificates in Powershell running as an Administrator, not within WSL2:
-   * nginx(Drupal & CKAN):
+1. Use [mkcert](https://github.com/FiloSottile/mkcert) to make a certificate for nginx(Drupal) and solr if you're using Windows with WSL2, makes sure to make the certificates in Powershell running as an Administrator, not within WSL2:
+   * nginx(Drupal):
       1. cd inside of the `docker/config/nginx/certs` directory.
-      1. Generate the pem chain: `mkcert -cert-file open.local.pem -key-file open.local-key.pem open.local ckan.open.local`
+      1. Generate the pem chain: `mkcert -cert-file open.local.pem -key-file open.local-key.pem open.local 127.0.0.1 localhost ::5001 ::5000`
    * solr:
       1. cd inside of the `docker/config/solr/certs` directory.
       1. Generate the PKCS12 keystore: `mkcert -pkcs12 -p12-file solr.p12 127.0.0.1 localhost ::1 ::8981 ::8983`
@@ -40,14 +39,19 @@
 1. Create a folder in the root of this repository called `backup`, in it, place the following files:
    1. `drupal_db.pgdump` <- the database backup for the Drupal site.
    1. `drupal_files.tgz` <- the compressed folder of the public files from the Drupal site.
-   1. `ckan_db.pgdump` <- the database backup for the CKAN app(s).
+   1. `ckan_db.pgdump` <- the database backup for the CKAN Core app.
+   1. `ckan_registry_db.pgdump` <- the database backup for the CKAN Registry app.
+   1. `ckan_registry_ds_db.pgdump` <- the database backup for the CKAN Registry Datastore.
 1. Create a folder in the root of this repository called `postgres`. This folder will hold the data for imported databases to persist during Docker container restarts.
 1. Create a folder in the root of this repository called `solr`. This folder will hold the data for imported indices to persist during Docker container restarts.
+1. Create a folder in the root of this repository called `nginx`. This folder will hold the nginx logs for the Docker environments.
+   * By default, the volume is commented out in the `docker-compose.yml` file as the nginx logs can get large. You can uncomment the lines if you are having issues with nginx.
 
 ## Build
 
 1. Build the container: `docker-compose build`
    * The initial build will take a long time.
+   * If you are rebuilding and receive errors such as `max depth exceeded`, you may need to destroy all of the docker images (`docker image prune -a`) and then run the above build command.
 1. Bring up the app and detach the shell: `docker-compose up -d` to make sure that all the containers can start correctly.
    * The initial up may take a long time.
    * To stop all the containers: `docker-compose down`
@@ -100,4 +104,11 @@ Though there is an initialization script to create the databases on the initial 
       * `All`: will execute all of the above, use this for first time install or if you wish to re-install everything.
       * `Exit`: will exit the installation script.
    
+## Usage
+
+### CKAN
+
+1. Bring up the CKAN docker container: `docker-compose up -d ckan`
+1. Open a shell into the container: `docker-compose exec ckan bash`
+1. Activate the Python virtual environment: `. /srv/app/ckan/default/bin/activate`
    

@@ -1,3 +1,24 @@
-drupal*
-ckan*
-backup* 
+# drupal
+drupal
+drupal/*
+drupal/**
+#ckan
+ckan
+ckan/*
+ckan/**
+# backup
+backup
+backup/*
+backup/**
+# solr
+solr
+solr/*
+solr/**
+# postgres
+postgres
+postgres/*
+postgres/**
+# nginx
+nginx
+nginx/*
+nginx/**
