@@ -13,11 +13,11 @@ services:
     depends_on:
       - postgres
       - solr
-      - mailhog
+      #- mailhog
     links:
       - postgres
       - solr
-      - mailhog
+      #- mailhog
     env_file:
       - .docker.env
     environment:
@@ -113,12 +113,13 @@ services:
       - SOLR_SSL_TRUST_STORE_TYPE=PKCS12
     ports:
       - 8981:8983
-  mailhog:
-    container_name: og-mailhog
-    image: mailhog/mailhog:v1.0.0
-    ports:
-      - "1025:1025"
-      - "8025:8025"
+  # Commented out due to failed nginx bindings
+  # mailhog:
+  #   container_name: og-mailhog
+  #   image: mailhog/mailhog:v1.0.0
+  #   ports:
+  #     - "1025:1025"
+  #     - "8025:8025"
 
 volumes:
   postgres:

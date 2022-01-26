@@ -20,13 +20,12 @@
 
 ## Prebuild
 
-1. Create the following hosts file entries:
+1. Create the following hosts file(`/etc/hosts`) entries:
     1. `127.0.0.1 open.local`
-    1. `127.0.0.1 mailhog.local`
 1. Use [mkcert](https://github.com/FiloSottile/mkcert) to make a certificate for nginx(Drupal) and solr if you're using Windows with WSL2, makes sure to make the certificates in Powershell running as an Administrator, not within WSL2:
    * nginx(Drupal):
       1. cd inside of the `docker/config/nginx/certs` directory.
-      1. Generate the pem chain: `mkcert -cert-file open.local.pem -key-file open.local-key.pem open.local 127.0.0.1 localhost ::5001 ::5000`
+      1. Generate the pem chain: `mkcert -cert-file open.local.pem -key-file open.local-key.pem open.local 127.0.0.1 localhost ::1 ::5001 ::5000`
    * solr:
       1. cd inside of the `docker/config/solr/certs` directory.
       1. Generate the PKCS12 keystore: `mkcert -pkcs12 -p12-file solr.p12 127.0.0.1 localhost ::1 ::8981 ::8983`
@@ -51,7 +50,7 @@
 
 1. Build the container: `docker-compose build`
    * The initial build will take a long time.
-   * If you are rebuilding and receive errors such as `max depth exceeded`, you may need to destroy all of the docker images (`docker image prune -a`) and then run the above build command.
+   * If you are rebuilding and receive errors such as `max depth exceeded`, you may need to destroy all of the docker images (`docker image prune -a`) and then run the above build command. Please note that this will also destroy any other docker images you have on your machine.
 1. Bring up the app and detach the shell: `docker-compose up -d` to make sure that all the containers can start correctly.
    * The initial up may take a long time.
    * To stop all the containers: `docker-compose down`
@@ -77,7 +76,7 @@ Though there is an initialization script to create the databases on the initial 
    1. Select `Drupal`
    1. Select what you want to install for Drupal:
       * `SSH (Required for Repositories)`: will install and configure the ssh command along with the ssh-agent and keys.
-      * `Database`: will destroy the current database and import a fresh one from `backup/drupal_db.pgdump`
+      * `Database`: will destroy the current `og_drupal_local` database and import a fresh one from `backup/drupal_db.pgdump`
       * `Repositories`: will destroy all files inside of the `drupal` directory and pull all required repositories related to Drupal.
       * `Local Files`: will destroy all Drupal local files and extract the directory from `backup/drupal_files.tgz`.
       * `Set File Permissions (also creates missing directories)`: will download default settings files, copy `drupal-local-settings.php` create the private files directory, and set the correct file and directory ownerships and permissions.
@@ -97,9 +96,16 @@ Though there is an initialization script to create the databases on the initial 
    1. Select `CKAN`
    1. Select what you want to install for CKAN:
       * `SSH (Required for Repositories)`: will install and configure the ssh command along with the ssh-agent and keys.
-      * `Database`: will destroy the current database and import a fresh one from `backup/ckan_db.pgdump`
+      * `Core Database`: will destroy the current `og_ckan_local` database and import a fresh one from `backup/ckan_db.pgdump`
          * The database for CKAN is large, so importing the database will take a long time.
-      * `Repositories`: will destroy all files inside of the `ckan` directory, re-grenerate the Python environment, and pull & install all required repositories related to CKAN into the Python environment.
+         * You may recieve warnings during the pg_restore: `out of shared memory`, this can be ignored, the import will just take longer.
+      * `Registry Database`: will destroy the current `og_ckan_registry_local` database and import a fresh one from `backup/ckan_registry_db.pgdump`
+         * The database for CKAN Registry is not too large, however it has a lot of tables so importing the database will take a long time.
+         * You may recieve warnings during the pg_restore: `out of shared memory`, this can be ignored, the import will just take longer.
+      * `Registry Datastore Database`: will destroy the current `og_ckan_registry_ds_local` database and import a fresh one from `backup/ckan_registry_ds_db.pgdump`
+         * The database for CKAN Registry is not too large, however it has a lot of tables so importing the database will take a long time.
+         * You may recieve warnings during the pg_restore: `out of shared memory`, this can be ignored, the import will just take longer.
+      * `Repositories`: will destroy all files inside of the `ckan/default/src` directory, and pull & install all required repositories related to CKAN and install them into the Python environment.
       * `Set File Permissions`: will set the correct file and directory ownerships and permissions.
       * `All`: will execute all of the above, use this for first time install or if you wish to re-install everything.
       * `Exit`: will exit the installation script.

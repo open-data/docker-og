@@ -26,6 +26,7 @@ installRepos_Drupal='false'
 installFiles_Drupal='false'
 installFilePermissions_Drupal='false'
 installLocalUser_Drupal='false'
+installSolrIndices_Drupal='false'
 
 # ckan flags
 installSSH_CKAN='false'
@@ -34,6 +35,7 @@ installDB_Registry_CKAN='false'
 installDB_Registry_DS_CKAN='false'
 installRepos_CKAN='false'
 installFilePermissions_CKAN='false'
+installSolrIndices_CKAN='false'
 
 # general flags
 exitScript='false'
@@ -56,6 +58,7 @@ function install_drupal {
     "Repositories" 
     "Local Files" 
     "Set File Permissions (also creates missing directories)" 
+    "Create Solr Indices" 
     "Create Local User"
     "All" 
     "Exit"
@@ -97,20 +100,27 @@ function install_drupal {
       installFilePermissions_Drupal='true'
       ;;
 
-    # "Create Local User"
+    # "Create Solr Indices"
     (5)
+      exitScript='false'
+      installSolrIndices_Drupal='true'
+      ;;
+
+    # "Create Local User"
+    (6)
       exitScript='false'
       installLocalUser_Drupal='true'
       ;;
 
     # "All"
-    (6) 
+    (7) 
       exitScript='false'
       installSSH_Drupal='true'
       installDB_Drupal='true'
       installRepos_Drupal='true'
       installFiles_Drupal='true'
       installFilePermissions_Drupal='true'
+      installSolrIndices_Drupal='true'
       installLocalUser_Drupal='true'
       ;;
 
@@ -220,11 +230,11 @@ function install_drupal {
     #
     if [[ $installDB_Drupal == "true" ]]; then
 
-      printf "${SPACER}${Cyan}${INDENT}Drop the DB if it exists and then recreate it blank/clean${NC}${SPACER}"
+      printf "${SPACER}${Cyan}${INDENT}Drop the og_drupal_local DB if it exists and then recreate it blank/clean${NC}${SPACER}"
       psql -eb --dbname=og_drupal_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_drupal_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
 
       # import the database
-      printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup${NC}${SPACER}"
+      printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into og_drupal_local${NC}${SPACER}"
       pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=$PGDATABASE --username=$PGUSER ${APP_ROOT}/backup/drupal_db.pgdump
 
     fi
@@ -496,6 +506,20 @@ function install_drupal {
     # END
 
     #
+    # Create solr indices
+    #
+    #TODO: create drupal core content solr index...
+    if [[ $installSolrIndices_Drupal == "true" ]]; then
+
+      # drupal_content
+      # curl https://127.0.0.1:8983/solr/admin/cores?action=CREATE&name=drupal_content&numShards=2&replicationFactor=2
+
+    fi
+    # END
+    # Create solr indices
+    # END
+
+    #
     # Create Drupal admin user
     #
     if [[ $installLocalUser_Drupal == "true" ]]; then
@@ -565,6 +589,7 @@ function install_ckan {
     "Registry Datastore Database" 
     "Repositories (Installs them into Python venv)" 
     "Set File Permissions" 
+    "Create Solr Indices" 
     "All" 
     "Exit"
   )
@@ -611,8 +636,14 @@ function install_ckan {
       installFilePermissions_CKAN='true'
       ;;
 
+    # "Create Solr Indices"
+    (6)
+      exitScript='false'
+      installSolrIndices_CKAN='true'
+      ;;
+
     # "All"
-    (6) 
+    (7) 
       exitScript='false'
       installSSH_CKAN='true'
       installDB_CKAN='true'
@@ -620,10 +651,11 @@ function install_ckan {
       installDB_Registry_DS_CKAN='true'
       installRepos_CKAN='true'
       installFilePermissions_CKAN='true'
+      installSolrIndices_CKAN='true'
       ;;
 
     # "Exit"
-    (7)
+    (8)
       exitScript='true'
       ;;
 
@@ -750,11 +782,11 @@ function install_ckan {
     #
     if [[ $installDB_CKAN == "true" ]]; then
 
-      printf "${SPACER}${Cyan}${INDENT}Drop the DB if it exists and then recreate it blank/clean${NC}${SPACER}"
+      printf "${SPACER}${Cyan}${INDENT}Drop the og_ckan_local DB if it exists and then recreate it blank/clean${NC}${SPACER}"
       psql -eb --dbname=og_ckan_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
 
       # import the database
-      printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup${NC}${SPACER}"
+      printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into og_ckan_local${NC}${SPACER}"
       pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=$PGDATABASE --username=$PGUSER ${APP_ROOT}/backup/ckan_db.pgdump
 
     fi
@@ -767,11 +799,11 @@ function install_ckan {
     #
     if [[ $installDB_Registry_CKAN == "true" ]]; then
 
-      printf "${SPACER}${Cyan}${INDENT}Drop the DB if it exists and then recreate it blank/clean${NC}${SPACER}"
+      printf "${SPACER}${Cyan}${INDENT}Drop the og_ckan_registry_local DB if it exists and then recreate it blank/clean${NC}${SPACER}"
       psql -eb --dbname=og_ckan_registry_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_registry_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
 
       # import the database
-      printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup${NC}${SPACER}"
+      printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into og_ckan_registry_local${NC}${SPACER}"
       pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=og_ckan_registry_local --username=$PGUSER ${APP_ROOT}/backup/ckan_registry_db.pgdump
 
     fi
@@ -784,11 +816,11 @@ function install_ckan {
     #
     if [[ $installDB_Registry_DS_CKAN == "true" ]]; then
 
-      printf "${SPACER}${Cyan}${INDENT}Drop the DB if it exists and then recreate it blank/clean${NC}${SPACER}"
+      printf "${SPACER}${Cyan}${INDENT}Drop the og_ckan_registry_ds_local DB if it exists and then recreate it blank/clean${NC}${SPACER}"
       psql -eb --dbname=og_ckan_registry_ds_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_registry_ds_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
 
       # import the database
-      printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup${NC}${SPACER}"
+      printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into og_ckan_registry_ds_local${NC}${SPACER}"
       pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=og_ckan_registry_ds_local --username=$PGUSER ${APP_ROOT}/backup/ckan_registry_ds_db.pgdump
 
     fi
@@ -967,6 +999,43 @@ function install_ckan {
     fi
     # END
     # Set file permissions
+    # END
+
+    #
+    # Create solr indices
+    #
+    if [[ $installSolrIndices_CKAN == "true" ]]; then
+
+      # core_ati
+      # curl https://127.0.0.1:8983/solr/admin/cores?action=CREATE&name=core_ati&numShards=2&replicationFactor=2
+
+      # core_contracts
+      # curl https://127.0.0.1:8983/solr/admin/cores?action=CREATE&name=core_contracts&numShards=2&replicationFactor=2
+
+      # core_grants
+      # curl https://127.0.0.1:8983/solr/admin/cores?action=CREATE&name=core_grants&numShards=2&replicationFactor=2
+
+      # core_hospitalityq
+      # curl https://127.0.0.1:8983/solr/admin/cores?action=CREATE&name=core_hospitalityq&numShards=2&replicationFactor=2
+
+      # core_inventory
+      # curl https://127.0.0.1:8983/solr/admin/cores?action=CREATE&name=core_inventory&numShards=2&replicationFactor=2
+
+      # core_reclassification
+      # curl https://127.0.0.1:8983/solr/admin/cores?action=CREATE&name=core_reclassification&numShards=2&replicationFactor=2
+
+      # core_travela
+      # curl https://127.0.0.1:8983/solr/admin/cores?action=CREATE&name=core_travela&numShards=2&replicationFactor=2
+
+      # core_travelq
+      # curl https://127.0.0.1:8983/solr/admin/cores?action=CREATE&name=core_travelq&numShards=2&replicationFactor=2
+
+      # core_wrongdoing
+      # curl https://127.0.0.1:8983/solr/admin/cores?action=CREATE&name=core_wrongdoing&numShards=2&replicationFactor=2
+
+    fi
+    # END
+    # Create solr indices
     # END
 
   else
