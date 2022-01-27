@@ -9,12 +9,12 @@ RUN apt-get update -yqq \
         zip \
         unzip \
         wget \
-        python3-dev \
+        python2-dev \
         postgresql \
         libpq-dev \
-        python3-pip \
-        python3-venv \
+        virtualenv \
         redis-server \
+        curl \
         nano \
         vim \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
@@ -24,6 +24,10 @@ RUN apt-get update -yqq \
 # Supervisor
 ADD docker/config/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 ADD docker/config/supervisor/conf.d/*.conf /etc/supervisor/conf.d-available/
+
+# PIP2
+RUN curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py \
+    && python2 get-pip.py
 
 ADD docker/start.sh /usr/local/bin/start
 

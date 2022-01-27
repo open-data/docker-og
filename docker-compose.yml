@@ -33,11 +33,12 @@ services:
     volumes:
       - .:/var/www/html
       - ./docker/config/nginx/certs:/usr/share/certs
-      - ~/.gitconfig:/etc/gitconfig
-      - ~/.ssh:/var/www/html/.ssh
-      - $SSH_AUTH_SOCK:/ssh-agent
+      - ~/.gitconfig:/etc/gitconfig:ro
+      - ~/.ssh:/var/www/html/.ssh:ro
+      - $SSH_AUTH_SOCK:/ssh-agent:ro
       #- ./nginx:/var/log/nginx
       - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
     ports:
       - 443:443
       - 80:80
@@ -67,12 +68,15 @@ services:
       PGPASSWORD: secret
       SSH_AUTH_SOCK: /ssh-agent
       APP_ROOT: /srv/app
+      PIP_VERSION: 19.2.1
+      SETUP_TOOLS_VERSION: 36.1
     volumes:
       - ./docker/config/ckan:/docker-entrypoint.d
       - .:/srv/app
-      - ~/.gitconfig:/etc/gitconfig
-      - ~/.ssh:/srv/app/.ssh
-      - $SSH_AUTH_SOCK:/ssh-agent
+      - ~/.gitconfig:/etc/gitconfig:ro
+      - ~/.ssh:/srv/app/.ssh:ro
+      - $SSH_AUTH_SOCK:/ssh-agent:ro
+      - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
     ports:
       - 5001:5000
   postgres:
@@ -100,6 +104,17 @@ services:
       - ./docker/config/solr/certs:/opt/solr/server/certs
       - ./docker/config/solr/certs/solr.p12:/etc/solr.p12
       - ./solr:/opt/solr/server/solr
+      # drupal_content
+      - ./docker/config/solr/drupal/schema.xml:/var/solr/data/drupal_content/drupal_schema.xml
+      - ./docker/config/solr/drupal/solrconfig.xml:/var/solr/data/drupal_content/drupal_solrconfig.xml
+      # core_inventory
+      - ./docker/config/solr/ckan/schema.xml:/var/solr/data/core_inventory/ati_pd_schema.xml
+      - ./docker/config/solr/ckan/solrconfig.xml:/var/solr/data/core_inventory/ati_pd_solrconfig.xml
+      - ./docker/config/solr/ckan/protwords.txt:/var/solr/data/core_inventory/protwords.txt
+      - ./docker/config/solr/ckan/synonyms.txt:/var/solr/data/core_inventory/synonyms.txt
+      - ./docker/config/solr/ckan/protwords_fr.txt:/var/solr/data/core_inventory/protwords_fr.txt
+      - ./docker/config/solr/ckan/synonyms_fr.txt:/var/solr/data/core_inventory/synonyms_fr.txt
+      - ./docker/config/solr/ckan/stopwords.txt:/var/solr/data/core_inventory/stopwords.txt
     environment:
       - SOLR_SSL_ENABLED=true
       - SOLR_SSL_KEY_STORE=/etc/solr.p12

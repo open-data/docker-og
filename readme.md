@@ -28,12 +28,13 @@
       1. Generate the pem chain: `mkcert -cert-file open.local.pem -key-file open.local-key.pem open.local 127.0.0.1 localhost ::1 ::5001 ::5000`
    * solr:
       1. cd inside of the `docker/config/solr/certs` directory.
-      1. Generate the PKCS12 keystore: `mkcert -pkcs12 -p12-file solr.p12 127.0.0.1 localhost ::1 ::8981 ::8983`
+      1. Generate the PKCS12 keystore: `mkcert -pkcs12 -p12-file solr.p12 127.0.0.1 localhost solr ::1 ::8981 ::8983`
 1. Copy `.docker.env.example` to `.docker.env`
 1. Copy `example-drupal-local-settings.php` to `drupal-local-settings.php`
 1. Copy `example-ckan.ini` to `ckan.ini`
 1. Copy `.env.example` to `.env`
-   * If you need to, change your user and group to match the user and group your WSL2 user or Linux/Mac user employs:
+   1. You will need to update the `CA_LOCAL_ROOT` variable to the output of this command: `mkcert -CAROOT`
+   1. If you need to, change your user and group to match the user and group your WSL2 user or Linux/Mac user employs:
       1. `id` <- this should get your current user ID and group ID in WSL2 or whatever shell you're using. If you're using WSL2 and only ever made your default user, it will likely be `1000`
 1. Create a folder in the root of this repository called `backup`, in it, place the following files:
    1. `drupal_db.pgdump` <- the database backup for the Drupal site.

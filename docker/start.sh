@@ -34,8 +34,10 @@ if [[ "$role" = "drupal" ]]; then
 elif [[ "$role" = "ckan" ]]; then
 
     mkdir -p ${APP_ROOT}/ckan/default
-    python3 -m venv ${APP_ROOT}/ckan/default
+    virtualenv --python=python2 ${APP_ROOT}/ckan/default
     . ${APP_ROOT}/ckan/default/bin/activate
+    pip install setuptools==${SETUP_TOOLS_VERSION}
+    pip install --upgrade pip==${PIP_VERSION}
 
 elif [[ "$role" = "scheduler" ]]; then
 

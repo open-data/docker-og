@@ -26,6 +26,7 @@ RUN apt-get update -yqq \
         less \
         postgresql \
         libpq-dev \
+        curl \
         nano \
         vim \
         memcached \
