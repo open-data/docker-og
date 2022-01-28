@@ -100,22 +100,20 @@ services:
     container_name: og-solr
     image: solr
     restart: always
+    build:
+      context: .
+      dockerfile: docker/solr/Dockerfile
+      # args:
+      #   USER_ID: ${USER_ID:-0}
+      #   GROUP_ID: ${GROUP_ID:-0}
+    working_dir: /opt/solr
     volumes:
       - ./docker/config/solr/certs:/opt/solr/server/certs
       - ./docker/config/solr/certs/solr.p12:/etc/solr.p12
       - ./solr:/opt/solr/server/solr
-      # drupal_content
-      - ./docker/config/solr/drupal/schema.xml:/var/solr/data/drupal_content/drupal_schema.xml
-      - ./docker/config/solr/drupal/solrconfig.xml:/var/solr/data/drupal_content/drupal_solrconfig.xml
-      # core_inventory
-      - ./docker/config/solr/ckan/schema.xml:/var/solr/data/core_inventory/ati_pd_schema.xml
-      - ./docker/config/solr/ckan/solrconfig.xml:/var/solr/data/core_inventory/ati_pd_solrconfig.xml
-      - ./docker/config/solr/ckan/protwords.txt:/var/solr/data/core_inventory/protwords.txt
-      - ./docker/config/solr/ckan/synonyms.txt:/var/solr/data/core_inventory/synonyms.txt
-      - ./docker/config/solr/ckan/protwords_fr.txt:/var/solr/data/core_inventory/protwords_fr.txt
-      - ./docker/config/solr/ckan/synonyms_fr.txt:/var/solr/data/core_inventory/synonyms_fr.txt
-      - ./docker/config/solr/ckan/stopwords.txt:/var/solr/data/core_inventory/stopwords.txt
+      - ./docker/config/solr/cores:/var/solr/local_data
     environment:
+      - CONTAINER_ROLE=solr
       - SOLR_SSL_ENABLED=true
       - SOLR_SSL_KEY_STORE=/etc/solr.p12
       - SOLR_SSL_KEY_STORE_PASSWORD=changeit

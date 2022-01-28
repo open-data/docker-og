@@ -27,8 +27,8 @@ installFiles_Drupal='false'
 installFilePermissions_Drupal='false'
 installLocalUser_Drupal='false'
 installSolrIndices_Drupal='false'
-solrSchema_Drupal='drupal_schema.xml'
-solrConfig_Drupal='drupal_solrconfig.xml'
+solrSchema_Drupal='/var/solr/data/drupal_content/schema.xml'
+solrConfig_Drupal='/var/solr/data/drupal_content/solrconfig.xml'
 
 # ckan flags
 installSSH_CKAN='false'
@@ -38,8 +38,8 @@ installDB_Registry_DS_CKAN='false'
 installRepos_CKAN='false'
 installFilePermissions_CKAN='false'
 installSolrIndices_CKAN='false'
-solrSchema_CKAN_ATI_PD='ati_pd_schema.xml'
-solrConfig_CKAN_ATI_PD='ati_pd_solrconfig.xml'
+solrSchema_CKAN_ATI_PD='/var/solr/data/%core_name%/schema.xml'
+solrConfig_CKAN_ATI_PD='/var/solr/data/%core_name%/solrconfig.xml'
 
 # general flags
 exitScript='false'
@@ -1062,7 +1062,7 @@ function install_ckan {
 
       # core_inventory
       printf "${SPACER}${Cyan}${INDENT}Create solr core core_inventory${NC}${SPACER}"
-      curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem "https://solr:8983/solr/admin/cores?action=CREATE&name=core_inventory&config=${solrConfig_CKAN_ATI_PD}&schema=${solrSchema_CKAN_ATI_PD}&numShards=2&replicationFactor=2"
+      curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem "https://solr:8983/solr/admin/cores?action=CREATE&name=core_inventory&config=${solrConfig_CKAN_ATI_PD/'%core_name%'/'core_inventory'}&schema=${solrSchema_CKAN_ATI_PD/'%core_name%'/'core_inventory'}&numShards=2&replicationFactor=2"
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Create solr core core_inventory: OK${NC}${EOL}"
       else

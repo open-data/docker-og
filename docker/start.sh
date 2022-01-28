@@ -38,6 +38,13 @@ elif [[ "$role" = "ckan" ]]; then
     . ${APP_ROOT}/ckan/default/bin/activate
     pip install setuptools==${SETUP_TOOLS_VERSION}
     pip install --upgrade pip==${PIP_VERSION}
+    deactivate
+
+elif [[ "$role" = "ckan" ]]; then
+
+    echo 'Do solr entry script...'
+    cp -R /var/solr/local_data/* /var/solr/data
+    chown -R solr:root /var/solr/data
 
 elif [[ "$role" = "scheduler" ]]; then
 
@@ -62,4 +69,5 @@ else
 
 fi
 
+echo "Executing supervisord"
 exec supervisord -c /etc/supervisor/supervisord.conf
