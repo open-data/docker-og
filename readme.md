@@ -106,7 +106,7 @@ Though there is an initialization script to create the databases on the initial 
       * `Registry Datastore Database`: will destroy the current `og_ckan_registry_ds_local` database and import a fresh one from `backup/ckan_registry_ds_db.pgdump`
          * The database for CKAN Registry is not too large, however it has a lot of tables so importing the database will take a long time.
          * You may recieve warnings during the pg_restore: `out of shared memory`, this can be ignored, the import will just take longer.
-      * `Repositories`: will destroy all files inside of the `ckan/default/src` directory, and pull & install all required repositories related to CKAN and install them into the Python environment.
+      * `Repositories`: will destroy all files inside of the `ckan/default` directory, and pull & install all required repositories related to CKAN and install them into the Python environment (along with their requirements).
       * `Set File Permissions`: will set the correct file and directory ownerships and permissions.
       * `All`: will execute all of the above, use this for first time install or if you wish to re-install everything.
       * `Exit`: will exit the installation script.
@@ -118,4 +118,5 @@ Though there is an initialization script to create the databases on the initial 
 1. Bring up the CKAN docker container: `docker-compose up -d ckan`
 1. Open a shell into the container: `docker-compose exec ckan bash`
 1. Activate the Python virtual environment: `. /srv/app/ckan/default/bin/activate`
+1. Build the indices:
    

@@ -7,25 +7,14 @@ role=${CONTAINER_ROLE:-app}
 
 echo "The Environment is $env"
 
-#if [ "$env" != "local" ]; then
-#
-#    (
-#        cd /var/www/html &&
-#        php artisan config:cache &&
-#        php artisan route:cache &&
-#        php artisan view:cache
-#    )
-
-    echo "Removing XDebug"
-    rm -rf /usr/local/etc/php/conf.d/{docker-php-ext-xdebug.ini,xdebug.ini}
-
-#fi
+echo "Removing XDebug"
+rm -rf /usr/local/etc/php/conf.d/{docker-php-ext-xdebug.ini,xdebug.ini}
 
 echo "The role is $role"
 
 if [[ "$role" = "drupal" ]]; then
 
-    ln -sf /etc/supervisor/conf.d-available/app.conf /etc/supervisor/conf.d/app.conf
+    ln -sf /etc/supervisor/conf.d-available/drupal.conf /etc/supervisor/conf.d/drupal.conf
     ln -sf /etc/nginx/sites-available/open.local /etc/nginx/sites-enabled/open.local
     #ln -sf /etc/nginx/sites-available/mailhog /etc/nginx/sites-enabled/mailhog
     nginx -g "user ${NGINX_UNAME};"
@@ -33,16 +22,24 @@ if [[ "$role" = "drupal" ]]; then
 
 elif [[ "$role" = "ckan" ]]; then
 
+    ln -sf /etc/supervisor/conf.d-available/ckan.conf /etc/supervisor/conf.d/ckan.conf
     mkdir -p ${APP_ROOT}/ckan/default
     virtualenv --python=python2 ${APP_ROOT}/ckan/default
     . ${APP_ROOT}/ckan/default/bin/activate
     pip install setuptools==${SETUP_TOOLS_VERSION}
     pip install --upgrade pip==${PIP_VERSION}
+    pip install --upgrade certifi
+    cp /etc/ssl/mkcert/rootCA.pem /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem
+    if [[ $? -eq 0 ]]; then
+        echo "Copied /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem"
+      else
+        printf "FAILED to copy /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem"
+      fi
     deactivate
 
-elif [[ "$role" = "ckan" ]]; then
+elif [[ "$role" = "solr" ]]; then
 
-    echo 'Do solr entry script...'
+    ln -sf /etc/supervisor/conf.d-available/solr.conf /etc/supervisor/conf.d/solr.conf
     cp -R /var/solr/local_data/* /var/solr/data
     chown -R solr:root /var/solr/data
 

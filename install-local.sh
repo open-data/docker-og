@@ -62,7 +62,7 @@ function install_drupal {
     "Repositories" 
     "Local Files" 
     "Set File Permissions (also creates missing directories)" 
-    "Create Solr Indices" 
+    # "Create Solr Indices" 
     "Create Local User"
     "All" 
     "Exit"
@@ -105,19 +105,19 @@ function install_drupal {
       ;;
 
     # "Create Solr Indices"
-    (5)
-      exitScript='false'
-      installSolrIndices_Drupal='true'
-      ;;
+    # (5)
+    #   exitScript='false'
+    #   installSolrIndices_Drupal='true'
+    #   ;;
 
     # "Create Local User"
-    (6)
+    (5)
       exitScript='false'
       installLocalUser_Drupal='true'
       ;;
 
     # "All"
-    (7) 
+    (6) 
       exitScript='false'
       installSSH_Drupal='true'
       installDB_Drupal='true'
@@ -512,19 +512,18 @@ function install_drupal {
     #
     # Create solr indices
     #
-    if [[ $installSolrIndices_Drupal == "true" ]]; then
+    # if [[ $installSolrIndices_Drupal == "true" ]]; then
 
-      # drupal_content
-      printf "${SPACER}${Yellow}${INDENT}TODO${NC}${SPACER}"
-      printf "${SPACER}${Cyan}${INDENT}Create solr core drupal_content${NC}${SPACER}"
-      # curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem https://solr:8983/solr/admin/cores?action=CREATE&name=drupal_content&config=${solrConfig_Drupal}&schema=${solrSchema_Drupal}&numShards=2&replicationFactor=2
-      # if [[ $? -eq 0 ]]; then
-      #   printf "${Green}${INDENT}${INDENT}Create solr core drupal_content: OK${NC}${EOL}" 
-      # else
-      #   printf "${Red}${INDENT}${INDENT}Create solr core drupal_content: FAIL (core may already exists)${NC}${EOL}"
-      # fi
+    #   # drupal_content
+    #   printf "${SPACER}${Cyan}${INDENT}Create solr core drupal_content${NC}${SPACER}"
+    #   curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem "https://solr:8983/solr/admin/cores?action=CREATE&name=drupal_content&config=${solrConfig_Drupal}&schema=${solrSchema_Drupal}&numShards=2&replicationFactor=2"
+    #   if [[ $? -eq 0 ]]; then
+    #     printf "${Green}${INDENT}${INDENT}Create solr core drupal_content: OK${NC}${EOL}" 
+    #   else
+    #     printf "${Red}${INDENT}${INDENT}Create solr core drupal_content: FAIL (core may already exists)${NC}${EOL}"
+    #   fi
 
-    fi
+    # fi
     # END
     # Create solr indices
     # END
@@ -599,7 +598,7 @@ function install_ckan {
     "Registry Datastore Database" 
     "Repositories (Installs them into Python venv)" 
     "Set File Permissions" 
-    "Create Solr Indices" 
+    # "Create Solr Indices" 
     "All" 
     "Exit"
   )
@@ -647,13 +646,13 @@ function install_ckan {
       ;;
 
     # "Create Solr Indices"
-    (6)
-      exitScript='false'
-      installSolrIndices_CKAN='true'
-      ;;
+    # (6)
+    #   exitScript='false'
+    #   installSolrIndices_CKAN='true'
+    #   ;;
 
     # "All"
-    (7) 
+    (6) 
       exitScript='false'
       installSSH_CKAN='true'
       installDB_CKAN='true'
@@ -665,7 +664,7 @@ function install_ckan {
       ;;
 
     # "Exit"
-    (8)
+    (7)
       exitScript='true'
       ;;
 
@@ -905,10 +904,14 @@ function install_ckan {
       pip install --upgrade pip==${PIP_VERSION}
       # set github as a trusted host
       ssh -T git@github.com
+      # update certifi
+      pip install --upgrade certifi
+      # copy CA root pem chain
+      cp /etc/ssl/mkcert/rootCA.pem /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem
 
       # install ckan core into the python environment
       printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Core repository from git@github.com:open-data/ckan.git@canada-v2.8 and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/open-data/ckan.git@canada-v2.8#egg=ckan[requirements]'
+      pip install --force-reinstall -e 'git+ssh://git@github.com/open-data/ckan.git@canada-v2.8#egg=ckan' -r 'https://raw.githubusercontent.com/open-data/ckan/canada-v2.8/requirements.txt'
 
       # copy local ckan config file
       cp ${APP_ROOT}/ckan.ini ${APP_ROOT}/ckan/default/ckan.ini
@@ -918,6 +921,8 @@ function install_ckan {
       else
         printf "${Red}${INDENT}${INDENT}Copy ckan.ini to ckan/default/ckan.ini: FAIL${NC}${EOL}"
       fi
+
+      # TODO: add in the requirements for the below repos...
 
       # copy core who config file
       cp ${APP_ROOT}/ckan/default/src/ckan/ckan/config/who.ini ${APP_ROOT}/ckan/default/who.ini
@@ -930,51 +935,51 @@ function install_ckan {
 
       # install ckanapi into the python environment
       printf "${SPACER}${Cyan}${INDENT}Pulling CKAN API repository from git@github.com:ckan/ckanapi.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/ckan/ckanapi.git#egg=ckanapi[]'
+      pip install --force-reinstall -e 'git+ssh://git@github.com/ckan/ckanapi.git#egg=ckanapi' -r 'https://raw.githubusercontent.com/ckan/ckanapi/master/requirements.txt'
 
       # install ckan canada into the python environment
       printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Canada repository from git@github.com:open-data/ckanext-canada.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/open-data/ckanext-canada.git#egg=ckanext-canada[]'
+      pip install --force-reinstall -e 'git+ssh://git@github.com/open-data/ckanext-canada.git#egg=ckanext-canada' -r 'https://raw.githubusercontent.com/open-data/ckanext-canada/master/requirements.txt'
 
       # install ckan cloud storage into the python environment
       printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Cloud Storage repository from git@github.com:open-data/ckanext-cloudstorage.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/open-data/ckanext-cloudstorage.git#egg=ckanext-cloudstorage[]'
+      pip install --force-reinstall -e 'git+ssh://git@github.com/open-data/ckanext-cloudstorage.git#egg=ckanext-cloudstorage'
 
       # install ckan dcat into the python environment
       printf "${SPACER}${Cyan}${INDENT}Pulling CKAN DCat repository from git@github.com:open-data/ckanext-dcat.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/open-data/ckanext-dcat.git#egg=ckanext-dcat[]'
+      pip install --force-reinstall -e 'git+ssh://git@github.com/open-data/ckanext-dcat.git#egg=ckanext-dcat' -r 'https://raw.githubusercontent.com/open-data/ckanext-dcat/master/requirements.txt'
 
       # install ckan extended activity into the python environment
       printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Extended Activity repository from git@github.com:open-data/ckanext-extendedactivity.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/open-data/ckanext-extendedactivity.git#egg=ckanext-extendedactivity[]'
+      pip install --force-reinstall -e 'git+ssh://git@github.com/open-data/ckanext-extendedactivity.git#egg=ckanext-extendedactivity'
 
       # install ckan extractor into the python environment
       printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Extractor repository from git@github.com:open-data/ckanext-extractor.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/open-data/ckanext-extractor.git#egg=ckanext-extractor[]'
+      pip install --force-reinstall -e 'git+ssh://git@github.com/open-data/ckanext-extractor.git#egg=ckanext-extractor' -r 'https://raw.githubusercontent.com/open-data/ckanext-extractor/master/requirements.txt'
 
       # install ckan fluent into the python environment
       printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Fluent repository from git@github.com:ckan/ckanext-fluent.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/ckan/ckanext-fluent.git#egg=ckanext-fluent[]'
+      pip install --force-reinstall -e 'git+ssh://git@github.com/ckan/ckanext-fluent.git#egg=ckanext-fluent' -r 'https://raw.githubusercontent.com/ckan/ckanext-fluent/master/requirements.txt'
 
       # install ckan recombinant into the python environment
       printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Recombinant repository from git@github.com:open-data/ckanext-recombinant.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/open-data/ckanext-recombinant.git#egg=ckanext-recombinant[]'
+      pip install --force-reinstall -e 'git+ssh://git@github.com/open-data/ckanext-recombinant.git#egg=ckanext-recombinant' -r 'https://raw.githubusercontent.com/open-data/ckanext-recombinant/master/requirements.txt'
 
       # install ckan scheming into the python environment
       printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Scheming repository from git@github.com:ckan/ckanext-scheming.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/ckan/ckanext-scheming.git#egg=ckanext-scheming[]'
+      pip install --force-reinstall -e 'git+ssh://git@github.com/ckan/ckanext-scheming.git#egg=ckanext-scheming'
 
       # install ckan security into the python environment
       printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Security repository from git@github.com:open-data/ckanext-security.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/open-data/ckanext-security.git#egg=ckanext-security[]'
+      pip install --force-reinstall -e 'git+ssh://git@github.com/open-data/ckanext-security.git#egg=ckanext-security'
 
       # install ckan validation into the python environment
       printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Validation repository from git@github.com:open-data/ckanext-validation.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/open-data/ckanext-validation.git#egg=ckanext-validation[]'
+      pip install --force-reinstall -e 'git+ssh://git@github.com/open-data/ckanext-validation.git#egg=ckanext-validation' -r 'https://raw.githubusercontent.com/open-data/ckanext-validation/master/requirements.txt'
 
       # install ckan xloader into the python environment
       printf "${SPACER}${Cyan}${INDENT}Pulling CKAN Xloader repository from git@github.com:open-data/ckanext-xloader.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/open-data/ckanext-xloader.git#egg=ckanext-xloader[]'
+      pip install --force-reinstall -e 'git+ssh://git@github.com/open-data/ckanext-xloader.git#egg=ckanext-xloader' -r 'https://raw.githubusercontent.com/open-data/ckanext-xloader/master/requirements.txt'
 
       # decativate python environment
       deactivate
@@ -1018,98 +1023,90 @@ function install_ckan {
     #
     # Create solr indices
     #
-    if [[ $installSolrIndices_CKAN == "true" ]]; then
+    # if [[ $installSolrIndices_CKAN == "true" ]]; then
 
-      # core_ati
-      printf "${SPACER}${Yellow}${INDENT}TODO${NC}${SPACER}"
-      printf "${SPACER}${Cyan}${INDENT}Create solr core core_ati${NC}${SPACER}"
-      # curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem https://solr:8983/solr/admin/cores?action=CREATE&name=core_ati&config=${solrConfig_CKAN_ATI_PD}&schema=${solrSchema_CKAN_ATI_PD}&numShards=2&replicationFactor=2
-      # if [[ $? -eq 0 ]]; then
-      #   printf "${Green}${INDENT}${INDENT}Create solr core core_ati: OK${NC}${EOL}"
-      # else
-      #   printf "${Red}${INDENT}${INDENT}Create solr core core_ati: FAIL (core may already exists)${NC}${EOL}"
-      # fi
+    #   # core_ati
+    #   printf "${SPACER}${Cyan}${INDENT}Create solr core core_ati${NC}${SPACER}"
+    #   curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem "https://solr:8983/solr/admin/cores?action=CREATE&name=core_ati&config=${solrConfig_CKAN_ATI_PD/'%core_name%'/'core_ati'}&schema=${solrSchema_CKAN_ATI_PD/'%core_name%'/'core_ati'}&numShards=2&replicationFactor=2"
+    #   if [[ $? -eq 0 ]]; then
+    #     printf "${Green}${INDENT}${INDENT}Create solr core core_ati: OK${NC}${EOL}"
+    #   else
+    #     printf "${Red}${INDENT}${INDENT}Create solr core core_ati: FAIL (core may already exists)${NC}${EOL}"
+    #   fi
 
-      # core_contracts
-      printf "${SPACER}${Yellow}${INDENT}TODO${NC}${SPACER}"
-      printf "${SPACER}${Cyan}${INDENT}Create solr core core_contracts${NC}${SPACER}"
-      # curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem https://solr:8983/solr/admin/cores?action=CREATE&name=core_contracts&config=${solrConfig_CKAN_ATI_PD}&schema=${solrSchema_CKAN_ATI_PD}&numShards=2&replicationFactor=2
-      # if [[ $? -eq 0 ]]; then
-      #   printf "${Green}${INDENT}${INDENT}Create solr core core_contracts: OK${NC}${EOL}"
-      # else
-      #   printf "${Red}${INDENT}${INDENT}Create solr core core_contracts: FAIL (core may already exists)${NC}${EOL}"
-      # fi
+    #   # core_contracts
+    #   printf "${SPACER}${Cyan}${INDENT}Create solr core core_contracts${NC}${SPACER}"
+    #   curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem "https://solr:8983/solr/admin/cores?action=CREATE&name=core_contracts&config=${solrConfig_CKAN_ATI_PD/'%core_name%'/'core_contracts'}&schema=${solrSchema_CKAN_ATI_PD/'%core_name%'/'core_contracts'}&numShards=2&replicationFactor=2"
+    #   if [[ $? -eq 0 ]]; then
+    #     printf "${Green}${INDENT}${INDENT}Create solr core core_contracts: OK${NC}${EOL}"
+    #   else
+    #     printf "${Red}${INDENT}${INDENT}Create solr core core_contracts: FAIL (core may already exists)${NC}${EOL}"
+    #   fi
 
-      # core_grants
-      printf "${SPACER}${Yellow}${INDENT}TODO${NC}${SPACER}"
-      printf "${SPACER}${Cyan}${INDENT}Create solr core core_grants${NC}${SPACER}"
-      # curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem https://solr:8983/solr/admin/cores?action=CREATE&name=core_grants&config=${solrConfig_CKAN_ATI_PD}&schema=${solrSchema_CKAN_ATI_PD}&numShards=2&replicationFactor=2
-      # if [[ $? -eq 0 ]]; then
-      #   printf "${Green}${INDENT}${INDENT}Create solr core core_grants: OK${NC}${EOL}"
-      # else
-      #   printf "${Red}${INDENT}${INDENT}Create solr core core_grants: FAIL (core may already exists)${NC}${EOL}"
-      # fi
+    #   # core_grants
+    #   printf "${SPACER}${Cyan}${INDENT}Create solr core core_grants${NC}${SPACER}"
+    #   curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem "https://solr:8983/solr/admin/cores?action=CREATE&name=core_grants&config=${solrConfig_CKAN_ATI_PD/'%core_name%'/'core_grants'}&schema=${solrSchema_CKAN_ATI_PD/'%core_name%'/'core_grants'}&numShards=2&replicationFactor=2"
+    #   if [[ $? -eq 0 ]]; then
+    #     printf "${Green}${INDENT}${INDENT}Create solr core core_grants: OK${NC}${EOL}"
+    #   else
+    #     printf "${Red}${INDENT}${INDENT}Create solr core core_grants: FAIL (core may already exists)${NC}${EOL}"
+    #   fi
 
-      # core_hospitalityq
-      printf "${SPACER}${Yellow}${INDENT}TODO${NC}${SPACER}"
-      printf "${SPACER}${Cyan}${INDENT}Create solr core core_hospitalityq${NC}${SPACER}"
-      # curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem https://solr:8983/solr/admin/cores?action=CREATE&name=core_hospitalityq&config=${solrConfig_CKAN_ATI_PD}&schema=${solrSchema_CKAN_ATI_PD}&numShards=2&replicationFactor=2
-      # if [[ $? -eq 0 ]]; then
-      #   printf "${Green}${INDENT}${INDENT}Create solr core core_hospitalityq: OK${NC}${EOL}"
-      # else
-      #   printf "${Red}${INDENT}${INDENT}Create solr core core_hospitalityq: FAIL (core may already exists)${NC}${EOL}"
-      # fi
+    #   # core_hospitalityq
+    #   printf "${SPACER}${Cyan}${INDENT}Create solr core core_hospitalityq${NC}${SPACER}"
+    #   curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem "https://solr:8983/solr/admin/cores?action=CREATE&name=core_hospitalityq&config=${solrConfig_CKAN_ATI_PD/'%core_name%'/'core_hospitalityq'}&schema=${solrSchema_CKAN_ATI_PD/'%core_name%'/'core_hospitalityq'}&numShards=2&replicationFactor=2"
+    #   if [[ $? -eq 0 ]]; then
+    #     printf "${Green}${INDENT}${INDENT}Create solr core core_hospitalityq: OK${NC}${EOL}"
+    #   else
+    #     printf "${Red}${INDENT}${INDENT}Create solr core core_hospitalityq: FAIL (core may already exists)${NC}${EOL}"
+    #   fi
 
-      # core_inventory
-      printf "${SPACER}${Cyan}${INDENT}Create solr core core_inventory${NC}${SPACER}"
-      curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem "https://solr:8983/solr/admin/cores?action=CREATE&name=core_inventory&config=${solrConfig_CKAN_ATI_PD/'%core_name%'/'core_inventory'}&schema=${solrSchema_CKAN_ATI_PD/'%core_name%'/'core_inventory'}&numShards=2&replicationFactor=2"
-      if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Create solr core core_inventory: OK${NC}${EOL}"
-      else
-        printf "${Red}${INDENT}${INDENT}Create solr core core_inventory: FAIL (core may already exists)${NC}${EOL}"
-      fi
+    #   # core_inventory
+    #   printf "${SPACER}${Cyan}${INDENT}Create solr core core_inventory${NC}${SPACER}"
+    #   curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem "https://solr:8983/solr/admin/cores?action=CREATE&name=core_inventory&config=${solrConfig_CKAN_ATI_PD/'%core_name%'/'core_inventory'}&schema=${solrSchema_CKAN_ATI_PD/'%core_name%'/'core_inventory'}&numShards=2&replicationFactor=2"
+    #   if [[ $? -eq 0 ]]; then
+    #     printf "${Green}${INDENT}${INDENT}Create solr core core_inventory: OK${NC}${EOL}"
+    #   else
+    #     printf "${Red}${INDENT}${INDENT}Create solr core core_inventory: FAIL (core may already exists)${NC}${EOL}"
+    #   fi
 
-      # core_reclassification
-      printf "${SPACER}${Yellow}${INDENT}TODO${NC}${SPACER}"
-      printf "${SPACER}${Cyan}${INDENT}Create solr core core_reclassification${NC}${SPACER}"
-      # curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem https://solr:8983/solr/admin/cores?action=CREATE&name=core_reclassification&config=${solrConfig_CKAN_ATI_PD}&schema=${solrSchema_CKAN_ATI_PD}&numShards=2&replicationFactor=2
-      # if [[ $? -eq 0 ]]; then
-      #   printf "${Green}${INDENT}${INDENT}Create solr core core_reclassification: OK${NC}${EOL}"
-      # else
-      #   printf "${Red}${INDENT}${INDENT}Create solr core core_reclassification: FAIL (core may already exists)${NC}${EOL}"
-      # fi
+    #   # core_reclassification
+    #   printf "${SPACER}${Cyan}${INDENT}Create solr core core_reclassification${NC}${SPACER}"
+    #   curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem "https://solr:8983/solr/admin/cores?action=CREATE&name=core_reclassification&config=${solrConfig_CKAN_ATI_PD/'%core_name%'/'core_reclassification'}&schema=${solrSchema_CKAN_ATI_PD/'%core_name%'/'core_reclassification'}&numShards=2&replicationFactor=2"
+    #   if [[ $? -eq 0 ]]; then
+    #     printf "${Green}${INDENT}${INDENT}Create solr core core_reclassification: OK${NC}${EOL}"
+    #   else
+    #     printf "${Red}${INDENT}${INDENT}Create solr core core_reclassification: FAIL (core may already exists)${NC}${EOL}"
+    #   fi
 
-      # core_travela
-      printf "${SPACER}${Yellow}${INDENT}TODO${NC}${SPACER}"
-      printf "${SPACER}${Cyan}${INDENT}Create solr core core_travela${NC}${SPACER}"
-      # curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem https://solr:8983/solr/admin/cores?action=CREATE&name=core_travela&config=${solrConfig_CKAN_ATI_PD}&schema=${solrSchema_CKAN_ATI_PD}&numShards=2&replicationFactor=2
-      # if [[ $? -eq 0 ]]; then
-      #   printf "${Green}${INDENT}${INDENT}Create solr core core_travela: OK${NC}${EOL}"
-      # else
-      #   printf "${Red}${INDENT}${INDENT}Create solr core core_travela: FAIL (core may already exists)${NC}${EOL}"
-      # fi
+    #   # core_travela
+    #   printf "${SPACER}${Cyan}${INDENT}Create solr core core_travela${NC}${SPACER}"
+    #   curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem "https://solr:8983/solr/admin/cores?action=CREATE&name=core_travela&config=${solrConfig_CKAN_ATI_PD/'%core_name%'/'core_travela'}&schema=${solrSchema_CKAN_ATI_PD/'%core_name%'/'core_travela'}&numShards=2&replicationFactor=2"
+    #   if [[ $? -eq 0 ]]; then
+    #     printf "${Green}${INDENT}${INDENT}Create solr core core_travela: OK${NC}${EOL}"
+    #   else
+    #     printf "${Red}${INDENT}${INDENT}Create solr core core_travela: FAIL (core may already exists)${NC}${EOL}"
+    #   fi
 
-      # core_travelq
-      printf "${SPACER}${Yellow}${INDENT}TODO${NC}${SPACER}"
-      printf "${SPACER}${Cyan}${INDENT}Create solr core core_travelq${NC}${SPACER}"
-      # curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem https://solr:8983/solr/admin/cores?action=CREATE&name=core_travelq&config=${solrConfig_CKAN_ATI_PD}&schema=${solrSchema_CKAN_ATI_PD}&numShards=2&replicationFactor=2
-      # if [[ $? -eq 0 ]]; then
-      #   printf "${Green}${INDENT}${INDENT}Create solr core core_travelq: OK${NC}${EOL}"
-      # else
-      #   printf "${Red}${INDENT}${INDENT}Create solr core core_travelq: FAIL (core may already exists)${NC}${EOL}"
-      # fi
+    #   # core_travelq
+    #   printf "${SPACER}${Cyan}${INDENT}Create solr core core_travelq${NC}${SPACER}"
+    #   curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem "https://solr:8983/solr/admin/cores?action=CREATE&name=core_travelq&config=${solrConfig_CKAN_ATI_PD/'%core_name%'/'core_travelq'}&schema=${solrSchema_CKAN_ATI_PD/'%core_name%'/'core_travelq'}&numShards=2&replicationFactor=2"
+    #   if [[ $? -eq 0 ]]; then
+    #     printf "${Green}${INDENT}${INDENT}Create solr core core_travelq: OK${NC}${EOL}"
+    #   else
+    #     printf "${Red}${INDENT}${INDENT}Create solr core core_travelq: FAIL (core may already exists)${NC}${EOL}"
+    #   fi
 
-      # core_wrongdoing
-      printf "${SPACER}${Yellow}${INDENT}TODO${NC}${SPACER}"
-      printf "${SPACER}${Cyan}${INDENT}Create solr core core_wrongdoing${NC}${SPACER}"
-      # curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem https://solr:8983/solr/admin/cores?action=CREATE&name=core_wrongdoing&config=${solrConfig_CKAN_ATI_PD}&schema=${solrSchema_CKAN_ATI_PD}&numShards=2&replicationFactor=2
-      # if [[ $? -eq 0 ]]; then
-      #   printf "${Green}${INDENT}${INDENT}Create solr core core_wrongdoing: OK${NC}${EOL}"
-      # else
-      #   printf "${Red}${INDENT}${INDENT}Create solr core core_wrongdoing: FAIL (core may already exists)${NC}${EOL}"
-      # fi
+    #   # core_wrongdoing
+    #   printf "${SPACER}${Cyan}${INDENT}Create solr core core_wrongdoing${NC}${SPACER}"
+    #   curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem "https://solr:8983/solr/admin/cores?action=CREATE&name=core_wrongdoing&config=${solrConfig_CKAN_ATI_PD/'%core_name%'/'core_wrongdoing'}&schema=${solrSchema_CKAN_ATI_PD/'%core_name%'/'core_wrongdoing'}&numShards=2&replicationFactor=2"
+    #   if [[ $? -eq 0 ]]; then
+    #     printf "${Green}${INDENT}${INDENT}Create solr core core_wrongdoing: OK${NC}${EOL}"
+    #   else
+    #     printf "${Red}${INDENT}${INDENT}Create solr core core_wrongdoing: FAIL (core may already exists)${NC}${EOL}"
+    #   fi
 
-    fi
+    # fi
     # END
     # Create solr indices
     # END
@@ -1136,6 +1133,8 @@ function install_databases {
   psql -v ON_ERROR_STOP=0 --username "homestead" --dbname "postgres" <<-EOSQL
     CREATE USER homestead;
     ALTER USER homestead PASSWORD 'secret';
+    CREATE USER homestead_reader;
+    ALTER USER homestead_reader PASSWORD 'secret';
     CREATE DATABASE og_drupal_local;
     CREATE DATABASE og_ckan_local;
     CREATE DATABASE og_ckan_registry_local;
@@ -1144,6 +1143,10 @@ function install_databases {
     GRANT ALL PRIVILEGES ON DATABASE og_ckan_local TO homestead;
     GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_local TO homestead;
     GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_ds_local TO homestead;
+    GRANT CONNECT, USAGE, SELECT PRIVILEGES ON DATABASE og_drupal_local TO homestead_reader;
+    GRANT CONNECT, USAGE, SELECT PRIVILEGES ON DATABASE og_ckan_local TO homestead_reader;
+    GRANT CONNECT, USAGE, SELECT PRIVILEGES ON DATABASE og_ckan_registry_local TO homestead_reader;
+    GRANT CONNECT, USAGE, SELECT PRIVILEGES ON DATABASE og_ckan_registry_ds_local TO homestead_reader;
 EOSQL
 
 }

@@ -23,10 +23,8 @@ RUN cp -R /var/solr/local_data/* /var/solr/data
 
 # Set new files with correct user:group
 RUN chown -R solr:root /var/solr/data && \
-    && chmod +x /usr/local/bin/start
+    chmod +x /usr/local/bin/start
 
-USER solr
-
-RUN /opt/solr/bin/solr start
+RUN /opt/solr/bin/solr start -force
 
 CMD ["/usr/local/bin/start"]
