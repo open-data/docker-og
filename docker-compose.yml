@@ -30,6 +30,8 @@ services:
       PATH: '$PATH:/var/www/html/drupal/vendor/bin'
       NGINX_UNAME: www-data
       APP_ROOT: /var/www/html
+      SSL_CERT_FILE: /etc/ssl/mkcert/rootCA.pem
+      SSL_CERT_DIR: /etc/ssl/mkcert
     volumes:
       - .:/var/www/html
       - ./docker/config/nginx/certs:/usr/share/certs
@@ -68,9 +70,13 @@ services:
       PGPASSWORD: secret
       SSH_AUTH_SOCK: /ssh-agent
       APP_ROOT: /srv/app
+      PATH: '$PATH:/srv/app/ckan/default/bin'
       PY_VERSION: 2.7
       PIP_VERSION: 19.2.1
       SETUP_TOOLS_VERSION: 36.1
+      PYTHONHTTPSVERIFY: 0
+      SSL_CERT_FILE: /etc/ssl/mkcert/rootCA.pem
+      SSL_CERT_DIR: /etc/ssl/mkcert
     volumes:
       - ./docker/config/ckan:/docker-entrypoint.d
       - .:/srv/app
@@ -110,6 +116,7 @@ services:
       - ./docker/config/solr/certs/solr.p12:/etc/solr.p12
       - ./solr:/opt/solr/server/solr
       - ./docker/config/solr/cores:/var/solr/local_data
+      - ./docker/config/solr/ckan_schema.xml:/ckan_schema.xml
     environment:
       - CONTAINER_ROLE=solr
       - SOLR_SSL_ENABLED=true

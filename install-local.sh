@@ -922,8 +922,6 @@ function install_ckan {
         printf "${Red}${INDENT}${INDENT}Copy ckan.ini to ckan/default/ckan.ini: FAIL${NC}${EOL}"
       fi
 
-      # TODO: add in the requirements for the below repos...
-
       # copy core who config file
       cp ${APP_ROOT}/ckan/default/src/ckan/ckan/config/who.ini ${APP_ROOT}/ckan/default/who.ini
       printf "${SPACER}${Cyan}${INDENT}Copying Core CKAN who config file to into root Python environment${NC}${SPACER}"
@@ -1143,10 +1141,10 @@ function install_databases {
     GRANT ALL PRIVILEGES ON DATABASE og_ckan_local TO homestead;
     GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_local TO homestead;
     GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_ds_local TO homestead;
-    GRANT CONNECT, USAGE, SELECT PRIVILEGES ON DATABASE og_drupal_local TO homestead_reader;
-    GRANT CONNECT, USAGE, SELECT PRIVILEGES ON DATABASE og_ckan_local TO homestead_reader;
-    GRANT CONNECT, USAGE, SELECT PRIVILEGES ON DATABASE og_ckan_registry_local TO homestead_reader;
-    GRANT CONNECT, USAGE, SELECT PRIVILEGES ON DATABASE og_ckan_registry_ds_local TO homestead_reader;
+    GRANT ALL PRIVILEGES ON DATABASE og_drupal_local TO homestead_reader;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_local TO homestead_reader;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_local TO homestead_reader;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_ds_local TO homestead_reader;
 EOSQL
 
 }

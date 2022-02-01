@@ -32,9 +32,9 @@ elif [[ "$role" = "ckan" ]]; then
     cp /etc/ssl/mkcert/rootCA.pem /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem
     if [[ $? -eq 0 ]]; then
         echo "Copied /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem"
-      else
+    else
         printf "FAILED to copy /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem"
-      fi
+    fi
     deactivate
 
 elif [[ "$role" = "solr" ]]; then
@@ -42,6 +42,15 @@ elif [[ "$role" = "solr" ]]; then
     ln -sf /etc/supervisor/conf.d-available/solr.conf /etc/supervisor/conf.d/solr.conf
     cp -R /var/solr/local_data/* /var/solr/data
     chown -R solr:root /var/solr/data
+    mkdir -p /etc/solr/conf
+    mkdir -p /opt/solr/server/solr/configsets/_default/conf
+    mkdir -p /opt/solr/server/conf
+    cp /ckan_schema.xml /etc/solr/conf/schema.xml
+    cp /ckan_schema.xml /opt/solr/server/solr/configsets/_default/conf/schema.xml
+    cp /ckan_schema.xml /opt/solr/server/conf/schema.xml
+    chown solr:root /etc/solr/conf/schema.xml
+    chown solr:root /opt/solr/server/solr/configsets/_default/conf/schema.xml
+    chown solr:root /opt/solr/server/conf/schema.xml
 
 elif [[ "$role" = "scheduler" ]]; then
 
