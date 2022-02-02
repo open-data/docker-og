@@ -14,43 +14,55 @@ echo "The role is $role"
 
 if [[ "$role" = "drupal" ]]; then
 
+    # link drupal supervisord config
     ln -sf /etc/supervisor/conf.d-available/drupal.conf /etc/supervisor/conf.d/drupal.conf
+
+    # link drupal nginx server block
     ln -sf /etc/nginx/sites-available/open.local /etc/nginx/sites-enabled/open.local
+
+    # commented out for now
     #ln -sf /etc/nginx/sites-available/mailhog /etc/nginx/sites-enabled/mailhog
+
+    # set the nginx user to the environment variable and reload nginx service
     nginx -g "user ${NGINX_UNAME};"
     service nginx reload
 
 elif [[ "$role" = "ckan" ]]; then
 
+    # link ckan supervisord config
     ln -sf /etc/supervisor/conf.d-available/ckan.conf /etc/supervisor/conf.d/ckan.conf
+
+    # create directory for python venv
     mkdir -p ${APP_ROOT}/ckan/default
+
+    # initiate python venv and go into it
     virtualenv --python=python2 ${APP_ROOT}/ckan/default
     . ${APP_ROOT}/ckan/default/bin/activate
+
+    # install base dependencies
     pip install setuptools==${SETUP_TOOLS_VERSION}
     pip install --upgrade pip==${PIP_VERSION}
     pip install --upgrade certifi
+
+    # copy mkcert CA root to the python CA root
     cp /etc/ssl/mkcert/rootCA.pem /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem
     if [[ $? -eq 0 ]]; then
         echo "Copied /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem"
     else
         printf "FAILED to copy /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem"
     fi
+
+    # exit python venv
     deactivate
 
 elif [[ "$role" = "solr" ]]; then
 
+    # link solr supervisord config
     ln -sf /etc/supervisor/conf.d-available/solr.conf /etc/supervisor/conf.d/solr.conf
+
+    # copy all local core data to solr data directory
     cp -R /var/solr/local_data/* /var/solr/data
     chown -R solr:root /var/solr/data
-    mkdir -p /etc/solr/conf
-    mkdir -p /opt/solr/server/solr/configsets/_default/conf
-    mkdir -p /opt/solr/server/conf
-    cp /ckan_schema.xml /etc/solr/conf/schema.xml
-    cp /ckan_schema.xml /opt/solr/server/solr/configsets/_default/conf/schema.xml
-    cp /ckan_schema.xml /opt/solr/server/conf/schema.xml
-    chown solr:root /etc/solr/conf/schema.xml
-    chown solr:root /opt/solr/server/solr/configsets/_default/conf/schema.xml
-    chown solr:root /opt/solr/server/conf/schema.xml
 
 elif [[ "$role" = "scheduler" ]]; then
 

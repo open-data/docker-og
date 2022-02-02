@@ -21,20 +21,8 @@ RUN mkdir -p /var/solr/data
 ADD docker/config/solr/cores /var/solr/local_data
 RUN cp -R /var/solr/local_data/* /var/solr/data
 
-# Copy ckan schema
-ADD docker/config/solr/ckan_schema.xml /ckan_schema.xml
-RUN mkdir -p /etc/solr/conf && \
-    mkdir -p /opt/solr/server/solr/configsets/_default/conf && \
-    mkdir -p /opt/solr/server/conf && \
-    cp /ckan_schema.xml /etc/solr/conf/schema.xml && \
-    cp /ckan_schema.xml /opt/solr/server/solr/configsets/_default/conf/schema.xml && \
-    cp /ckan_schema.xml /opt/solr/server/conf/schema.xml
-
 # Set new files with correct user:group
 RUN chown -R solr:root /var/solr/data && \
-    chown solr:root /etc/solr/conf/schema.xml && \
-    chown solr:root /opt/solr/server/solr/configsets/_default/conf/schema.xml && \
-    chown solr:root /opt/solr/server/conf/schema.xml && \
     chmod +x /usr/local/bin/start
 
 RUN /opt/solr/bin/solr start -force

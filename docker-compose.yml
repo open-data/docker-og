@@ -114,9 +114,9 @@ services:
     volumes:
       - ./docker/config/solr/certs:/opt/solr/server/certs
       - ./docker/config/solr/certs/solr.p12:/etc/solr.p12
-      - ./solr:/opt/solr/server/solr
+      # TODO: mount volume(s) for persistent solr indices
+      # - ./solr:/var/solr/data
       - ./docker/config/solr/cores:/var/solr/local_data
-      - ./docker/config/solr/ckan_schema.xml:/ckan_schema.xml
     environment:
       - CONTAINER_ROLE=solr
       - SOLR_SSL_ENABLED=true
