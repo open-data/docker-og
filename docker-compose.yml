@@ -114,8 +114,17 @@ services:
     volumes:
       - ./docker/config/solr/certs:/opt/solr/server/certs
       - ./docker/config/solr/certs/solr.p12:/etc/solr.p12
-      # TODO: mount volume(s) for persistent solr indices
-      # - ./solr:/var/solr/data
+      - ./solr/ckan:/var/solr/data/ckan
+      - ./solr/core_ati:/var/solr/data/core_ati
+      - ./solr/core_contracts:/var/solr/data/core_contracts
+      - ./solr/core_grants:/var/solr/data/core_grants
+      - ./solr/core_hospitalityq:/var/solr/data/core_hospitalityq
+      - ./solr/core_inventory:/var/solr/data/core_inventory
+      - ./solr/core_reclassification:/var/solr/data/core_reclassification
+      - ./solr/core_travela:/var/solr/data/core_travela
+      - ./solr/core_travelq:/var/solr/data/core_travelq
+      - ./solr/core_wrongdoing:/var/solr/data/core_wrongdoing
+      - ./solr/drupal_content:/var/solr/data/drupal_content
       - ./docker/config/solr/cores:/var/solr/local_data
     environment:
       - CONTAINER_ROLE=solr
