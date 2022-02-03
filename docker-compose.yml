@@ -1,14 +1,59 @@
 version: "3"
 services:
   drupal:
-    image: og-d8-www
-    container_name: og-d8-www
+    image: og-drupal
+    container_name: og-drupal
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/drupal/Dockerfile
       args:
         USER_ID: ${USER_ID:-0}
         GROUP_ID: ${GROUP_ID:-0}
+    working_dir: /var/www/html
+    depends_on:
+      - postgres
+      - solr
+      #- mailhog
+    links:
+      - postgres
+      - solr
+      #- mailhog
+    env_file:
+      - .docker.env
+    environment:
+      CONTAINER_ROLE: drupal
+      PGHOST: postgres
+      PGDATABASE: og_drupal_local
+      PGUSER: homestead
+      PGPASSWORD: secret
+      SSH_AUTH_SOCK: /ssh-agent
+      PATH: '$PATH:/var/www/html/drupal/vendor/bin'
+      NGINX_UNAME: www-data
+      APP_ROOT: /var/www/html
+      SSL_CERT_FILE: /etc/ssl/mkcert/rootCA.pem
+      SSL_CERT_DIR: /etc/ssl/mkcert
+    volumes:
+      - .:/var/www/html
+      - ./docker/config/nginx/certs:/usr/share/certs
+      - ~/.gitconfig:/etc/gitconfig:ro
+      - ~/.ssh:/var/www/html/.ssh:ro
+      - $SSH_AUTH_SOCK:/ssh-agent:ro
+      #- ./nginx:/var/log/nginx
+      - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
+    ports:
+      - 443:443
+      - 80:80
+  ckan:
+    container_name: og-ckan
+    image: openknowledge/ckan-base:2.8
+    build:
+      context: .
+      dockerfile: docker/ckan/Dockerfile
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
+    working_dir: /srv/app
     depends_on:
       - postgres
       - solr
@@ -18,50 +63,92 @@ services:
     env_file:
       - .docker.env
     environment:
-      CONTAINER_ROLE: app
+      CONTAINER_ROLE: ckan
       PGHOST: postgres
-      PGDATABASE: og_d8_local
+      PGDATABASE: og_ckan_local
       PGUSER: homestead
       PGPASSWORD: secret
       SSH_AUTH_SOCK: /ssh-agent
-      PATH: '$PATH:/var/www/html/drupal/vendor/bin'
+      APP_ROOT: /srv/app
+      PATH: '$PATH:/srv/app/ckan/default/bin'
+      PY_VERSION: 2.7
+      PIP_VERSION: 19.2.1
+      SETUP_TOOLS_VERSION: 36.1
+      PYTHONHTTPSVERIFY: 0
+      SSL_CERT_FILE: /etc/ssl/mkcert/rootCA.pem
+      SSL_CERT_DIR: /etc/ssl/mkcert
+      CKAN_CONFIG: /srv/app/ckan/default/ckan.ini
     volumes:
-      - .:/var/www/html
-      - ./docker/config/nginx/certs/:/usr/share/certs/
-      - ~/.gitconfig:/etc/gitconfig
-      - ~/.ssh:/var/www/html/.ssh
-      - $SSH_AUTH_SOCK:/ssh-agent
+      - ./docker/config/ckan:/docker-entrypoint.d
+      - .:/srv/app
+      - ~/.gitconfig:/etc/gitconfig:ro
+      - ~/.ssh:/srv/app/.ssh:ro
+      - $SSH_AUTH_SOCK:/ssh-agent:ro
+      - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
     ports:
-      - 443:443
-      - 80:80
+      - 5001:5000
   postgres:
-    container_name: og-d8-postgres
+    container_name: og-postgres
     image: postgres:9.6
     restart: always
     volumes:
       - ./postgres:/var/lib/postgresql/data
-      - ./docker/config/postgres/:/docker-entrypoint-initdb.d/
+      - ./docker/config/postgres:/docker-entrypoint-initdb.d
     environment:
-      POSTGRES_DB: og_d8_local
+      POSTGRES_DB: og_drupal_local
       POSTGRES_USER: homestead
       POSTGRES_PASSWORD: secret
       POSTGRES_HOST_AUTH_METHOD: trust
+    env_file:
+      - .docker.env
+    user: "${USER_ID:-0}:${GROUP_ID:-0}"
     ports:
       - 15438:5432
   solr:
     container_name: og-solr
     image: solr
     restart: always
+    build:
+      context: .
+      dockerfile: docker/solr/Dockerfile
+    working_dir: /opt/solr
     volumes:
-      - ./solr:/opt/solr/server/solr
+      - ./docker/config/solr/certs:/opt/solr/server/certs
+      - ./docker/config/solr/certs/solr.p12:/etc/solr.p12
+      - ./solr/ckan:/var/solr/data/ckan
+      - ./solr/core_ati:/var/solr/data/core_ati
+      - ./solr/core_contracts:/var/solr/data/core_contracts
+      - ./solr/core_grants:/var/solr/data/core_grants
+      - ./solr/core_hospitalityq:/var/solr/data/core_hospitalityq
+      - ./solr/core_inventory:/var/solr/data/core_inventory
+      - ./solr/core_reclassification:/var/solr/data/core_reclassification
+      - ./solr/core_travela:/var/solr/data/core_travela
+      - ./solr/core_travelq:/var/solr/data/core_travelq
+      - ./solr/core_wrongdoing:/var/solr/data/core_wrongdoing
+      - ./solr/drupal_content:/var/solr/data/drupal_content
+      - ./docker/config/solr/cores:/var/solr/local_data
+    environment:
+      - CONTAINER_ROLE=solr
+      - SOLR_SSL_ENABLED=true
+      - SOLR_SSL_KEY_STORE=/etc/solr.p12
+      - SOLR_SSL_KEY_STORE_PASSWORD=changeit
+      - SOLR_SSL_TRUST_STORE=/etc/solr.p12
+      - SOLR_SSL_TRUST_STORE_PASSWORD=changeit
+      - SOLR_SSL_NEED_CLIENT_AUTH=false
+      - SOLR_SSL_WANT_CLIENT_AUTH=false
+      - SOLR_SSL_CHECK_PEER_NAME=true
+      - SOLR_SSL_KEY_STORE_TYPE=PKCS12
+      - SOLR_SSL_TRUST_STORE_TYPE=PKCS12
+    user: "root:root"
     ports:
       - 8981:8983
-  mailhog:
-    container_name: og-d8-mailhog
-    image: mailhog/mailhog:v1.0.0
-    ports:
-      - "1025:1025"
-      - "8025:8025"
+  # Commented out due to failed nginx bindings
+  # mailhog:
+  #   container_name: og-mailhog
+  #   image: mailhog/mailhog:v1.0.0
+  #   ports:
+  #     - "1025:1025"
+  #     - "8025:8025"
 
 volumes:
   postgres:

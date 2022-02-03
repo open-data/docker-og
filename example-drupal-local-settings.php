@@ -5,7 +5,7 @@
 $databases['default']['default'] = [
     'driver'    => 'pgsql',
     'namespace' => 'Drupal\\Core\\Database\\Driver\\pgsql',
-    'database'  => 'og_d8_local',
+    'database'  => 'og_drupal_local',
     'username'  => 'homestead',
     'password'  => 'secret',
     'host'      => 'postgres',

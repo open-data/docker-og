@@ -26,6 +26,7 @@ RUN apt-get update -yqq \
         less \
         postgresql \
         libpq-dev \
+        curl \
         nano \
         vim \
         memcached \
@@ -53,8 +54,10 @@ ADD docker/config/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 ADD docker/config/supervisor/conf.d/*.conf /etc/supervisor/conf.d-available/
 
 # Nginx
+ADD docker/config/nginx/nginx.conf /etc/nginx/nginx.conf
 ADD docker/config/nginx/default /etc/nginx/sites-available/default
-ADD docker/config/nginx/mailhog /etc/nginx/sites-available/mailhog
+ADD docker/config/nginx/open.local /etc/nginx/sites-available/open.local
+#ADD docker/config/nginx/mailhog /etc/nginx/sites-available/mailhog
 ADD docker/config/nginx/h5bp/ /etc/nginx/h5bp
 
 ADD docker/start.sh /usr/local/bin/start
@@ -62,33 +65,38 @@ ADD docker/start.sh /usr/local/bin/start
 # Create homestead user
 RUN useradd homestead
 
+# Create root directory
+RUN mkdir -p /var/www/html
 RUN chown -R www-data:www-data /var/www/html \
     && chmod +x /usr/local/bin/start \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 
+
 ARG USER_ID
 ARG GROUP_ID
 
 RUN if [ ${USER_ID:-0} -ne 0 ] && [ ${GROUP_ID:-0} -ne 0 ]; then \
-    userdel -f www-data &&\
-    if getent group www-data ; then groupdel www-data; fi &&\
-    getent group www-data || groupadd -g ${GROUP_ID} www-data &&\
-    useradd -l -u ${USER_ID} -g www-data www-data &&\
-    install -d -m 0755 -o www-data -g www-data /home/www-data &&\
-    chown --changes --silent --no-dereference --recursive \
-          --from=33:33 ${USER_ID}:${GROUP_ID} \
-        /home/www-data &&\
-    echo 'alias ls="ls $LS_OPTIONS"\n\
-    alias ll="ls $LS_OPTIONS -l"\n\
-    alias l="ls $LS_OPTIONS -lA"\n\
-    alias phpunit="vendor/bin/phpunit"\n\
-    alias home="cd /var/www/html"\n\
-    alias mrs="artisan migrate:refresh --seed"\n\
-    function artisan() {\n\
-    php artisan "$@"\n\
-    }' >> /home/www-data/.bashrc &&\
-    chown www-data:www-data /home/www-data/.bashrc \
+        if [ $(getent passwd | grep www-data) ]; then \
+            userdel -f www-data; fi && \
+        if [ $(getent group | grep ${GROUP_ID}) ]; then \
+            groupmod -g ${GROUP_ID} -n www-data $(getent group ${GROUP_ID} | cut -d: -f1); else \
+            groupadd -g ${GROUP_ID} www-data; fi && \
+        if [ $(getent passwd | grep ${USER_ID}) ]; then \
+            usermod -l www-data -g www-data $(getent passwd ${USER_ID} | cut -d: -f1); else \
+            useradd -l -u ${USER_ID} -g www-data www-data; fi && \
+        install -d -m 0755 -o www-data -g www-data /home/www-data && \
+        chown --changes --silent --no-dereference --recursive --from=33:33 ${USER_ID}:${GROUP_ID} /home/www-data && \
+        echo 'alias ls="ls $LS_OPTIONS"\n\
+        alias ll="ls $LS_OPTIONS -l"\n\
+        alias l="ls $LS_OPTIONS -lA"\n\
+        alias phpunit="vendor/bin/phpunit"\n\
+        alias home="cd /var/www/html"\n\
+        alias mrs="artisan migrate:refresh --seed"\n\
+        function artisan() {\n\
+        php artisan "$@"\n\
+        }' >> /home/www-data/.bashrc &&\
+        chown www-data:www-data /home/www-data/.bashrc \
 ;fi
 
 CMD ["/usr/local/bin/start"]
