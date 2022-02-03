@@ -20,40 +20,43 @@
 
 ## Prebuild
 
-1. Create the following hosts file(`/etc/hosts`) entries:
+1. __Create__ the following hosts file(`/etc/hosts`) entries:
     1. `127.0.0.1 open.local`
-1. Use [mkcert](https://github.com/FiloSottile/mkcert) to make a certificate for nginx(Drupal) and solr if you're using Windows with WSL2, makes sure to make the certificates in Powershell running as an Administrator, not within WSL2:
-   * nginx(Drupal):
+1. __Use [mkcert](https://github.com/FiloSottile/mkcert)__ to make a certificate for nginx(Drupal) and solr if you're using Windows with WSL2, makes sure to make the certificates in Powershell running as an Administrator, not within WSL2:
+   * __nginx(Drupal):__
       1. cd inside of the `docker/config/nginx/certs` directory.
       1. Generate the pem chain: `mkcert -cert-file open.local.pem -key-file open.local-key.pem open.local 127.0.0.1 localhost ::1 ::5001 ::5000`
-   * solr:
+   * __solr:__
       1. cd inside of the `docker/config/solr/certs` directory.
       1. Generate the PKCS12 keystore: `mkcert -pkcs12 -p12-file solr.p12 127.0.0.1 localhost solr ::1 ::8981 ::8983`
-1. Copy `.docker.env.example` to `.docker.env`
-1. Copy `example-drupal-local-settings.php` to `drupal-local-settings.php`
-1. Copy `example-ckan.ini` to `ckan.ini`
-1. Copy `.env.example` to `.env`
-   1. You will need to update the `CA_LOCAL_ROOT` variable to the output of this command: `mkcert -CAROOT`
+1. __Copy__ `.docker.env.example` to `.docker.env`
+1. __Copy__ `example-drupal-local-settings.php` to `drupal-local-settings.php`
+1. __Copy__ `example-ckan.ini` to `ckan.ini`
+1. __Copy__ `.env.example` to `.env`
+   1. You will need to __update__ the `CA_LOCAL_ROOT` variable to the output of this command: `mkcert -CAROOT`
    1. If you need to, change your user and group to match the user and group your WSL2 user or Linux/Mac user employs:
       1. `id` <- this should get your current user ID and group ID in WSL2 or whatever shell you're using. If you're using WSL2 and only ever made your default user, it will likely be `1000`
-1. Create a folder in the root of this repository called `backup`, in it, place the following files:
-   1. `drupal_db.pgdump` <- the database backup for the Drupal site.
-   1. `drupal_files.tgz` <- the compressed folder of the public files from the Drupal site.
-   1. `ckan_db.pgdump` <- the database backup for the CKAN Core app.
-   1. `ckan_registry_db.pgdump` <- the database backup for the CKAN Registry app.
-   1. `ckan_registry_ds_db.pgdump` <- the database backup for the CKAN Registry Datastore.
-1. Create a folder in the root of this repository called `postgres`. This folder will hold the data for imported databases to persist during Docker container restarts.
-1. Create a folder in the root of this repository called `solr`. This folder will hold the data for imported indices to persist during Docker container restarts.
-1. Create a folder in the root of this repository called `nginx`. This folder will hold the nginx logs for the Docker environments.
+1. __Create__ a folder in the root of this repository called `backup`, in it, place the following files:
+   * __For Drupal:__
+      1. `drupal_db.pgdump` <- the database backup for the Drupal site.
+      1. `drupal_files.tgz` <- the compressed folder of the public files from the Drupal site.
+   * __For CKAN:__
+      1. `ckan_db.pgdump` <- the database backup for the CKAN Core app.
+      1. `ckan_registry_db.pgdump` <- the database backup for the CKAN Registry app.
+      1. `ckan_registry_ds_db.pgdump` <- the database backup for the CKAN Registry Datastore.
+      1. `inventory.csv` <- Open Data Inventory data set csv file.
+1. __Create__ a folder in the root of this repository called `postgres`. This folder will hold the data for imported databases to persist during Docker container restarts.
+1. __Create__ a folder in the root of this repository called `solr`. This folder will hold the data for imported indices to persist during Docker container restarts.
+1. __Create__ a folder in the root of this repository called `nginx`. This folder will hold the nginx logs for the Docker environments.
    * By default, the volume is commented out in the `docker-compose.yml` file as the nginx logs can get large. You can uncomment the lines if you are having issues with nginx.
 
 ## Build
 
-1. Build the container: `docker-compose build`
-   * The initial build will take a long time.
+1. __Build__ the container: `docker-compose build`
+   * ***The initial build will take a long time.***
    * If you are rebuilding and receive errors such as `max depth exceeded`, you may need to destroy all of the docker images (`docker image prune -a`) and then run the above build command. Please note that this will also destroy any other docker images you have on your machine.
-1. Bring up the app and detach the shell: `docker-compose up -d` to make sure that all the containers can start correctly.
-   * The initial up may take a long time.
+1. __Bring up__ the app and detach the shell: `docker-compose up -d` to make sure that all the containers can start correctly.
+   * ***The initial up may take a long time.***
    * To stop all the containers: `docker-compose down`
 
 ## Installation
@@ -62,20 +65,20 @@
 
 Though there is an initialization script to create the databases on the initial up of the `postgres` container, this script only runs once. After you have built the containers once, this script will no longer run. To fix any issues with missing databases, users, or password:
 
-1. Bring up the Drupal docker container: `docker-compose up -d drupal`
-1. Open a shell into the container: `docker-compose exec drupal bash`
-1. Change permissions of this file (if not already done) so you can run it as a bash script: `chmod 775 install-local.sh`
-1. Run the install script: `./install-local.sh`
-   1. Select `Databases (fixes missing databases, privileges, and users)`
+1. __Bring up__ the Drupal or CKAN docker container: `docker-compose up -d <drupal or ckan>`
+1. __Open a shell__ into the container: `docker-compose exec <drupal or ckan> bash`
+1. __Change permissions__ of this file (if not already done) so you can run it as a bash script: `chmod 775 install-local.sh`
+1. __Run__ the install script: `./install-local.sh`
+   1. __Select__ `Databases (fixes missing databases, privileges, and users)`
 
 ### Drupal
 
-1. Bring up the Drupal docker container: `docker-compose up -d drupal`
-1. Open a shell into the container: `docker-compose exec drupal bash`
-1. Change permissions of this file (if not already done) so you can run it as a bash script: `chmod 775 install-local.sh`
-1. Run the install script: `./install-local.sh`
-   1. Select `Drupal`
-   1. Select what you want to install for Drupal:
+1. __Bring up__ the Drupal docker container: `docker-compose up -d drupal`
+1. __Open a shell__ into the container: `docker-compose exec drupal bash`
+1. __Change__ permissions of this file (if not already done) so you can run it as a bash script: `chmod 775 install-local.sh`
+1. __Run__ the install script: `./install-local.sh`
+   1. __Select__ `Drupal`
+   1. __Select__ what you want to install for Drupal:
       * `SSH (Required for Repositories)`: will install and configure the ssh command along with the ssh-agent and keys.
       * `Database`: will destroy the current `og_drupal_local` database and import a fresh one from `backup/drupal_db.pgdump`
       * `Repositories`: will destroy all files inside of the `drupal` directory and pull all required repositories related to Drupal.
@@ -90,12 +93,12 @@ Though there is an initialization script to create the databases on the initial 
 
 ### CKAN
 
-1. Bring up the CKAN docker container: `docker-compose up -d ckan`
-1. Open a shell into the container: `docker-compose exec ckan bash`
-1. Change permissions of this file (if not already done) so you can run it as a bash script: `chmod 775 install-local.sh`
-1. Run the install script: `./install-local.sh`
-   1. Select `CKAN`
-   1. Select what you want to install for CKAN:
+1. __Bring up__ the CKAN docker container: `docker-compose up -d ckan`
+1. __Open a shell__ into the container: `docker-compose exec ckan bash`
+1. __Change__ permissions of this file (if not already done) so you can run it as a bash script: `chmod 775 install-local.sh`
+1. __Run__ the install script: `./install-local.sh`
+   1. __Select__ `CKAN`
+   1. __Select__ what you want to install for CKAN:
       * `SSH (Required for Repositories)`: will install and configure the ssh command along with the ssh-agent and keys.
       * `Core Database`: will destroy the current `og_ckan_local` database and import a fresh one from `backup/ckan_db.pgdump`
          * The database for CKAN is large, so importing the database will take a long time.
@@ -115,8 +118,8 @@ Though there is an initialization script to create the databases on the initial 
 
 ### CKAN
 
-1. Bring up the CKAN docker container: `docker-compose up -d ckan`
-1. Open a shell into the container: `docker-compose exec ckan bash`
-1. Activate the Python virtual environment: `. /srv/app/ckan/default/bin/activate`
-1. Build the indices:
+1. __Bring up__ the CKAN docker container: `docker-compose up -d ckan`
+1. __Open a shell__ into the container: `docker-compose exec ckan bash`
+1. __Build__ the indices:
+   1. __Inventory:__ `paster --plugin=ckanext-canada inventory rebuild --lenient -c $CKAN_CONFIG -f /srv/app/backup/inventory.csv`
    

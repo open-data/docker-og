@@ -26,9 +26,6 @@ installRepos_Drupal='false'
 installFiles_Drupal='false'
 installFilePermissions_Drupal='false'
 installLocalUser_Drupal='false'
-installSolrIndices_Drupal='false'
-solrSchema_Drupal='/var/solr/data/drupal_content/schema.xml'
-solrConfig_Drupal='/var/solr/data/drupal_content/solrconfig.xml'
 
 # ckan flags
 installSSH_CKAN='false'
@@ -37,9 +34,6 @@ installDB_Registry_CKAN='false'
 installDB_Registry_DS_CKAN='false'
 installRepos_CKAN='false'
 installFilePermissions_CKAN='false'
-installSolrIndices_CKAN='false'
-solrSchema_CKAN_ATI_PD='/var/solr/data/%core_name%/schema.xml'
-solrConfig_CKAN_ATI_PD='/var/solr/data/%core_name%/solrconfig.xml'
 
 # general flags
 exitScript='false'
@@ -62,7 +56,6 @@ function install_drupal {
     "Repositories" 
     "Local Files" 
     "Set File Permissions (also creates missing directories)" 
-    # "Create Solr Indices" 
     "Create Local User"
     "All" 
     "Exit"
@@ -104,12 +97,6 @@ function install_drupal {
       installFilePermissions_Drupal='true'
       ;;
 
-    # "Create Solr Indices"
-    # (5)
-    #   exitScript='false'
-    #   installSolrIndices_Drupal='true'
-    #   ;;
-
     # "Create Local User"
     (5)
       exitScript='false'
@@ -124,7 +111,6 @@ function install_drupal {
       installRepos_Drupal='true'
       installFiles_Drupal='true'
       installFilePermissions_Drupal='true'
-      installSolrIndices_Drupal='true'
       installLocalUser_Drupal='true'
       ;;
 
@@ -510,25 +496,6 @@ function install_drupal {
     # END
 
     #
-    # Create solr indices
-    #
-    # if [[ $installSolrIndices_Drupal == "true" ]]; then
-
-    #   # drupal_content
-    #   printf "${SPACER}${Cyan}${INDENT}Create solr core drupal_content${NC}${SPACER}"
-    #   curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem "https://solr:8983/solr/admin/cores?action=CREATE&name=drupal_content&config=${solrConfig_Drupal}&schema=${solrSchema_Drupal}&numShards=2&replicationFactor=2"
-    #   if [[ $? -eq 0 ]]; then
-    #     printf "${Green}${INDENT}${INDENT}Create solr core drupal_content: OK${NC}${EOL}" 
-    #   else
-    #     printf "${Red}${INDENT}${INDENT}Create solr core drupal_content: FAIL (core may already exists)${NC}${EOL}"
-    #   fi
-
-    # fi
-    # END
-    # Create solr indices
-    # END
-
-    #
     # Create Drupal admin user
     #
     if [[ $installLocalUser_Drupal == "true" ]]; then
@@ -537,7 +504,7 @@ function install_drupal {
 
         printf "${SPACER}${Cyan}${INDENT}Set local user admin${NC}${SPACER}"
         cd ${APP_ROOT}/drupal
-        drush uinf admin.local || drush user:create admin.local --mail=temp@tbs-sct.gc.ca --password=12345678
+        drush uinf admin.local || drush user:create admin.local --password=12345678
         drush urol administrator admin.local
 
       else
@@ -598,7 +565,6 @@ function install_ckan {
     "Registry Datastore Database" 
     "Repositories (Installs them into Python venv)" 
     "Set File Permissions" 
-    # "Create Solr Indices" 
     "All" 
     "Exit"
   )
@@ -645,12 +611,6 @@ function install_ckan {
       installFilePermissions_CKAN='true'
       ;;
 
-    # "Create Solr Indices"
-    # (6)
-    #   exitScript='false'
-    #   installSolrIndices_CKAN='true'
-    #   ;;
-
     # "All"
     (6) 
       exitScript='false'
@@ -660,7 +620,6 @@ function install_ckan {
       installDB_Registry_DS_CKAN='true'
       installRepos_CKAN='true'
       installFilePermissions_CKAN='true'
-      installSolrIndices_CKAN='true'
       ;;
 
     # "Exit"
@@ -1018,97 +977,6 @@ function install_ckan {
     # Set file permissions
     # END
 
-    #
-    # Create solr indices
-    #
-    # if [[ $installSolrIndices_CKAN == "true" ]]; then
-
-    #   # core_ati
-    #   printf "${SPACER}${Cyan}${INDENT}Create solr core core_ati${NC}${SPACER}"
-    #   curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem "https://solr:8983/solr/admin/cores?action=CREATE&name=core_ati&config=${solrConfig_CKAN_ATI_PD/'%core_name%'/'core_ati'}&schema=${solrSchema_CKAN_ATI_PD/'%core_name%'/'core_ati'}&numShards=2&replicationFactor=2"
-    #   if [[ $? -eq 0 ]]; then
-    #     printf "${Green}${INDENT}${INDENT}Create solr core core_ati: OK${NC}${EOL}"
-    #   else
-    #     printf "${Red}${INDENT}${INDENT}Create solr core core_ati: FAIL (core may already exists)${NC}${EOL}"
-    #   fi
-
-    #   # core_contracts
-    #   printf "${SPACER}${Cyan}${INDENT}Create solr core core_contracts${NC}${SPACER}"
-    #   curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem "https://solr:8983/solr/admin/cores?action=CREATE&name=core_contracts&config=${solrConfig_CKAN_ATI_PD/'%core_name%'/'core_contracts'}&schema=${solrSchema_CKAN_ATI_PD/'%core_name%'/'core_contracts'}&numShards=2&replicationFactor=2"
-    #   if [[ $? -eq 0 ]]; then
-    #     printf "${Green}${INDENT}${INDENT}Create solr core core_contracts: OK${NC}${EOL}"
-    #   else
-    #     printf "${Red}${INDENT}${INDENT}Create solr core core_contracts: FAIL (core may already exists)${NC}${EOL}"
-    #   fi
-
-    #   # core_grants
-    #   printf "${SPACER}${Cyan}${INDENT}Create solr core core_grants${NC}${SPACER}"
-    #   curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem "https://solr:8983/solr/admin/cores?action=CREATE&name=core_grants&config=${solrConfig_CKAN_ATI_PD/'%core_name%'/'core_grants'}&schema=${solrSchema_CKAN_ATI_PD/'%core_name%'/'core_grants'}&numShards=2&replicationFactor=2"
-    #   if [[ $? -eq 0 ]]; then
-    #     printf "${Green}${INDENT}${INDENT}Create solr core core_grants: OK${NC}${EOL}"
-    #   else
-    #     printf "${Red}${INDENT}${INDENT}Create solr core core_grants: FAIL (core may already exists)${NC}${EOL}"
-    #   fi
-
-    #   # core_hospitalityq
-    #   printf "${SPACER}${Cyan}${INDENT}Create solr core core_hospitalityq${NC}${SPACER}"
-    #   curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem "https://solr:8983/solr/admin/cores?action=CREATE&name=core_hospitalityq&config=${solrConfig_CKAN_ATI_PD/'%core_name%'/'core_hospitalityq'}&schema=${solrSchema_CKAN_ATI_PD/'%core_name%'/'core_hospitalityq'}&numShards=2&replicationFactor=2"
-    #   if [[ $? -eq 0 ]]; then
-    #     printf "${Green}${INDENT}${INDENT}Create solr core core_hospitalityq: OK${NC}${EOL}"
-    #   else
-    #     printf "${Red}${INDENT}${INDENT}Create solr core core_hospitalityq: FAIL (core may already exists)${NC}${EOL}"
-    #   fi
-
-    #   # core_inventory
-    #   printf "${SPACER}${Cyan}${INDENT}Create solr core core_inventory${NC}${SPACER}"
-    #   curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem "https://solr:8983/solr/admin/cores?action=CREATE&name=core_inventory&config=${solrConfig_CKAN_ATI_PD/'%core_name%'/'core_inventory'}&schema=${solrSchema_CKAN_ATI_PD/'%core_name%'/'core_inventory'}&numShards=2&replicationFactor=2"
-    #   if [[ $? -eq 0 ]]; then
-    #     printf "${Green}${INDENT}${INDENT}Create solr core core_inventory: OK${NC}${EOL}"
-    #   else
-    #     printf "${Red}${INDENT}${INDENT}Create solr core core_inventory: FAIL (core may already exists)${NC}${EOL}"
-    #   fi
-
-    #   # core_reclassification
-    #   printf "${SPACER}${Cyan}${INDENT}Create solr core core_reclassification${NC}${SPACER}"
-    #   curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem "https://solr:8983/solr/admin/cores?action=CREATE&name=core_reclassification&config=${solrConfig_CKAN_ATI_PD/'%core_name%'/'core_reclassification'}&schema=${solrSchema_CKAN_ATI_PD/'%core_name%'/'core_reclassification'}&numShards=2&replicationFactor=2"
-    #   if [[ $? -eq 0 ]]; then
-    #     printf "${Green}${INDENT}${INDENT}Create solr core core_reclassification: OK${NC}${EOL}"
-    #   else
-    #     printf "${Red}${INDENT}${INDENT}Create solr core core_reclassification: FAIL (core may already exists)${NC}${EOL}"
-    #   fi
-
-    #   # core_travela
-    #   printf "${SPACER}${Cyan}${INDENT}Create solr core core_travela${NC}${SPACER}"
-    #   curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem "https://solr:8983/solr/admin/cores?action=CREATE&name=core_travela&config=${solrConfig_CKAN_ATI_PD/'%core_name%'/'core_travela'}&schema=${solrSchema_CKAN_ATI_PD/'%core_name%'/'core_travela'}&numShards=2&replicationFactor=2"
-    #   if [[ $? -eq 0 ]]; then
-    #     printf "${Green}${INDENT}${INDENT}Create solr core core_travela: OK${NC}${EOL}"
-    #   else
-    #     printf "${Red}${INDENT}${INDENT}Create solr core core_travela: FAIL (core may already exists)${NC}${EOL}"
-    #   fi
-
-    #   # core_travelq
-    #   printf "${SPACER}${Cyan}${INDENT}Create solr core core_travelq${NC}${SPACER}"
-    #   curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem "https://solr:8983/solr/admin/cores?action=CREATE&name=core_travelq&config=${solrConfig_CKAN_ATI_PD/'%core_name%'/'core_travelq'}&schema=${solrSchema_CKAN_ATI_PD/'%core_name%'/'core_travelq'}&numShards=2&replicationFactor=2"
-    #   if [[ $? -eq 0 ]]; then
-    #     printf "${Green}${INDENT}${INDENT}Create solr core core_travelq: OK${NC}${EOL}"
-    #   else
-    #     printf "${Red}${INDENT}${INDENT}Create solr core core_travelq: FAIL (core may already exists)${NC}${EOL}"
-    #   fi
-
-    #   # core_wrongdoing
-    #   printf "${SPACER}${Cyan}${INDENT}Create solr core core_wrongdoing${NC}${SPACER}"
-    #   curl -X POST -H "Connection: close" --capath /etc/ssl/mkcert --cacert /etc/ssl/mkcert/rootCA.pem "https://solr:8983/solr/admin/cores?action=CREATE&name=core_wrongdoing&config=${solrConfig_CKAN_ATI_PD/'%core_name%'/'core_wrongdoing'}&schema=${solrSchema_CKAN_ATI_PD/'%core_name%'/'core_wrongdoing'}&numShards=2&replicationFactor=2"
-    #   if [[ $? -eq 0 ]]; then
-    #     printf "${Green}${INDENT}${INDENT}Create solr core core_wrongdoing: OK${NC}${EOL}"
-    #   else
-    #     printf "${Red}${INDENT}${INDENT}Create solr core core_wrongdoing: FAIL (core may already exists)${NC}${EOL}"
-    #   fi
-
-    # fi
-    # END
-    # Create solr indices
-    # END
-
   else
 
     printf "${SPACER}${Yellow}${INDENT}Exiting install script...${NC}${SPACER}"
@@ -1240,14 +1108,27 @@ function select_option {
 
 printf "${SPACER}${Cyan}${INDENT}Select what to install:${NC}${SPACER}"
 
-# Options for the user to select from
-options=(
-  "Drupal" 
-  "CKAN"
-  "Databases (fixes missing databases, privileges, and users)"
-  "All" 
-  "Exit"
-)
+if [[ ${CONTAINER_ROLE} == "drupal" ]]; then
+
+  # Options for the user to select from
+  options=(
+    "Drupal" 
+    "Databases (fixes missing databases, privileges, and users)"
+    "All" 
+    "Exit"
+  )
+
+elif [[ ${CONTAINER_ROLE} == "ckan" ]]; then
+
+  # Options for the user to select from
+  options=(
+    "CKAN"
+    "Databases (fixes missing databases, privileges, and users)"
+    "All" 
+    "Exit"
+  )
+
+fi
 
 # IMPORTANT: select_option will return the index of the options and not the value.
 select_option "${options[@]}"
@@ -1255,16 +1136,15 @@ opt=$?
 
 case $opt in
 
-  # "Drupal"
+  # "Drupal or CKAN"
   (0) 
-    exitScript='false'
-    installDrupal='true'
-    ;;
-
-  # "CKAN"
-  (1) 
-    exitScript='false'
-    installCKAN='true'
+    if [[ ${CONTAINER_ROLE} == "drupal" ]]; then
+      exitScript='false'
+      installDrupal='true'
+    elif [[ ${CONTAINER_ROLE} == "ckan" ]]; then
+      exitScript='false'
+      installCKAN='true'
+    fi
     ;;
 
   (2)

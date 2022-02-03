@@ -77,6 +77,7 @@ services:
       PYTHONHTTPSVERIFY: 0
       SSL_CERT_FILE: /etc/ssl/mkcert/rootCA.pem
       SSL_CERT_DIR: /etc/ssl/mkcert
+      CKAN_CONFIG: /srv/app/ckan/default/ckan.ini
     volumes:
       - ./docker/config/ckan:/docker-entrypoint.d
       - .:/srv/app
