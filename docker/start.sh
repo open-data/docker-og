@@ -20,6 +20,12 @@ if [[ "$role" = "drupal" ]]; then
     # link drupal nginx server block
     ln -sf /etc/nginx/sites-available/open.local /etc/nginx/sites-enabled/open.local
 
+    # link mkcert certificate to the truststore
+    ln -sf /etc/ssl/mkcert/rootCA.pem /etc/ssl/certs/mkcert-certificate.pem
+    mkdir -p /usr/local/share/ca-certificates
+    cp /etc/ssl/mkcert/rootCA.pem /usr/local/share/ca-certificates/mkcert-certificate.crt
+    update-ca-certificates
+
     # commented out for now
     #ln -sf /etc/nginx/sites-available/mailhog /etc/nginx/sites-enabled/mailhog
 
@@ -31,6 +37,12 @@ elif [[ "$role" = "ckan" ]]; then
 
     # link ckan supervisord config
     ln -sf /etc/supervisor/conf.d-available/ckan.conf /etc/supervisor/conf.d/ckan.conf
+
+    # link mkcert certificate to the truststore
+    ln -sf /etc/ssl/mkcert/rootCA.pem /etc/ssl/certs/mkcert-certificate.pem
+    mkdir -p /usr/local/share/ca-certificates
+    cp /etc/ssl/mkcert/rootCA.pem /usr/local/share/ca-certificates/mkcert-certificate.crt
+    update-ca-certificates
 
     # create directory for python venv
     mkdir -p ${APP_ROOT}/ckan/default
