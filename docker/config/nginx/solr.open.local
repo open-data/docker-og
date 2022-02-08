@@ -1,4 +1,5 @@
 server {
+    #TODO: proxy pass solr to the server name...
     listen       443 ssl http2 default_server;
     listen       [::]:443 ssl http2 default_server;
     server_name  solr.open.local;

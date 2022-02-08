@@ -32,7 +32,7 @@ http {
         # always needed - do not comment!
         uwsgi_param SCRIPT_NAME "";
         uwsgi_modifier1 30;
-        # uwsgi_pass unix:/opt/tbs/ckan/run/uwsgi-registry.sock;
+        # uwsgi_pass unix:<path to uwsgi-registry.sock>;
         uwsgi_pass uwsgi_registry;
 
         # don't send extra logging data to clients:
