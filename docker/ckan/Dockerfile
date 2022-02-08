@@ -3,6 +3,7 @@ FROM php:7.4-fpm
 
 RUN apt-get update -yqq \
     && apt-get install -y --no-install-recommends \
+        nginx \
         supervisor \
 		git \
 		libzip-dev \
@@ -24,6 +25,14 @@ RUN apt-get update -yqq \
 # Supervisor
 ADD docker/config/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 ADD docker/config/supervisor/conf.d/*.conf /etc/supervisor/conf.d-available/
+
+# Nginx
+ADD docker/config/nginx/nginx.conf /etc/nginx/nginx.conf
+ADD docker/config/nginx/default /etc/nginx/sites-available/default
+ADD docker/config/nginx/registry.open.local /etc/nginx/sites-available/registry.open.local
+ADD docker/config/nginx/portal.open.local /etc/nginx/sites-available/portal.open.local
+#ADD docker/config/nginx/mailhog /etc/nginx/sites-available/mailhog
+ADD docker/config/nginx/h5bp/ /etc/nginx/h5bp
 
 # PIP2
 RUN curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py \

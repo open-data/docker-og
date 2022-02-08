@@ -1,0 +1,46 @@
+http {
+
+    upstream uwsgi_portal {
+
+        server 127.0.0.1:8080;
+
+    }
+
+    upstream uwsgi_registry {
+
+        server 127.0.0.1:8081;
+
+    }
+
+    listen 443 ssl http2;
+    listen [::]:443 http2;
+
+    client_max_body_size 100M;
+
+    ssl_certificate /usr/share/certs/open.local.pem;
+    ssl_certificate_key /usr/share/certs/open.local-key.pem;
+    ssl_protocols TLSv1.2;
+
+    location / {
+
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $remote_addr;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        add_header 'Access-Control-Allow-Origin' '*';
+        # add_header Referrer-Policy no-referrer;
+        include uwsgi_params;
+        # always needed - do not comment!
+        uwsgi_param SCRIPT_NAME "";
+        uwsgi_modifier1 30;
+        # uwsgi_pass unix:/opt/tbs/ckan/run/uwsgi-registry.sock;
+        uwsgi_pass uwsgi_registry;
+
+        # don't send extra logging data to clients:
+        uwsgi_hide_header  X-Logextra;
+
+    }
+
+    add_header X-Served-By DockerCompose;
+    include h5bp/basic.conf;
+
+}

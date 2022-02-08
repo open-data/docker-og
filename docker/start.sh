@@ -46,6 +46,12 @@ elif [[ "$role" = "ckan" ]]; then
 
     # create directory for python venv
     mkdir -p ${APP_ROOT}/ckan/default
+    mkdir -p ${APP_ROOT}/ckan/portal
+    mkdir -p ${APP_ROOT}/ckan/registry
+
+    # create directories for uwsgi outputs
+    mkdir -p /dev
+    chown -R ckan:ckan /dev
 
     # initiate python venv and go into it
     virtualenv --python=python2 ${APP_ROOT}/ckan/default
@@ -53,6 +59,7 @@ elif [[ "$role" = "ckan" ]]; then
 
     # install base dependencies
     pip install setuptools==${SETUP_TOOLS_VERSION}
+    pip install uwsgi
     pip install --upgrade pip==${PIP_VERSION}
     pip install --upgrade certifi
 
@@ -66,6 +73,26 @@ elif [[ "$role" = "ckan" ]]; then
 
     # exit python venv
     deactivate
+
+    # copy default environment into portal and registry environments
+    cp -R ${APP_ROOT}/ckan/default/* ${APP_ROOT}/ckan/portal/
+    cp -R ${APP_ROOT}/ckan/default/* ${APP_ROOT}/ckan/registry/
+
+    # copy the ckan configs
+    cp ${APP_ROOT}/ckan.ini ${APP_ROOT}/ckan/default/ckan.ini
+    cp ${APP_ROOT}/portal.ini ${APP_ROOT}/ckan/portal/portal.ini
+    cp ${APP_ROOT}/registry.ini ${APP_ROOT}/ckan/registry/registry.ini
+
+    # remove default nginx server block
+    rm -vf /etc/nginx/sites-enabled/default
+
+    # link nginx server block
+    ln -sf /etc/nginx/sites-available/registry.open.local /etc/nginx/sites-enabled/registry.open.local
+    ln -sf /etc/nginx/sites-available/portal.open.local /etc/nginx/sites-enabled/portal.open.local
+
+    # set the nginx user to the environment variable and reload nginx service
+    nginx -g "user ${NGINX_UNAME};"
+    service nginx reload
 
 elif [[ "$role" = "solr" ]]; then
 

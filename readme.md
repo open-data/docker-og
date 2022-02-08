@@ -22,16 +22,21 @@
 
 1. __Create__ the following hosts file(`/etc/hosts`) entries:
     1. `127.0.0.1 open.local`
-1. __Use [mkcert](https://github.com/FiloSottile/mkcert)__ to make a certificate for nginx(Drupal) and solr if you're using Windows with WSL2, makes sure to make the certificates in Powershell running as an Administrator, not within WSL2:
+    1. `127.0.0.1 registry.open.local`
+    1. `127.0.0.1 portal.open.local`
+    1. `127.0.0.1 solr.open.local`
+1. __Use [mkcert](https://github.com/FiloSottile/mkcert)__ to make a certificate for nginx(Drupal, CKAN, and Solr) and solr if you're using Windows with WSL2, makes sure to make the certificates in Powershell running as an Administrator, not within WSL2:
    * __nginx(Drupal):__
       1. cd inside of the `docker/config/nginx/certs` directory.
-      1. Generate the pem chain: `mkcert -cert-file open.local.pem -key-file open.local-key.pem open.local 127.0.0.1 localhost ::1 ::5001 ::5000`
+      1. Generate the pem chain: `mkcert -cert-file open.local.pem -key-file open.local-key.pem open.local registry.open.local portal.open.local solr.open.local 127.0.0.1 localhost ::1 ::5001 ::5000 ::8981 ::8983`
    * __solr:__
       1. cd inside of the `docker/config/solr/certs` directory.
       1. Generate the PKCS12 keystore: `mkcert -pkcs12 -p12-file solr.p12 127.0.0.1 localhost solr ::1 ::8981 ::8983`
 1. __Copy__ `.docker.env.example` to `.docker.env`
 1. __Copy__ `example-drupal-local-settings.php` to `drupal-local-settings.php`
 1. __Copy__ `example-ckan.ini` to `ckan.ini`
+1. __Copy__ `example-portal.ini` to `portal.ini`
+1. __Copy__ `example-registry.ini` to `registry.ini`
 1. __Copy__ `.env.example` to `.env`
    1. You will need to __update__ the `CA_LOCAL_ROOT` variable to the output of this command: `mkcert -CAROOT`
    1. If you need to, change your user and group to match the user and group your WSL2 user or Linux/Mac user employs:

@@ -23,6 +23,8 @@ supervisord.log
 /.ssh/
 drupal-local-settings.php
 ckan.ini
+portal.ini
+registry.ini
 pgrestore.log
 /docker/config/nginx/certs/*.pem
 /docker/config/solr/certs/*.pem

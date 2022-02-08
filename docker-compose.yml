@@ -35,17 +35,17 @@ services:
     volumes:
       - .:/var/www/html
       - ./docker/config/nginx/certs:/usr/share/certs
+      - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ~/.gitconfig:/etc/gitconfig:ro
       - ~/.ssh:/var/www/html/.ssh:ro
       - $SSH_AUTH_SOCK:/ssh-agent:ro
-      #- ./nginx:/var/log/nginx
-      - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
+      #- ./nginx:/var/log/nginx      
       - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
     ports:
       - 443:443
       - 80:80
-  ckan:
-    container_name: og-ckan
+  ckan-registry:
+    container_name: og-ckan-registry
     image: openknowledge/ckan-base:2.8
     build:
       context: .
@@ -69,8 +69,9 @@ services:
       PGUSER: homestead
       PGPASSWORD: secret
       SSH_AUTH_SOCK: /ssh-agent
+      NGINX_UNAME: ckan
       APP_ROOT: /srv/app
-      PATH: '$PATH:/srv/app/ckan/default/bin'
+      PATH: '$PATH:/srv/app/ckan/registry/bin'
       PY_VERSION: 2.7
       PIP_VERSION: 19.2.1
       SETUP_TOOLS_VERSION: 36.1
@@ -78,9 +79,61 @@ services:
       SSL_CERT_FILE: /etc/ssl/mkcert/rootCA.pem
       SSL_CERT_DIR: /etc/ssl/mkcert
       CKAN_CONFIG: /srv/app/ckan/default/ckan.ini
+      PORTAL_CONFIG: /srv/app/ckan/portal/portal.ini
+      REGISTRY_CONFIG: /srv/app/ckan/registry/registry.ini
     volumes:
       - ./docker/config/ckan:/docker-entrypoint.d
       - .:/srv/app
+      - ./docker/config/nginx/certs:/usr/share/certs
+      - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ~/.gitconfig:/etc/gitconfig:ro
+      - ~/.ssh:/srv/app/.ssh:ro
+      - $SSH_AUTH_SOCK:/ssh-agent:ro
+      - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
+    ports:
+      - 5001:5000
+  ckan-portal:
+    container_name: og-ckan-portal
+    image: openknowledge/ckan-base:2.8
+    build:
+      context: .
+      dockerfile: docker/ckan/Dockerfile
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
+    working_dir: /srv/app
+    depends_on:
+      - postgres
+      - solr
+    links:
+      - postgres
+      - solr
+    env_file:
+      - .docker.env
+    environment:
+      CONTAINER_ROLE: ckan
+      PGHOST: postgres
+      PGDATABASE: og_ckan_local
+      PGUSER: homestead
+      PGPASSWORD: secret
+      SSH_AUTH_SOCK: /ssh-agent
+      NGINX_UNAME: ckan
+      APP_ROOT: /srv/app
+      PATH: '$PATH:/srv/app/ckan/portal/bin'
+      PY_VERSION: 2.7
+      PIP_VERSION: 19.2.1
+      SETUP_TOOLS_VERSION: 36.1
+      PYTHONHTTPSVERIFY: 0
+      SSL_CERT_FILE: /etc/ssl/mkcert/rootCA.pem
+      SSL_CERT_DIR: /etc/ssl/mkcert
+      CKAN_CONFIG: /srv/app/ckan/default/ckan.ini
+      PORTAL_CONFIG: /srv/app/ckan/portal/portal.ini
+      REGISTRY_CONFIG: /srv/app/ckan/registry/registry.ini
+    volumes:
+      - ./docker/config/ckan:/docker-entrypoint.d
+      - .:/srv/app
+      - ./docker/config/nginx/certs:/usr/share/certs
+      - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ~/.gitconfig:/etc/gitconfig:ro
       - ~/.ssh:/srv/app/.ssh:ro
       - $SSH_AUTH_SOCK:/ssh-agent:ro
