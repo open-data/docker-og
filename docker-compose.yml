@@ -44,7 +44,7 @@ services:
     ports:
       - 443:443
       - 80:80
-  ckan-registry:
+  ckan:
     container_name: og-ckan-registry
     image: openknowledge/ckan-base:2.8
     build:
@@ -64,6 +64,7 @@ services:
       - .docker.env
     environment:
       CONTAINER_ROLE: ckan
+      CKAN_ROLE: registry
       PGHOST: postgres
       PGDATABASE: og_ckan_local
       PGUSER: homestead
@@ -92,7 +93,9 @@ services:
       - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
     ports:
       - 5001:5000
-  ckan-portal:
+      - 443:443
+      - 80:80
+  ckanapi:
     container_name: og-ckan-portal
     image: openknowledge/ckan-base:2.8
     build:
@@ -112,6 +115,7 @@ services:
       - .docker.env
     environment:
       CONTAINER_ROLE: ckan
+      CKAN_ROLE: portal
       PGHOST: postgres
       PGDATABASE: og_ckan_local
       PGUSER: homestead
@@ -140,6 +144,8 @@ services:
       - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
     ports:
       - 5001:5000
+      - 443:443
+      - 80:80
   postgres:
     container_name: og-postgres
     image: postgres:9.6
@@ -168,6 +174,7 @@ services:
     volumes:
       - ./docker/config/solr/certs:/opt/solr/server/certs
       - ./docker/config/solr/certs/solr.p12:/etc/solr.p12
+      - ./docker/config/nginx/certs:/usr/share/certs
       - ./solr/ckan:/var/solr/data/ckan
       - ./solr/core_ati:/var/solr/data/core_ati
       - ./solr/core_contracts:/var/solr/data/core_contracts
@@ -182,6 +189,7 @@ services:
       - ./docker/config/solr/cores:/var/solr/local_data
     environment:
       - CONTAINER_ROLE=solr
+      - NGINX_UNAME=root
       - SOLR_SSL_ENABLED=true
       - SOLR_SSL_KEY_STORE=/etc/solr.p12
       - SOLR_SSL_KEY_STORE_PASSWORD=changeit
@@ -195,6 +203,8 @@ services:
     user: "root:root"
     ports:
       - 8981:8983
+      - 443:443
+      - 80:80
   # Commented out due to failed nginx bindings
   # mailhog:
   #   container_name: og-mailhog

@@ -6,11 +6,19 @@ RUN /opt/solr/bin/solr stop -all
 
 RUN apt-get update -yqq \
     && apt-get install -y --no-install-recommends \
+        nginx \
         supervisor
 
 # Supervisor
 ADD docker/config/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 ADD docker/config/supervisor/conf.d/*.conf /etc/supervisor/conf.d-available/
+
+# Nginx
+ADD docker/config/nginx/nginx.conf /etc/nginx/nginx.conf
+ADD docker/config/nginx/default /etc/nginx/sites-available/default
+ADD docker/config/nginx/solr.open.local /etc/nginx/sites-available/solr.open.local
+#ADD docker/config/nginx/mailhog /etc/nginx/sites-available/mailhog
+ADD docker/config/nginx/h5bp/ /etc/nginx/h5bp
 
 ADD docker/start.sh /usr/local/bin/start
 

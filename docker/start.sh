@@ -4,6 +4,7 @@ set -e
 
 env=${DOCKER_ENV:-production}
 role=${CONTAINER_ROLE:-app}
+ckanRole=${CKAN_ROLE:-registry}
 
 echo "The Environment is $env"
 
@@ -26,11 +27,15 @@ if [[ "$role" = "drupal" ]]; then
     cp /etc/ssl/mkcert/rootCA.pem /usr/local/share/ca-certificates/mkcert-certificate.crt
     update-ca-certificates
 
+    # remove default nginx server block
+    rm -vf /etc/nginx/sites-enabled/default
+
     # commented out for now
     #ln -sf /etc/nginx/sites-available/mailhog /etc/nginx/sites-enabled/mailhog
 
     # set the nginx user to the environment variable and reload nginx service
     nginx -g "user ${NGINX_UNAME};"
+    nginx -g "daemon off;"
     service nginx reload
 
 elif [[ "$role" = "ckan" ]]; then
@@ -83,15 +88,24 @@ elif [[ "$role" = "ckan" ]]; then
     cp ${APP_ROOT}/portal.ini ${APP_ROOT}/ckan/portal/portal.ini
     cp ${APP_ROOT}/registry.ini ${APP_ROOT}/ckan/registry/registry.ini
 
+    # create storage paths
+    mkdir -p ${APP_ROOT}/ckan/default/storage
+    mkdir -p ${APP_ROOT}/ckan/portal/storage
+    mkdir -p ${APP_ROOT}/ckan/registry/storage
+
     # remove default nginx server block
     rm -vf /etc/nginx/sites-enabled/default
 
     # link nginx server block
-    ln -sf /etc/nginx/sites-available/registry.open.local /etc/nginx/sites-enabled/registry.open.local
-    ln -sf /etc/nginx/sites-available/portal.open.local /etc/nginx/sites-enabled/portal.open.local
+    if [[ "$ckanRole" = "registry" ]]; then
+        ln -sf /etc/nginx/sites-available/registry.open.local /etc/nginx/sites-enabled/registry.open.local
+    elif [[ "$ckanRole" = "portal" ]]; then
+        ln -sf /etc/nginx/sites-available/portal.open.local /etc/nginx/sites-enabled/portal.open.local
+    fi
 
     # set the nginx user to the environment variable and reload nginx service
     nginx -g "user ${NGINX_UNAME};"
+    nginx -g "daemon off;"
     service nginx reload
 
 elif [[ "$role" = "solr" ]]; then
@@ -102,6 +116,17 @@ elif [[ "$role" = "solr" ]]; then
     # copy all local core data to solr data directory
     cp -R /var/solr/local_data/* /var/solr/data
     chown -R solr:root /var/solr/data
+
+    # remove default nginx server block
+    rm -vf /etc/nginx/sites-enabled/default
+
+    # link nginx server block
+    ln -sf /etc/nginx/sites-available/solr.open.local /etc/nginx/sites-enabled/solr.open.local
+
+    # set the nginx user to the environment variable and reload nginx service
+    nginx -g "user ${NGINX_UNAME};"
+    nginx -g "daemon off;"
+    service nginx reload
 
 elif [[ "$role" = "scheduler" ]]; then
 

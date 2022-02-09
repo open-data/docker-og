@@ -1,46 +1,45 @@
-http {
+upstream backend_hosts {
 
-    upstream uwsgi_portal {
+    server ckan:5000;
 
-        server 127.0.0.1:8080;
+}
 
-    }
-
-    upstream uwsgi_registry {
-
-        server 127.0.0.1:8081;
-
-    }
+server {
 
     listen 443 ssl http2;
     listen [::]:443 http2;
 
-    client_max_body_size 100M;
+    server_name  registry.open.local;
 
     ssl_certificate /usr/share/certs/open.local.pem;
     ssl_certificate_key /usr/share/certs/open.local-key.pem;
     ssl_protocols TLSv1.2;
 
+    server_tokens off;
+
+    charset utf-8;
+
     location / {
 
-        proxy_set_header   Host             $host;
-        proxy_set_header   X-Real-IP        $remote_addr;
-        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
-        add_header 'Access-Control-Allow-Origin' '*';
-        # add_header Referrer-Policy no-referrer;
-        include uwsgi_params;
-        # always needed - do not comment!
-        uwsgi_param SCRIPT_NAME "";
-        uwsgi_modifier1 30;
-        # uwsgi_pass unix:<path to uwsgi-registry.sock>;
-        uwsgi_pass uwsgi_registry;
-
-        # don't send extra logging data to clients:
-        uwsgi_hide_header  X-Logextra;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Forwarded-Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header HTTPS "on";
+        proxy_pass_header Server;
+        proxy_pass https://backend_hosts;
+        proxy_buffering off;
+        # proxy_redirect off;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        tcp_nodelay on;
 
     }
 
+    client_max_body_size 100M;
+
     add_header X-Served-By DockerCompose;
-    include h5bp/basic.conf;
+    include h5bp/basic.conf;   
 
 }

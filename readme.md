@@ -121,6 +121,10 @@ Though there is an initialization script to create the databases on the initial 
    
 ## Usage
 
+### Solr
+
+1. __Bring up__ the Solr docker container: `docker-compose up -d solr`
+1. __Open__ a browser into: `https://solr.open.local`
 ### CKAN
 
 1. __Bring up__ the CKAN docker container: `docker-compose up -d ckan`

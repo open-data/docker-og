@@ -819,23 +819,54 @@ function install_ckan {
       fi
 
       mkdir -p ${APP_ROOT}/ckan/default
-      cd ${APP_ROOT}/ckan/default
+      mkdir -p ${APP_ROOT}/ckan/registry
+      mkdir -p ${APP_ROOT}/ckan/portal
 
       # nuke the entire folder
       printf "${SPACER}${Cyan}${INDENT}Pre-nuke the existing CKAN install${NC}${SPACER}"
       # destroy all files
+      cd ${APP_ROOT}/ckan/default
       rm -rf ./*
       if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Remove all files: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Remove all files in ckan/default: OK${NC}${EOL}"
       else
-        printf "${Red}${INDENT}${INDENT}Remove all files: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Remove all files in ckan/default: FAIL${NC}${EOL}"
+      fi
+      cd ${APP_ROOT}/ckan/registry
+      rm -rf ./*
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Remove all files in ckan/registry: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Remove all files in ckan/registry: FAIL${NC}${EOL}"
+      fi
+      cd ${APP_ROOT}/ckan/portal
+      rm -rf ./*
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Remove all files in ckan/portal: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Remove all files in ckan/portal: FAIL${NC}${EOL}"
       fi
       # destroy all hidden files
+      cd ${APP_ROOT}/ckan/default
       rm -rf ./.??*
       if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Remove all hidden files: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Remove all hidden files in ckan/default: OK${NC}${EOL}"
       else
-        printf "${Red}${INDENT}${INDENT}Remove all hidden files: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Remove all hidden files in ckan/default: FAIL${NC}${EOL}"
+      fi
+      cd ${APP_ROOT}/ckan/registry
+      rm -rf ./.??*
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Remove all hidden files in ckan/registry: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Remove all hidden files in ckan/registry: FAIL${NC}${EOL}"
+      fi
+      cd ${APP_ROOT}/ckan/portal
+      rm -rf ./.??*
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Remove all hidden files in ckan/portal: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Remove all hidden files in ckan/portal: FAIL${NC}${EOL}"
       fi
 
       # create virtual environment
@@ -952,6 +983,60 @@ function install_ckan {
         printf "${Green}${INDENT}${INDENT}Set ckan ownership to ckan:ckan: OK${NC}${EOL}"
       else
         printf "${Red}${INDENT}${INDENT}Set ckan ownership to ckan:ckan: FAIL${NC}${EOL}"
+      fi
+
+      # copy default environment into portal and registry environments
+      printf "${SPACER}${Cyan}${INDENT}Copying default Python environment into ckan/portal and ckan/registry${NC}${SPACER}"
+      cp -R ${APP_ROOT}/ckan/default/* ${APP_ROOT}/ckan/portal/
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Copy ckan/default to ckan/portal: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Copy ckan/default to ckan/portal: FAIL${NC}${EOL}"
+      fi
+      cp -R ${APP_ROOT}/ckan/default/* ${APP_ROOT}/ckan/registry/
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Copy ckan/default to ckan/registry: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Copy ckan/default to ckan/registry: FAIL${NC}${EOL}"
+      fi
+
+      # copy portal ckan config file
+      cp ${APP_ROOT}/portal.ini ${APP_ROOT}/ckan/portal/portal.ini
+      printf "${SPACER}${Cyan}${INDENT}Copying local portal CKAN config file to into portal Python environment${NC}${SPACER}"
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Copy portal.ini to ckan/portal/portal.ini: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Copy portal.ini to ckan/portal/portal.ini: FAIL${NC}${EOL}"
+      fi
+
+      # copy registry ckan config file
+      cp ${APP_ROOT}/registry.ini ${APP_ROOT}/ckan/registry/registry.ini
+      printf "${SPACER}${Cyan}${INDENT}Copying local registry CKAN config file to into registry Python environment${NC}${SPACER}"
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Copy registry.ini to ckan/registry/registry.ini: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Copy registry.ini to ckan/registry/registry.ini: FAIL${NC}${EOL}"
+      fi
+
+      # create storage paths
+      printf "${SPACER}${Cyan}${INDENT}Create storage paths${NC}${SPACER}"
+      mkdir -p ${APP_ROOT}/ckan/default/storage
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Create ckan/default/storage: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Create ckan/default/storage: FAIL (directory may already exist)${NC}${EOL}"
+      fi
+      mkdir -p ${APP_ROOT}/ckan/portal/storage
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Create ckan/portal/storage: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Create ckan/portal/storage: FAIL (directory may already exist)${NC}${EOL}"
+      fi
+      mkdir -p ${APP_ROOT}/ckan/registry/storage
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Create ckan/registry/storage: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Create ckan/registry/storage: FAIL (directory may already exist)${NC}${EOL}"
       fi
 
     fi
