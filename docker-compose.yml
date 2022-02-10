@@ -1,26 +1,36 @@
 version: "3"
 services:
-  traefik:
-    image: traefik:v2.6
-    container_name: og-traefik
+  proxy:
+    image: og-proxy
+    container_name: og-proxy
     restart: always
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
     healthcheck:
       test: 
         - CMD
-        - traefik
-        - healthcheck
+        - echo "do heatlh test" 
       interval: 10s
       timeout: 5s
       retries: 3
+    env_file:
+      - .docker.env
+    environment:
+      CONTAINER_ROLE: proxy
+      NGINX_UNAME: www-data
+      SSH_AUTH_SOCK: /ssh-agent
+      SSL_CERT_FILE: /etc/ssl/mkcert/rootCA.pem
+      SSL_CERT_DIR: /etc/ssl/mkcert
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/config/nginx/certs:/usr/share/certs
+      - $SSH_AUTH_SOCK:/ssh-agent:ro
+      - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
     ports:
       - 443:443
       - 80:80
-      - 8080:8080
-    volumes:
-      # TODO: get mkcert certificates loaded into container...
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./docker/config/traefik/traefik.yml:/etc/traefik/traefik.yml
-      - ./docker/config/nginx/certs:/usr/share/certs
   drupal:
     image: og-drupal
     container_name: og-drupal
@@ -32,31 +42,19 @@ services:
         GROUP_ID: ${GROUP_ID:-0}
     working_dir: /var/www/html
     networks:
-      - og-traefik-network
+      - og-proxy-network
       - og-local-network
-    labels:
-      traefik.enable: true
-      traefik.port: 443
-      traefik.docker.network: og-traefik-network
-      traefik.http.routers.drupal.rule: Host(`open.local`)
-      traefik.http.routers.drupal.entrypoints: websecure
-      traefik.http.routers.drupal.tls: true
-      traefik.http.routers.solr.tls.insecureSkipVerify: true
-      traefik.http.routers.drupal.tls.cert: /usr/share/certs/open.local.pem
-      traefik.http.routers.drupal.tls.key: /usr/share/certs/open.local-key.pem
     depends_on:
-      traefik:
+      proxy:
         condition: service_healthy
       postgres:
         condition: service_started
       solr:
         condition: service_started
-      #- mailhog
     links:
-      - traefik
+      - proxy
       - postgres
       - solr
-      #- mailhog
     env_file:
       - .docker.env
     environment:
@@ -91,17 +89,17 @@ services:
         GROUP_ID: ${GROUP_ID:-0}
     working_dir: /srv/app
     networks:
-      - og-traefik-network
+      - og-proxy-network
       - og-local-network
     depends_on:
-      traefik:
+      proxy:
         condition: service_healthy
       postgres:
         condition: service_started
       solr:
         condition: service_started
     links:
-      - traefik
+      - proxy
       - postgres
       - solr
     env_file:
@@ -148,17 +146,17 @@ services:
         GROUP_ID: ${GROUP_ID:-0}
     working_dir: /srv/app
     networks:
-      - og-traefik-network
+      - og-proxy-network
       - og-local-network
     depends_on:
-      traefik:
+      proxy:
         condition: service_healthy
       postgres:
         condition: service_started
       solr:
         condition: service_started
     links:
-      - traefik
+      - proxy
       - postgres
       - solr
     env_file:
@@ -200,8 +198,6 @@ services:
     restart: always
     networks:
       - og-local-network
-    labels:
-      traefik.enable: false
     volumes:
       - ./postgres:/var/lib/postgresql/data
       - ./docker/config/postgres:/docker-entrypoint-initdb.d
@@ -224,23 +220,13 @@ services:
       dockerfile: docker/solr/Dockerfile
     working_dir: /opt/solr
     networks:
-      - og-traefik-network
+      - og-proxy-network
       - og-local-network
-    labels:
-      traefik.enable: true
-      traefik.port: 443
-      traefik.docker.network: og-traefik-network
-      traefik.http.routers.solr.rule: Host(`solr.open.local`)
-      traefik.http.routers.solr.entrypoints: websecure
-      traefik.http.routers.solr.tls: true
-      traefik.http.routers.solr.tls.insecureSkipVerify: true
-      traefik.http.routers.solr.tls.cert: /usr/share/certs/open.local.pem
-      traefik.http.routers.solr.tls.key: /usr/share/certs/open.local-key.pem
     depends_on:
-      traefik:
+      proxy:
         condition: service_healthy
     links:
-      - traefik
+      - proxy
     volumes:
       - ./docker/config/solr/certs:/opt/solr/server/certs
       - ./docker/config/solr/certs/solr.p12:/etc/solr.p12
@@ -273,13 +259,6 @@ services:
     user: "root:root"
     ports:
       - 8981:8983
-  # Commented out due to failed nginx bindings
-  # mailhog:
-  #   container_name: og-mailhog
-  #   image: mailhog/mailhog:v1.0.0
-  #   ports:
-  #     - "1025:1025"
-  #     - "8025:8025"
 
 volumes:
   postgres:
@@ -288,7 +267,7 @@ volumes:
     driver: "local"
 
 networks:
-  og-traefik-network:
+  og-proxy-network:
     external : true
   og-local-network:
     external : false

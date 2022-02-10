@@ -21,7 +21,7 @@
 ## Prebuild
 
 1. __Create__ new Docker networks: 
-   1. `docker network create og-traefik-network`
+   1. `docker network create og-proxy-network`
    1. `docker network create og-local-network`
 1. __Create__ the following hosts file(`/etc/hosts`) entries:
     1. `127.0.0.1 open.local`

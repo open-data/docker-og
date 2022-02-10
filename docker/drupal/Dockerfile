@@ -6,7 +6,6 @@ ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS=0 \
 
 RUN apt-get update -yqq \
     && apt-get install -y --no-install-recommends \
-        nginx \
         supervisor \
         procps \
         libpng-dev \
@@ -52,13 +51,6 @@ ADD docker/config/php/php-fpm.d/docker.conf /usr/local/etc/php-fpm.d/zz-docker.c
 # Supervisor
 ADD docker/config/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 ADD docker/config/supervisor/conf.d/*.conf /etc/supervisor/conf.d-available/
-
-# Nginx
-ADD docker/config/nginx/nginx.conf /etc/nginx/nginx.conf
-ADD docker/config/nginx/default /etc/nginx/sites-available/default
-ADD docker/config/nginx/open.local /etc/nginx/sites-available/open.local
-#ADD docker/config/nginx/mailhog /etc/nginx/sites-available/mailhog
-ADD docker/config/nginx/h5bp/ /etc/nginx/h5bp
 
 ADD docker/start.sh /usr/local/bin/start
 

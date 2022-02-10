@@ -13,10 +13,7 @@ rm -rf /usr/local/etc/php/conf.d/{docker-php-ext-xdebug.ini,xdebug.ini}
 
 echo "The role is $role"
 
-if [[ "$role" = "drupal" ]]; then
-
-    # link drupal supervisord config
-    ln -sf /etc/supervisor/conf.d-available/drupal.conf /etc/supervisor/conf.d/drupal.conf
+if [[ "$role" = "proxy" ]]; then
 
     # link drupal nginx server block
     ln -sf /etc/nginx/sites-available/open.local /etc/nginx/sites-enabled/open.local
@@ -30,13 +27,21 @@ if [[ "$role" = "drupal" ]]; then
     # remove default nginx server block
     rm -vf /etc/nginx/sites-enabled/default
 
-    # commented out for now
-    #ln -sf /etc/nginx/sites-available/mailhog /etc/nginx/sites-enabled/mailhog
-
     # set the nginx user to the environment variable and reload nginx service
     nginx -g "user ${NGINX_UNAME};"
     nginx -g "daemon off;"
     service nginx reload
+
+elif [[ "$role" = "drupal" ]]; then
+
+    # link drupal supervisord config
+    ln -sf /etc/supervisor/conf.d-available/drupal.conf /etc/supervisor/conf.d/drupal.conf
+
+    # link mkcert certificate to the truststore
+    ln -sf /etc/ssl/mkcert/rootCA.pem /etc/ssl/certs/mkcert-certificate.pem
+    mkdir -p /usr/local/share/ca-certificates
+    cp /etc/ssl/mkcert/rootCA.pem /usr/local/share/ca-certificates/mkcert-certificate.crt
+    update-ca-certificates
 
 elif [[ "$role" = "ckan" ]]; then
 
@@ -93,21 +98,6 @@ elif [[ "$role" = "ckan" ]]; then
     mkdir -p ${APP_ROOT}/ckan/portal/storage
     mkdir -p ${APP_ROOT}/ckan/registry/storage
 
-    # remove default nginx server block
-    rm -vf /etc/nginx/sites-enabled/default
-
-    # link nginx server block
-    if [[ "$ckanRole" = "registry" ]]; then
-        ln -sf /etc/nginx/sites-available/registry.open.local /etc/nginx/sites-enabled/registry.open.local
-    elif [[ "$ckanRole" = "portal" ]]; then
-        ln -sf /etc/nginx/sites-available/portal.open.local /etc/nginx/sites-enabled/portal.open.local
-    fi
-
-    # set the nginx user to the environment variable and reload nginx service
-    nginx -g "user ${NGINX_UNAME};"
-    nginx -g "daemon off;"
-    service nginx reload
-
 elif [[ "$role" = "solr" ]]; then
 
     # link solr supervisord config
@@ -117,32 +107,15 @@ elif [[ "$role" = "solr" ]]; then
     cp -R /var/solr/local_data/* /var/solr/data
     chown -R solr:root /var/solr/data
 
-    # remove default nginx server block
-    rm -vf /etc/nginx/sites-enabled/default
-
-    # link nginx server block
-    ln -sf /etc/nginx/sites-available/solr.open.local /etc/nginx/sites-enabled/solr.open.local
-
-    # set the nginx user to the environment variable and reload nginx service
-    nginx -g "user ${NGINX_UNAME};"
-    nginx -g "daemon off;"
-    service nginx reload
-
 elif [[ "$role" = "scheduler" ]]; then
 
+    # link scheduler supervisord config
     ln -sf /etc/supervisor/conf.d-available/scheduler.conf /etc/supervisor/conf.d/scheduler.conf
-
-    # while [ true ]
-    # do
-    #     php /var/www/html/artisan schedule:run --verbose --no-interaction &
-    #     sleep 60
-    # done
 
 elif [[ "$role" = "queue" ]]; then
 
+    # link queue supervisord config
     ln -sf /etc/supervisor/conf.d-available/queue.conf /etc/supervisor/conf.d/queue.conf
-    # echo "Running the queue"
-    # exec php /var/www/html/artisan queue:work --verbose --tries=1 --timeout=90
 
 else
 
