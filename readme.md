@@ -20,6 +20,9 @@
 
 ## Prebuild
 
+1. __Create__ new Docker networks: 
+   1. `docker network create og-traefik-network`
+   1. `docker network create og-local-network`
 1. __Create__ the following hosts file(`/etc/hosts`) entries:
     1. `127.0.0.1 open.local`
     1. `127.0.0.1 registry.open.local`
@@ -46,9 +49,11 @@
       1. `drupal_db.pgdump` <- the database backup for the Drupal site.
       1. `drupal_files.tgz` <- the compressed folder of the public files from the Drupal site.
    * __For CKAN:__
-      1. `ckan_db.pgdump` <- the database backup for the CKAN Core app.
+      1. `ckan_portal_db.pgdump` <- the database backup for the CKAN Portal app.
+      1. `ckan_portal_ds_db.pgdump` <- the database backup for the CKAN Portal Datastore.
       1. `ckan_registry_db.pgdump` <- the database backup for the CKAN Registry app.
       1. `ckan_registry_ds_db.pgdump` <- the database backup for the CKAN Registry Datastore.
+   * __For Solr:__
       1. `inventory.csv` <- Open Data Inventory data set csv file.
 1. __Create__ a folder in the root of this repository called `postgres`. This folder will hold the data for imported databases to persist during Docker container restarts.
 1. __Create__ a folder in the root of this repository called `solr`. This folder will hold the data for imported indices to persist during Docker container restarts.
@@ -105,7 +110,10 @@ Though there is an initialization script to create the databases on the initial 
    1. __Select__ `CKAN`
    1. __Select__ what you want to install for CKAN:
       * `SSH (Required for Repositories)`: will install and configure the ssh command along with the ssh-agent and keys.
-      * `Core Database`: will destroy the current `og_ckan_local` database and import a fresh one from `backup/ckan_db.pgdump`
+      * `Portal Database`: will destroy the current `og_ckan_portal_local` database and import a fresh one from `backup/ckan_portal_db.pgdump`
+         * The database for CKAN is large, so importing the database will take a long time.
+         * You may recieve warnings during the pg_restore: `out of shared memory`, this can be ignored, the import will just take longer.
+      * `Portal Datastore Database`: will destroy the current `og_ckan_portal_ds_local` database and import a fresh one from `backup/ckan_portal_ds_db.pgdump`
          * The database for CKAN is large, so importing the database will take a long time.
          * You may recieve warnings during the pg_restore: `out of shared memory`, this can be ignored, the import will just take longer.
       * `Registry Database`: will destroy the current `og_ckan_registry_local` database and import a fresh one from `backup/ckan_registry_db.pgdump`
@@ -130,5 +138,5 @@ Though there is an initialization script to create the databases on the initial 
 1. __Bring up__ the CKAN docker container: `docker-compose up -d ckan`
 1. __Open a shell__ into the container: `docker-compose exec ckan bash`
 1. __Build__ the indices:
-   1. __Inventory:__ `paster --plugin=ckanext-canada inventory rebuild --lenient -c $CKAN_CONFIG -f /srv/app/backup/inventory.csv`
+   1. __Inventory:__ `paster --plugin=ckanext-canada inventory rebuild --lenient -c $REGISTRY_CONFIG -f /srv/app/backup/inventory.csv`
    

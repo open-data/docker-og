@@ -29,7 +29,8 @@ installLocalUser_Drupal='false'
 
 # ckan flags
 installSSH_CKAN='false'
-installDB_CKAN='false'
+installDB_Portal_CKAN='false'
+installDB_Portal_DS_CKAN='false'
 installDB_Registry_CKAN='false'
 installDB_Registry_DS_CKAN='false'
 installRepos_CKAN='false'
@@ -560,7 +561,8 @@ function install_ckan {
   # Options for the user to select from
   options=(
     "SSH (Required for Repositories)" 
-    "Core Database" 
+    "Portal Database" 
+    "Portal Datastore Database" 
     "Registry Database" 
     "Registry Datastore Database" 
     "Repositories (Installs them into Python venv)" 
@@ -581,10 +583,10 @@ function install_ckan {
       installSSH_CKAN='true'
       ;;
 
-    # "Core Database"
+    # "Portal Database"
     (1) 
       exitScript='false'
-      installDB_CKAN='true'
+      installDB_Portal_CKAN='true'
       ;;
 
     # "Registry Database"
@@ -593,29 +595,36 @@ function install_ckan {
       installDB_Registry_CKAN='true'
       ;;
 
+    # "Portal Datastore Database"
+    (3)
+      exitScript='false'
+      installDB_Registry_DS_CKAN='true'
+      ;;
+
     # "Registry Datastore Database"
-    (3) 
+    (4) 
       exitScript='false'
       installDB_Registry_DS_CKAN='true'
       ;;
 
     # "Repositories (Installs them into Python venv)"
-    (4) 
+    (5) 
       exitScript='false'
       installRepos_CKAN='true'
       ;;
 
     # "Set File Permissions"
-    (5)
+    (6)
       exitScript='false'
       installFilePermissions_CKAN='true'
       ;;
 
     # "All"
-    (6) 
+    (7) 
       exitScript='false'
       installSSH_CKAN='true'
-      installDB_CKAN='true'
+      installDB_Portal_CKAN='true'
+      installDB_Portal_DS_CKAN='true'
       installDB_Registry_CKAN='true'
       installDB_Registry_DS_CKAN='true'
       installRepos_CKAN='true'
@@ -623,7 +632,7 @@ function install_ckan {
       ;;
 
     # "Exit"
-    (7)
+    (8)
       exitScript='true'
       ;;
 
@@ -637,17 +646,39 @@ function install_ckan {
     #
     # Confirm CKAN core database destruction
     #
-    if [[ $installDB_CKAN == "true" ]]; then
+    if [[ $installDB_Portal_CKAN == "true" ]]; then
 
-      read -r -p $'\n\n\033[0;31m    Are you sure you want delete the existing CKAN Core database and import a fresh copy? [y/N]:\033[0;0m    ' response
+      read -r -p $'\n\n\033[0;31m    Are you sure you want delete the existing CKAN Portal database and import a fresh copy? [y/N]:\033[0;0m    ' response
 
       if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
 
-        installDB_CKAN='true'
+        installDB_Portal_CKAN='true'
 
       else
 
-        installDB_CKAN='false'
+        installDB_Portal_CKAN='false'
+
+      fi
+
+    fi
+    # END
+    # Confirm CKAN core database destruction
+    # END
+
+    #
+    # Confirm CKAN core database destruction
+    #
+    if [[ $installDB_Portal_DS_CKAN == "true" ]]; then
+
+      read -r -p $'\n\n\033[0;31m    Are you sure you want delete the existing CKAN Portal Datastore database and import a fresh copy? [y/N]:\033[0;0m    ' response
+
+      if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+
+        installDB_Portal_DS_CKAN='true'
+
+      else
+
+        installDB_Portal_DS_CKAN='false'
 
       fi
 
@@ -746,20 +777,37 @@ function install_ckan {
     # END
 
     #
-    # Destroy and re-import core database
+    # Destroy and re-import portal database
     #
-    if [[ $installDB_CKAN == "true" ]]; then
+    if [[ $installDB_Portal_CKAN == "true" ]]; then
 
-      printf "${SPACER}${Cyan}${INDENT}Drop the og_ckan_local DB if it exists and then recreate it blank/clean${NC}${SPACER}"
-      psql -eb --dbname=og_ckan_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
+      printf "${SPACER}${Cyan}${INDENT}Drop the og_ckan_portal_local DB if it exists and then recreate it blank/clean${NC}${SPACER}"
+      psql -eb --dbname=og_ckan_portal_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_portal_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
 
       # import the database
-      printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into og_ckan_local${NC}${SPACER}"
-      pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=$PGDATABASE --username=$PGUSER ${APP_ROOT}/backup/ckan_db.pgdump
+      printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into og_ckan_portal_local${NC}${SPACER}"
+      pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=og_ckan_portal_local --username=$PGUSER ${APP_ROOT}/backup/ckan_portal_db.pgdump
 
     fi
     # END
-    # Destroy and re-import core database
+    # Destroy and re-import portal database
+    # END
+
+    #
+    # Destroy and re-import portal datastore database
+    #
+    if [[ $installDB_Portal_DS_CKAN == "true" ]]; then
+
+      printf "${SPACER}${Cyan}${INDENT}Drop the og_ckan_portal_ds_local DB if it exists and then recreate it blank/clean${NC}${SPACER}"
+      psql -eb --dbname=og_ckan_portal_ds_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_portal_ds_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
+
+      # import the database
+      printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into og_ckan_portal_ds_local${NC}${SPACER}"
+      pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=og_ckan_portal_ds_local --username=$PGUSER ${APP_ROOT}/backup/ckan_portal_ds_db.pgdump
+
+    fi
+    # END
+    # Destroy and re-import portal datastore database
     # END
 
     #
@@ -1087,15 +1135,18 @@ function install_databases {
     CREATE USER homestead_reader;
     ALTER USER homestead_reader PASSWORD 'secret';
     CREATE DATABASE og_drupal_local;
-    CREATE DATABASE og_ckan_local;
+    CREATE DATABASE og_ckan_portal_local;
+    CREATE DATABASE og_ckan_portal_ds_local;
     CREATE DATABASE og_ckan_registry_local;
     CREATE DATABASE og_ckan_registry_ds_local;
     GRANT ALL PRIVILEGES ON DATABASE og_drupal_local TO homestead;
-    GRANT ALL PRIVILEGES ON DATABASE og_ckan_local TO homestead;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_local TO homestead;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_ds_local TO homestead;
     GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_local TO homestead;
     GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_ds_local TO homestead;
     GRANT ALL PRIVILEGES ON DATABASE og_drupal_local TO homestead_reader;
-    GRANT ALL PRIVILEGES ON DATABASE og_ckan_local TO homestead_reader;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_local TO homestead_reader;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_ds_local TO homestead_reader;
     GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_local TO homestead_reader;
     GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_ds_local TO homestead_reader;
 EOSQL
