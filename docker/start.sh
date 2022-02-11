@@ -14,6 +14,49 @@ rm -rf /usr/local/etc/php/conf.d/{docker-php-ext-xdebug.ini,xdebug.ini}
 echo "The role is $role"
 
 if [[ "$role" = "proxy" ]]; then
+#
+# Proxy
+#
+
+    # link proxy supervisord config
+    ln -sf /etc/supervisor/conf.d-available/proxy.conf /etc/supervisor/conf.d/proxy.conf
+
+    mkdir -p /etc/nginx/sites-available
+    mkdir -p /etc/nginx/sites-enabled
+
+    # remove default server block
+    rm -vf /etc/nginx/sites-enabled/default
+
+    # link proxy nginx server block
+    ln -sf /etc/nginx/sites-available/proxy /etc/nginx/sites-enabled/proxy
+
+    # link mkcert certificate to the truststore
+    ln -sf /etc/ssl/mkcert/rootCA.pem /etc/ssl/certs/mkcert-certificate.pem
+    mkdir -p /usr/local/share/ca-certificates
+    cp /etc/ssl/mkcert/rootCA.pem /usr/local/share/ca-certificates/mkcert-certificate.crt
+    update-ca-certificates
+
+    # set the nginx user to the environment variable and reload nginx service
+    nginx -g "user ${NGINX_UNAME};"
+    nginx -g "daemon off;"
+    service nginx reload
+
+# END
+# Proxy
+# END
+elif [[ "$role" = "drupal" ]]; then
+#
+# Drupal
+#
+
+    # link drupal supervisord config
+    ln -sf /etc/supervisor/conf.d-available/drupal.conf /etc/supervisor/conf.d/drupal.conf
+
+    mkdir -p /etc/nginx/sites-available
+    mkdir -p /etc/nginx/sites-enabled
+
+    # remove default server block
+    rm -vf /etc/nginx/sites-enabled/default
 
     # link drupal nginx server block
     ln -sf /etc/nginx/sites-available/open.local /etc/nginx/sites-enabled/open.local
@@ -24,27 +67,18 @@ if [[ "$role" = "proxy" ]]; then
     cp /etc/ssl/mkcert/rootCA.pem /usr/local/share/ca-certificates/mkcert-certificate.crt
     update-ca-certificates
 
-    # remove default nginx server block
-    rm -vf /etc/nginx/sites-enabled/default
-
     # set the nginx user to the environment variable and reload nginx service
     nginx -g "user ${NGINX_UNAME};"
     nginx -g "daemon off;"
     service nginx reload
 
-elif [[ "$role" = "drupal" ]]; then
-
-    # link drupal supervisord config
-    ln -sf /etc/supervisor/conf.d-available/drupal.conf /etc/supervisor/conf.d/drupal.conf
-
-    # link mkcert certificate to the truststore
-    ln -sf /etc/ssl/mkcert/rootCA.pem /etc/ssl/certs/mkcert-certificate.pem
-    mkdir -p /usr/local/share/ca-certificates
-    cp /etc/ssl/mkcert/rootCA.pem /usr/local/share/ca-certificates/mkcert-certificate.crt
-    update-ca-certificates
-
+# END
+# Drupal
+# END
 elif [[ "$role" = "ckan" ]]; then
-
+#
+# CKAN Registry & Portal
+#
     # link ckan supervisord config
     ln -sf /etc/supervisor/conf.d-available/ckan.conf /etc/supervisor/conf.d/ckan.conf
 
@@ -98,7 +132,13 @@ elif [[ "$role" = "ckan" ]]; then
     mkdir -p ${APP_ROOT}/ckan/portal/storage
     mkdir -p ${APP_ROOT}/ckan/registry/storage
 
+# END
+# CKAN Registry & Portal
+# END
 elif [[ "$role" = "solr" ]]; then
+#
+# Solr
+#
 
     # link solr supervisord config
     ln -sf /etc/supervisor/conf.d-available/solr.conf /etc/supervisor/conf.d/solr.conf
@@ -107,6 +147,9 @@ elif [[ "$role" = "solr" ]]; then
     cp -R /var/solr/local_data/* /var/solr/data
     chown -R solr:root /var/solr/data
 
+# END
+# Solr
+# END
 elif [[ "$role" = "scheduler" ]]; then
 
     # link scheduler supervisord config

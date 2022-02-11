@@ -4,8 +4,10 @@ ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS=0 \
     PHP_OPCACHE_MAX_ACCELERATED_FILES=9000 \
     PHP_OPCACHE_MEMORY_CONSUMPTION=128
 
-RUN apt-get update -yqq \
+RUN docker-php-source extract \
+    && apt-get update -yqq \
     && apt-get install -y --no-install-recommends \
+        nginx \
         supervisor \
         procps \
         libpng-dev \
@@ -33,10 +35,11 @@ RUN apt-get update -yqq \
     && docker-php-ext-configure intl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
-    && docker-php-ext-install pdo pdo_pgsql pgsql gd zip exif bcmath intl pcntl \
+    && docker-php-ext-install sockets pdo pdo_pgsql pgsql gd zip exif bcmath intl pcntl \
     && pecl install xdebug \
     && pecl install redis \
-    && docker-php-ext-enable xdebug opcache redis pdo_pgsql pgsql
+    && docker-php-ext-enable sockets xdebug opcache redis pdo_pgsql pgsql \
+    && docker-php-source delete
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php \
@@ -52,6 +55,11 @@ ADD docker/config/php/php-fpm.d/docker.conf /usr/local/etc/php-fpm.d/zz-docker.c
 ADD docker/config/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 ADD docker/config/supervisor/conf.d/*.conf /etc/supervisor/conf.d-available/
 
+# Nginx
+ADD docker/config/nginx/nginx.conf /etc/nginx/nginx.conf
+ADD docker/config/nginx/open.local /etc/nginx/sites-available/open.local
+ADD docker/config/nginx/h5bp/ /etc/nginx/h5bp
+
 ADD docker/start.sh /usr/local/bin/start
 
 # Create homestead user
@@ -61,6 +69,7 @@ RUN useradd homestead
 RUN mkdir -p /var/www/html
 RUN chown -R www-data:www-data /var/www/html \
     && chmod +x /usr/local/bin/start \
+    && chmod +w /usr/local/var/run \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 

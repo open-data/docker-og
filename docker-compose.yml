@@ -1,19 +1,23 @@
 version: "3"
 services:
+#
+# Proxy
+#
   proxy:
     image: og-proxy
     container_name: og-proxy
-    restart: always
     build:
       context: .
       dockerfile: docker/nginx/Dockerfile
     healthcheck:
-      test: 
-        - CMD
-        - echo "do heatlh test" 
+      test: service nginx status || exit 1
       interval: 10s
       timeout: 5s
       retries: 3
+    networks:
+      og-proxy-network:
+      og-local-network:
+        ipv4_address: 172.0.0.3
     env_file:
       - .docker.env
     environment:
@@ -28,9 +32,16 @@ services:
       - ./docker/config/nginx/certs:/usr/share/certs
       - $SSH_AUTH_SOCK:/ssh-agent:ro
       - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
+      # - ./nginx:/var/log/nginx
     ports:
       - 443:443
       - 80:80
+# END
+# Proxy
+# END
+#
+# Drupal
+#
   drupal:
     image: og-drupal
     container_name: og-drupal
@@ -42,8 +53,9 @@ services:
         GROUP_ID: ${GROUP_ID:-0}
     working_dir: /var/www/html
     networks:
-      - og-proxy-network
-      - og-local-network
+      og-proxy-network:
+      og-local-network:
+        ipv4_address: 172.0.0.6
     depends_on:
       proxy:
         condition: service_healthy
@@ -75,9 +87,18 @@ services:
       - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ~/.gitconfig:/etc/gitconfig:ro
       - ~/.ssh:/var/www/html/.ssh:ro
-      - $SSH_AUTH_SOCK:/ssh-agent:ro
-      #- ./nginx:/var/log/nginx      
+      - $SSH_AUTH_SOCK:/ssh-agent:ro      
       - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
+      # TODO: solve issue with the php-fpm socket for the fastcgi_pass
+      - ./nginx:/var/log/nginx
+    ports:
+      - 4430:4430
+# END
+# Drupal
+# END
+#
+# CKAN Registry
+#
   ckan:
     container_name: og-ckan-registry
     image: openknowledge/ckan-base:2.8
@@ -89,8 +110,9 @@ services:
         GROUP_ID: ${GROUP_ID:-0}
     working_dir: /srv/app
     networks:
-      - og-proxy-network
-      - og-local-network
+      og-proxy-network:
+      og-local-network:
+        ipv4_address: 172.0.0.7
     depends_on:
       proxy:
         condition: service_healthy
@@ -135,6 +157,12 @@ services:
       - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
     ports:
       - 5001:5000
+# END
+# CKAN Registry
+# END
+#
+# CKAN Portal
+#
   ckanapi:
     container_name: og-ckan-portal
     image: openknowledge/ckan-base:2.8
@@ -146,8 +174,9 @@ services:
         GROUP_ID: ${GROUP_ID:-0}
     working_dir: /srv/app
     networks:
-      - og-proxy-network
-      - og-local-network
+      og-proxy-network:
+      og-local-network:
+        ipv4_address: 172.0.0.8
     depends_on:
       proxy:
         condition: service_healthy
@@ -192,12 +221,19 @@ services:
       - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
     ports:
       - 5002:5000
+# END
+# CKAN Portal
+# END
+#
+# Postgres
+#
   postgres:
     container_name: og-postgres
     image: postgres:9.6
     restart: always
     networks:
-      - og-local-network
+      og-local-network:
+        ipv4_address: 172.0.0.9
     volumes:
       - ./postgres:/var/lib/postgresql/data
       - ./docker/config/postgres:/docker-entrypoint-initdb.d
@@ -211,6 +247,12 @@ services:
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
     ports:
       - 15438:5432
+# END
+# Postgres
+# END
+#
+# Solr
+#
   solr:
     container_name: og-solr
     image: solr
@@ -220,8 +262,9 @@ services:
       dockerfile: docker/solr/Dockerfile
     working_dir: /opt/solr
     networks:
-      - og-proxy-network
-      - og-local-network
+      og-proxy-network:
+      og-local-network:
+        ipv4_address: 172.0.0.10
     depends_on:
       proxy:
         condition: service_healthy
@@ -259,6 +302,9 @@ services:
     user: "root:root"
     ports:
       - 8981:8983
+# END
+# Solr
+# END
 
 volumes:
   postgres:
@@ -271,3 +317,8 @@ networks:
     external : true
   og-local-network:
     external : false
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.0.0.0/16
+          gateway: 172.0.0.1
