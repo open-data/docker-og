@@ -42,7 +42,7 @@ server {
 
         include snippets/fastcgi-php.conf;
         fastcgi_pass unix:/usr/local/var/run/php-fpm.sock;
-        fastcgi_read_timeout 600;
+        fastcgi_read_timeout 3200;
 
     }
 

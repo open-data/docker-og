@@ -8,6 +8,8 @@ RUN docker-php-source extract \
     && apt-get update -yqq \
     && apt-get install -y --no-install-recommends \
         nginx \
+        libfreetype6-dev \
+        libjpeg62-turbo-dev \
         supervisor \
         procps \
         libpng-dev \

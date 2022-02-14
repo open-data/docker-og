@@ -87,10 +87,9 @@ services:
       - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ~/.gitconfig:/etc/gitconfig:ro
       - ~/.ssh:/var/www/html/.ssh:ro
-      - $SSH_AUTH_SOCK:/ssh-agent:ro      
+      - $SSH_AUTH_SOCK:/ssh-agent:ro
       - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
-      # TODO: solve issue with the php-fpm socket for the fastcgi_pass
-      - ./nginx:/var/log/nginx
+      # - ./nginx:/var/log/nginx
     ports:
       - 4430:4430
 # END

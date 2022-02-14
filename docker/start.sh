@@ -41,6 +41,10 @@ if [[ "$role" = "proxy" ]]; then
     nginx -g "daemon off;"
     service nginx reload
 
+    # start supervisord service
+    echo "Executing supervisord"
+    supervisord -c /etc/supervisor/supervisord.conf
+
 # END
 # Proxy
 # END
@@ -71,6 +75,11 @@ elif [[ "$role" = "drupal" ]]; then
     nginx -g "user ${NGINX_UNAME};"
     nginx -g "daemon off;"
     service nginx reload
+
+    #TODO: solve issue with the supervisord not starting...
+    # start supervisord service
+    echo "Executing supervisord"
+    supervisord -c /etc/supervisor/supervisord.conf
 
 # END
 # Drupal
@@ -132,6 +141,10 @@ elif [[ "$role" = "ckan" ]]; then
     mkdir -p ${APP_ROOT}/ckan/portal/storage
     mkdir -p ${APP_ROOT}/ckan/registry/storage
 
+    # start supervisord service
+    echo "Executing supervisord"
+    supervisord -c /etc/supervisor/supervisord.conf
+
 # END
 # CKAN Registry & Portal
 # END
@@ -147,6 +160,10 @@ elif [[ "$role" = "solr" ]]; then
     cp -R /var/solr/local_data/* /var/solr/data
     chown -R solr:root /var/solr/data
 
+    # start supervisord service
+    echo "Executing supervisord"
+    supervisord -c /etc/supervisor/supervisord.conf
+
 # END
 # Solr
 # END
@@ -155,10 +172,18 @@ elif [[ "$role" = "scheduler" ]]; then
     # link scheduler supervisord config
     ln -sf /etc/supervisor/conf.d-available/scheduler.conf /etc/supervisor/conf.d/scheduler.conf
 
+    # start supervisord service
+    echo "Executing supervisord"
+    supervisord -c /etc/supervisor/supervisord.conf
+
 elif [[ "$role" = "queue" ]]; then
 
     # link queue supervisord config
     ln -sf /etc/supervisor/conf.d-available/queue.conf /etc/supervisor/conf.d/queue.conf
+
+    # start supervisord service
+    echo "Executing supervisord"
+    supervisord -c /etc/supervisor/supervisord.conf
 
 else
 
@@ -166,6 +191,3 @@ else
     exit 1
 
 fi
-
-echo "Executing supervisord"
-exec supervisord -c /etc/supervisor/supervisord.conf
