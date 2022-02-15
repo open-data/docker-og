@@ -17,7 +17,7 @@ HAIR='\033[0m'
 
 printf "${Cyan}The Environment is ${BOLD}$env${HAIR}${NC}${EOL}"
 
-printf "${Yellow}${HAIR}Removing XDebug${HAIR}${NC}${EOL}"
+printf "${Yellow}Removing XDebug${NC}${EOL}"
 rm -rf /usr/local/etc/php/conf.d/{docker-php-ext-xdebug.ini,xdebug.ini}
 
 printf "${Cyan}The role is ${BOLD}$role${HAIR}${NC}${EOL}"
@@ -120,7 +120,7 @@ elif [[ "$role" = "ckan" ]]; then
     # copy mkcert CA root to the python CA root
     cp /etc/ssl/mkcert/rootCA.pem /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem
     if [[ $? -eq 0 ]]; then
-        printf "${Green}opied /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}"
+        printf "${Green}Copied /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}"
     else
         printf "${Red}FAILED to copy /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}"
     fi
@@ -158,7 +158,7 @@ elif [[ "$role" = "solr" ]]; then
     ln -sf /etc/supervisor/conf.d-available/solr.conf /etc/supervisor/conf.d/solr.conf
 
     # copy all local core data to solr data directory
-    printf "${Green}Load local cores${NC}${EOL}"
+    printf "${Green}Loading local cores${NC}${EOL}"
     cp -R /var/solr/local_data/* /var/solr/data
     chown -R solr:root /var/solr/data
 
