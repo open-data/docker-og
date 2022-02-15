@@ -6,12 +6,21 @@ env=${DOCKER_ENV:-production}
 role=${CONTAINER_ROLE:-app}
 ckanRole=${CKAN_ROLE:-registry}
 
-echo "The Environment is $env"
+Cyan='\033[0;36m'
+Yellow='\033[1;33m'
+Red='\033[0;31m'
+Green='\033[0;32m'
+NC='\033[0;0m'
+EOL='\n'
+BOLD='\033[1m'
+HAIR='\033[0m'
 
-echo "Removing XDebug"
+printf "${Cyan}The Environment is ${BOLD}$env${HAIR}${NC}${EOL}"
+
+printf "${Yellow}${HAIR}Removing XDebug${HAIR}${NC}${EOL}"
 rm -rf /usr/local/etc/php/conf.d/{docker-php-ext-xdebug.ini,xdebug.ini}
 
-echo "The role is $role"
+printf "${Cyan}The role is ${BOLD}$role${HAIR}${NC}${EOL}"
 
 if [[ "$role" = "proxy" ]]; then
 #
@@ -31,18 +40,14 @@ if [[ "$role" = "proxy" ]]; then
     ln -sf /etc/nginx/sites-available/proxy /etc/nginx/sites-enabled/proxy
 
     # link mkcert certificate to the truststore
+    printf "${Green}Adding mkcert to truststores${NC}${EOL}"
     ln -sf /etc/ssl/mkcert/rootCA.pem /etc/ssl/certs/mkcert-certificate.pem
     mkdir -p /usr/local/share/ca-certificates
     cp /etc/ssl/mkcert/rootCA.pem /usr/local/share/ca-certificates/mkcert-certificate.crt
     update-ca-certificates
 
-    # set the nginx user to the environment variable and reload nginx service
-    nginx -g "user ${NGINX_UNAME};"
-    nginx -g "daemon off;"
-    service nginx reload
-
     # start supervisord service
-    echo "Executing supervisord"
+    printf "${Green}Executing supervisord${NC}${EOL}"
     supervisord -c /etc/supervisor/supervisord.conf
 
 # END
@@ -66,19 +71,14 @@ elif [[ "$role" = "drupal" ]]; then
     ln -sf /etc/nginx/sites-available/open.local /etc/nginx/sites-enabled/open.local
 
     # link mkcert certificate to the truststore
+    printf "${Green}Adding mkcert to truststores${NC}${EOL}"
     ln -sf /etc/ssl/mkcert/rootCA.pem /etc/ssl/certs/mkcert-certificate.pem
     mkdir -p /usr/local/share/ca-certificates
     cp /etc/ssl/mkcert/rootCA.pem /usr/local/share/ca-certificates/mkcert-certificate.crt
     update-ca-certificates
 
-    # set the nginx user to the environment variable and reload nginx service
-    nginx -g "user ${NGINX_UNAME};"
-    nginx -g "daemon off;"
-    service nginx reload
-
-    #TODO: solve issue with the supervisord not starting...
     # start supervisord service
-    echo "Executing supervisord"
+    printf "${Green}Executing supervisord${NC}${EOL}"
     supervisord -c /etc/supervisor/supervisord.conf
 
 # END
@@ -92,6 +92,7 @@ elif [[ "$role" = "ckan" ]]; then
     ln -sf /etc/supervisor/conf.d-available/ckan.conf /etc/supervisor/conf.d/ckan.conf
 
     # link mkcert certificate to the truststore
+    printf "${Green}Adding mkcert to truststores${NC}${EOL}"
     ln -sf /etc/ssl/mkcert/rootCA.pem /etc/ssl/certs/mkcert-certificate.pem
     mkdir -p /usr/local/share/ca-certificates
     cp /etc/ssl/mkcert/rootCA.pem /usr/local/share/ca-certificates/mkcert-certificate.crt
@@ -119,9 +120,9 @@ elif [[ "$role" = "ckan" ]]; then
     # copy mkcert CA root to the python CA root
     cp /etc/ssl/mkcert/rootCA.pem /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem
     if [[ $? -eq 0 ]]; then
-        echo "Copied /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem"
+        printf "${Green}opied /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}"
     else
-        printf "FAILED to copy /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem"
+        printf "${Red}FAILED to copy /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}"
     fi
 
     # exit python venv
@@ -142,7 +143,7 @@ elif [[ "$role" = "ckan" ]]; then
     mkdir -p ${APP_ROOT}/ckan/registry/storage
 
     # start supervisord service
-    echo "Executing supervisord"
+    printf "${Green}Executing supervisord${NC}${EOL}"
     supervisord -c /etc/supervisor/supervisord.conf
 
 # END
@@ -157,11 +158,12 @@ elif [[ "$role" = "solr" ]]; then
     ln -sf /etc/supervisor/conf.d-available/solr.conf /etc/supervisor/conf.d/solr.conf
 
     # copy all local core data to solr data directory
+    printf "${Green}Load local cores${NC}${EOL}"
     cp -R /var/solr/local_data/* /var/solr/data
     chown -R solr:root /var/solr/data
 
     # start supervisord service
-    echo "Executing supervisord"
+    printf "${Green}Executing supervisord${NC}${EOL}"
     supervisord -c /etc/supervisor/supervisord.conf
 
 # END
@@ -173,7 +175,7 @@ elif [[ "$role" = "scheduler" ]]; then
     ln -sf /etc/supervisor/conf.d-available/scheduler.conf /etc/supervisor/conf.d/scheduler.conf
 
     # start supervisord service
-    echo "Executing supervisord"
+    printf "${Green}Executing supervisord${NC}${EOL}"
     supervisord -c /etc/supervisor/supervisord.conf
 
 elif [[ "$role" = "queue" ]]; then
@@ -182,12 +184,12 @@ elif [[ "$role" = "queue" ]]; then
     ln -sf /etc/supervisor/conf.d-available/queue.conf /etc/supervisor/conf.d/queue.conf
 
     # start supervisord service
-    echo "Executing supervisord"
-    supervisord -c /etc/supervisor/supervisord.conf
+    printf "${Green}Executing supervisord${NC}${EOL}"
+    supervisord -c /etc/supervisor/supervisord.con
 
 else
 
-    echo "Could not match the container role \"$role\""
+    printf "${Red}Could not match the container role \"${BOLD}$role${HAIR}\"${NC}${EOL}"
     exit 1
 
 fi

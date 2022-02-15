@@ -1,22 +1,22 @@
-upstream backend_host_drupal_default {
+upstream backend_host_drupal {
 
     server 172.0.0.6:4430;
 
 }
 
-upstream backend_host_ckanapi_default {
+upstream backend_host_ckanapi {
 
     server 172.0.0.8:5000;
 
 }
 
-upstream backend_host_ckan_default {
+upstream backend_host_ckan {
 
     server 172.0.0.7:5000;
 
 }
 
-upstream backend_host_solr_default {
+upstream backend_host_solr {
 
     server 172.0.0.10:8983;
 
@@ -39,25 +39,25 @@ server {
 
     if ($subdomain = "") {
 
-        set $upstreamHost "backend_host_drupal_default";
+        set $upstreamHost "backend_host_drupal";
 
     }
 
     if ($subdomain = "solr") {
 
-        set $upstreamHost "backend_host_solr_default";
+        set $upstreamHost "backend_host_solr";
 
     }
 
     if ($subdomain = "portal") {
 
-        set $upstreamHost "backend_host_ckanapi_default";
+        set $upstreamHost "backend_host_ckanapi";
 
     }
 
     if ($subdomain = "registry") {
 
-        set $upstreamHost "backend_host_ckan_default";
+        set $upstreamHost "backend_host_ckan";
 
     }
 
@@ -73,7 +73,10 @@ server {
         proxy_pass_header Server;
         proxy_pass https://$upstreamHost;
         proxy_buffering off;
-        # proxy_redirect off;
+        proxy_buffer_size 16k;
+        proxy_busy_buffers_size 24k;
+        proxy_buffers 64 4k;
+        proxy_redirect off;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         tcp_nodelay on;
