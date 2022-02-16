@@ -129,15 +129,18 @@ elif [[ "$role" = "ckan" ]]; then
     deactivate
 
     # copy default environment into portal and registry environments
+    printf "${Green}Copying python environment to portal and registry${NC}${EOL}"
     cp -R ${APP_ROOT}/ckan/default/* ${APP_ROOT}/ckan/portal/
     cp -R ${APP_ROOT}/ckan/default/* ${APP_ROOT}/ckan/registry/
 
     # copy the ckan configs
+    printf "${Green}Copying the CKAN configuration files to their respective environments${NC}${EOL}"
     cp ${APP_ROOT}/ckan.ini ${APP_ROOT}/ckan/default/ckan.ini
     cp ${APP_ROOT}/portal.ini ${APP_ROOT}/ckan/portal/portal.ini
     cp ${APP_ROOT}/registry.ini ${APP_ROOT}/ckan/registry/registry.ini
 
     # create storage paths
+    printf "${Green}Generating storage directories${NC}${EOL}"
     mkdir -p ${APP_ROOT}/ckan/default/storage
     mkdir -p ${APP_ROOT}/ckan/portal/storage
     mkdir -p ${APP_ROOT}/ckan/registry/storage
