@@ -20,18 +20,27 @@
 
 ## Prebuild
 
+1. __Create__ new Docker networks: 
+   1. `docker network create og-proxy-network`
+   1. `docker network create og-local-network`
 1. __Create__ the following hosts file(`/etc/hosts`) entries:
     1. `127.0.0.1 open.local`
-1. __Use [mkcert](https://github.com/FiloSottile/mkcert)__ to make a certificate for nginx(Drupal) and solr if you're using Windows with WSL2, makes sure to make the certificates in Powershell running as an Administrator, not within WSL2:
+    1. `127.0.0.1 registry.open.local`
+    1. `127.0.0.1 portal.open.local`
+    1. `127.0.0.1 solr.open.local`
+1. __Use [mkcert](https://github.com/FiloSottile/mkcert)__ to make a certificate for nginx(Drupal, CKAN, and Solr) and solr if you're using Windows with WSL2, makes sure to make the certificates in Powershell running as an Administrator, not within WSL2:
    * __nginx(Drupal):__
       1. cd inside of the `docker/config/nginx/certs` directory.
-      1. Generate the pem chain: `mkcert -cert-file open.local.pem -key-file open.local-key.pem open.local 127.0.0.1 localhost ::1 ::5001 ::5000`
+      1. Generate the pem chain: `mkcert -cert-file open.local.pem -key-file open.local-key.pem open.local registry.open.local portal.open.local solr.open.local 127.0.0.1 localhost ::1 ::5001 ::5000 ::8981 ::8983 ::4430`
    * __solr:__
       1. cd inside of the `docker/config/solr/certs` directory.
       1. Generate the PKCS12 keystore: `mkcert -pkcs12 -p12-file solr.p12 127.0.0.1 localhost solr ::1 ::8981 ::8983`
 1. __Copy__ `.docker.env.example` to `.docker.env`
 1. __Copy__ `example-drupal-local-settings.php` to `drupal-local-settings.php`
+1. __Copy__ `example-drupal-services.yml` to `drupal-services.yml`
 1. __Copy__ `example-ckan.ini` to `ckan.ini`
+1. __Copy__ `example-portal.ini` to `portal.ini`
+1. __Copy__ `example-registry.ini` to `registry.ini`
 1. __Copy__ `.env.example` to `.env`
    1. You will need to __update__ the `CA_LOCAL_ROOT` variable to the output of this command: `mkcert -CAROOT`
    1. If you need to, change your user and group to match the user and group your WSL2 user or Linux/Mac user employs:
@@ -41,9 +50,11 @@
       1. `drupal_db.pgdump` <- the database backup for the Drupal site.
       1. `drupal_files.tgz` <- the compressed folder of the public files from the Drupal site.
    * __For CKAN:__
-      1. `ckan_db.pgdump` <- the database backup for the CKAN Core app.
+      1. `ckan_portal_db.pgdump` <- the database backup for the CKAN Portal app.
+      1. `ckan_portal_ds_db.pgdump` <- the database backup for the CKAN Portal Datastore.
       1. `ckan_registry_db.pgdump` <- the database backup for the CKAN Registry app.
       1. `ckan_registry_ds_db.pgdump` <- the database backup for the CKAN Registry Datastore.
+   * __For Solr:__
       1. `inventory.csv` <- Open Data Inventory data set csv file.
 1. __Create__ a folder in the root of this repository called `postgres`. This folder will hold the data for imported databases to persist during Docker container restarts.
 1. __Create__ a folder in the root of this repository called `solr`. This folder will hold the data for imported indices to persist during Docker container restarts.
@@ -100,7 +111,10 @@ Though there is an initialization script to create the databases on the initial 
    1. __Select__ `CKAN`
    1. __Select__ what you want to install for CKAN:
       * `SSH (Required for Repositories)`: will install and configure the ssh command along with the ssh-agent and keys.
-      * `Core Database`: will destroy the current `og_ckan_local` database and import a fresh one from `backup/ckan_db.pgdump`
+      * `Portal Database`: will destroy the current `og_ckan_portal_local` database and import a fresh one from `backup/ckan_portal_db.pgdump`
+         * The database for CKAN is large, so importing the database will take a long time.
+         * You may recieve warnings during the pg_restore: `out of shared memory`, this can be ignored, the import will just take longer.
+      * `Portal Datastore Database`: will destroy the current `og_ckan_portal_ds_local` database and import a fresh one from `backup/ckan_portal_ds_db.pgdump`
          * The database for CKAN is large, so importing the database will take a long time.
          * You may recieve warnings during the pg_restore: `out of shared memory`, this can be ignored, the import will just take longer.
       * `Registry Database`: will destroy the current `og_ckan_registry_local` database and import a fresh one from `backup/ckan_registry_db.pgdump`
@@ -116,10 +130,14 @@ Though there is an initialization script to create the databases on the initial 
    
 ## Usage
 
+### Solr
+
+1. __Bring up__ the Solr docker container: `docker-compose up -d solr`
+1. __Open__ a browser into: `https://solr.open.local`
 ### CKAN
 
 1. __Bring up__ the CKAN docker container: `docker-compose up -d ckan`
 1. __Open a shell__ into the container: `docker-compose exec ckan bash`
 1. __Build__ the indices:
-   1. __Inventory:__ `paster --plugin=ckanext-canada inventory rebuild --lenient -c $CKAN_CONFIG -f /srv/app/backup/inventory.csv`
+   1. __Inventory:__ `paster --plugin=ckanext-canada inventory rebuild --lenient -c $REGISTRY_CONFIG -f /srv/app/backup/inventory.csv`
    

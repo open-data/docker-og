@@ -1,5 +1,47 @@
 version: "3"
 services:
+#
+# Proxy
+#
+  proxy:
+    image: og-proxy
+    container_name: og-proxy
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    healthcheck:
+      test: service nginx status || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      og-proxy-network:
+      og-local-network:
+        ipv4_address: 172.0.0.3
+    env_file:
+      - .docker.env
+    environment:
+      CONTAINER_ROLE: proxy
+      NGINX_UNAME: www-data
+      SSH_AUTH_SOCK: /ssh-agent
+      SSL_CERT_FILE: /etc/ssl/mkcert/rootCA.pem
+      SSL_CERT_DIR: /etc/ssl/mkcert
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/config/nginx/certs:/usr/share/certs
+      - $SSH_AUTH_SOCK:/ssh-agent:ro
+      - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
+      # - ./nginx:/var/log/nginx
+    ports:
+      - 443:443
+      - 80:80
+# END
+# Proxy
+# END
+#
+# Drupal
+#
   drupal:
     image: og-drupal
     container_name: og-drupal
@@ -10,14 +52,21 @@ services:
         USER_ID: ${USER_ID:-0}
         GROUP_ID: ${GROUP_ID:-0}
     working_dir: /var/www/html
+    networks:
+      og-proxy-network:
+      og-local-network:
+        ipv4_address: 172.0.0.6
     depends_on:
-      - postgres
-      - solr
-      #- mailhog
+      proxy:
+        condition: service_healthy
+      postgres:
+        condition: service_started
+      solr:
+        condition: service_started
     links:
+      - proxy
       - postgres
       - solr
-      #- mailhog
     env_file:
       - .docker.env
     environment:
@@ -35,17 +84,22 @@ services:
     volumes:
       - .:/var/www/html
       - ./docker/config/nginx/certs:/usr/share/certs
+      - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ~/.gitconfig:/etc/gitconfig:ro
       - ~/.ssh:/var/www/html/.ssh:ro
       - $SSH_AUTH_SOCK:/ssh-agent:ro
-      #- ./nginx:/var/log/nginx
-      - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
       - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
+      # - ./nginx:/var/log/nginx
     ports:
-      - 443:443
-      - 80:80
+      - 4430:4430
+# END
+# Drupal
+# END
+#
+# CKAN Registry
+#
   ckan:
-    container_name: og-ckan
+    container_name: og-ckan-registry
     image: openknowledge/ckan-base:2.8
     build:
       context: .
@@ -54,23 +108,34 @@ services:
         USER_ID: ${USER_ID:-0}
         GROUP_ID: ${GROUP_ID:-0}
     working_dir: /srv/app
+    networks:
+      og-proxy-network:
+      og-local-network:
+        ipv4_address: 172.0.0.7
     depends_on:
-      - postgres
-      - solr
+      proxy:
+        condition: service_healthy
+      postgres:
+        condition: service_started
+      solr:
+        condition: service_started
     links:
+      - proxy
       - postgres
       - solr
     env_file:
       - .docker.env
     environment:
       CONTAINER_ROLE: ckan
+      CKAN_ROLE: registry
       PGHOST: postgres
-      PGDATABASE: og_ckan_local
+      PGDATABASE: postgres
       PGUSER: homestead
       PGPASSWORD: secret
       SSH_AUTH_SOCK: /ssh-agent
+      NGINX_UNAME: ckan
       APP_ROOT: /srv/app
-      PATH: '$PATH:/srv/app/ckan/default/bin'
+      PATH: '$PATH:/srv/app/ckan/registry/bin'
       PY_VERSION: 2.7
       PIP_VERSION: 19.2.1
       SETUP_TOOLS_VERSION: 36.1
@@ -78,19 +143,96 @@ services:
       SSL_CERT_FILE: /etc/ssl/mkcert/rootCA.pem
       SSL_CERT_DIR: /etc/ssl/mkcert
       CKAN_CONFIG: /srv/app/ckan/default/ckan.ini
+      PORTAL_CONFIG: /srv/app/ckan/portal/portal.ini
+      REGISTRY_CONFIG: /srv/app/ckan/registry/registry.ini
     volumes:
       - ./docker/config/ckan:/docker-entrypoint.d
       - .:/srv/app
+      - ./docker/config/nginx/certs:/usr/share/certs
+      - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ~/.gitconfig:/etc/gitconfig:ro
       - ~/.ssh:/srv/app/.ssh:ro
       - $SSH_AUTH_SOCK:/ssh-agent:ro
       - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
     ports:
       - 5001:5000
+# END
+# CKAN Registry
+# END
+#
+# CKAN Portal
+#
+  ckanapi:
+    container_name: og-ckan-portal
+    image: openknowledge/ckan-base:2.8
+    build:
+      context: .
+      dockerfile: docker/ckan/Dockerfile
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
+    working_dir: /srv/app
+    networks:
+      og-proxy-network:
+      og-local-network:
+        ipv4_address: 172.0.0.8
+    depends_on:
+      proxy:
+        condition: service_healthy
+      postgres:
+        condition: service_started
+      solr:
+        condition: service_started
+    links:
+      - proxy
+      - postgres
+      - solr
+    env_file:
+      - .docker.env
+    environment:
+      CONTAINER_ROLE: ckan
+      CKAN_ROLE: portal
+      PGHOST: postgres
+      PGDATABASE: og_ckan_local
+      PGUSER: homestead
+      PGPASSWORD: secret
+      SSH_AUTH_SOCK: /ssh-agent
+      NGINX_UNAME: ckan
+      APP_ROOT: /srv/app
+      PATH: '$PATH:/srv/app/ckan/portal/bin'
+      PY_VERSION: 2.7
+      PIP_VERSION: 19.2.1
+      SETUP_TOOLS_VERSION: 36.1
+      PYTHONHTTPSVERIFY: 0
+      SSL_CERT_FILE: /etc/ssl/mkcert/rootCA.pem
+      SSL_CERT_DIR: /etc/ssl/mkcert
+      CKAN_CONFIG: /srv/app/ckan/default/ckan.ini
+      PORTAL_CONFIG: /srv/app/ckan/portal/portal.ini
+      REGISTRY_CONFIG: /srv/app/ckan/registry/registry.ini
+    volumes:
+      - ./docker/config/ckan:/docker-entrypoint.d
+      - .:/srv/app
+      - ./docker/config/nginx/certs:/usr/share/certs
+      - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ~/.gitconfig:/etc/gitconfig:ro
+      - ~/.ssh:/srv/app/.ssh:ro
+      - $SSH_AUTH_SOCK:/ssh-agent:ro
+      - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
+    ports:
+      - 5002:5000
+# END
+# CKAN Portal
+# END
+#
+# Postgres
+#
   postgres:
     container_name: og-postgres
     image: postgres:9.6
     restart: always
+    networks:
+      og-local-network:
+        ipv4_address: 172.0.0.9
     volumes:
       - ./postgres:/var/lib/postgresql/data
       - ./docker/config/postgres:/docker-entrypoint-initdb.d
@@ -104,6 +246,12 @@ services:
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
     ports:
       - 15438:5432
+# END
+# Postgres
+# END
+#
+# Solr
+#
   solr:
     container_name: og-solr
     image: solr
@@ -112,9 +260,19 @@ services:
       context: .
       dockerfile: docker/solr/Dockerfile
     working_dir: /opt/solr
+    networks:
+      og-proxy-network:
+      og-local-network:
+        ipv4_address: 172.0.0.10
+    depends_on:
+      proxy:
+        condition: service_healthy
+    links:
+      - proxy
     volumes:
       - ./docker/config/solr/certs:/opt/solr/server/certs
       - ./docker/config/solr/certs/solr.p12:/etc/solr.p12
+      - ./docker/config/nginx/certs:/usr/share/certs
       - ./solr/ckan:/var/solr/data/ckan
       - ./solr/core_ati:/var/solr/data/core_ati
       - ./solr/core_contracts:/var/solr/data/core_contracts
@@ -129,6 +287,7 @@ services:
       - ./docker/config/solr/cores:/var/solr/local_data
     environment:
       - CONTAINER_ROLE=solr
+      - NGINX_UNAME=root
       - SOLR_SSL_ENABLED=true
       - SOLR_SSL_KEY_STORE=/etc/solr.p12
       - SOLR_SSL_KEY_STORE_PASSWORD=changeit
@@ -142,16 +301,23 @@ services:
     user: "root:root"
     ports:
       - 8981:8983
-  # Commented out due to failed nginx bindings
-  # mailhog:
-  #   container_name: og-mailhog
-  #   image: mailhog/mailhog:v1.0.0
-  #   ports:
-  #     - "1025:1025"
-  #     - "8025:8025"
+# END
+# Solr
+# END
 
 volumes:
   postgres:
     driver: "local"
   solr:
     driver: "local"
+
+networks:
+  og-proxy-network:
+    external : true
+  og-local-network:
+    external : false
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.0.0.0/16
+          gateway: 172.0.0.1

@@ -1,0 +1,91 @@
+upstream backend_host_drupal {
+
+    server 172.0.0.6:4430;
+
+}
+
+upstream backend_host_ckanapi {
+
+    server 172.0.0.8:5000;
+
+}
+
+upstream backend_host_ckan {
+
+    server 172.0.0.7:5000;
+
+}
+
+upstream backend_host_solr {
+
+    server 172.0.0.10:8983;
+
+}
+
+server {
+    
+    server_name ~^(?<subdomain>.+)\.open\.local open.local;
+
+    listen 80 default_server reuseport;
+    listen 443 default_server ssl http2 reuseport;
+
+    ssl_certificate /usr/share/certs/open.local.pem;
+    ssl_certificate_key /usr/share/certs/open.local-key.pem;
+    ssl_protocols TLSv1.2;
+
+    server_tokens off;
+
+    charset utf-8;
+
+    if ($subdomain = "") {
+
+        set $upstreamHost "backend_host_drupal";
+
+    }
+
+    if ($subdomain = "solr") {
+
+        set $upstreamHost "backend_host_solr";
+
+    }
+
+    if ($subdomain = "portal") {
+
+        set $upstreamHost "backend_host_ckanapi";
+
+    }
+
+    if ($subdomain = "registry") {
+
+        set $upstreamHost "backend_host_ckan";
+
+    }
+
+    location / {
+
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Forwarded-Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header HTTPS "on";
+        proxy_set_header X-NginX-Proxy true;
+        proxy_pass_header Server;
+        proxy_pass https://$upstreamHost;
+        proxy_buffering off;
+        proxy_buffer_size 16k;
+        proxy_busy_buffers_size 24k;
+        proxy_buffers 64 4k;
+        proxy_redirect off;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        tcp_nodelay on;
+
+    }
+
+    client_max_body_size 100M;
+
+    add_header X-Served-By DockerCompose;
+    include h5bp/basic.conf;
+
+}

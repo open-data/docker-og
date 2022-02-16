@@ -1,13 +1,13 @@
 server {
-    listen 443 ssl http2;
-    listen [::]:443 http2;
+
+    server_name open.local;
+
+    listen 4430 default_server ssl http2 reuseport;
 
     root /var/www/html/drupal/html;
 
     # Add index.php to the list if you are using PHP
     index index.php index.html index.htm index.nginx-debian.html;
-
-    server_name open.local;
 
     ssl_certificate /usr/share/certs/open.local.pem;
     ssl_certificate_key /usr/share/certs/open.local-key.pem;
@@ -18,24 +18,32 @@ server {
     charset utf-8;
 
     location = /robots.txt {
+
         allow all;
         log_not_found off;
         access_log off;
+
     }
 
     location = /favicon.ico {
+
         log_not_found off;
         access_log off;
+
     }
 
     location / {
+
         try_files $uri $uri/ /index.php$is_args$args;
+
     }
 
     location ~ \.php$ {
+
         include snippets/fastcgi-php.conf;
         fastcgi_pass unix:/usr/local/var/run/php-fpm.sock;
-        fastcgi_read_timeout 600;
+        fastcgi_read_timeout 3200;
+
     }
 
     client_max_body_size 10M;
@@ -44,4 +52,5 @@ server {
 
     add_header X-Served-By DockerCompose;
     include h5bp/basic.conf;
+
 }
