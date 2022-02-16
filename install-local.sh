@@ -397,6 +397,22 @@ function install_drupal {
         printf "${Red}${INDENT}${INDENT}Copied drupal-local-settings.php to sites/default/settings.php: FAIL${NC}${EOL}"
       fi
 
+      printf "${SPACER}${Cyan}${INDENT}Copy Drupal services file${NC}${SPACER}"
+      # copy docker config development.services.yml to drupal directory
+      cp ${APP_ROOT}/drupal-services.yml ${APP_ROOT}/drupal/html/sites/development.services.yml
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Copied drupal-services.yml to sites/development.services.yml: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Copied drupal-services.yml to sites/development.services.yml: FAIL${NC}${EOL}"
+      fi
+      # copy docker config development.services.yml to drupal directory
+      cp ${APP_ROOT}/drupal-services.yml ${APP_ROOT}/drupal/html/sites/default/development.services.yml
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Copied drupal-services.yml to sites/default/development.services.yml: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Copied drupal-services.yml to sites/default/development.services.yml: FAIL${NC}${EOL}"
+      fi
+
       printf "${SPACER}${Cyan}${INDENT}Set Drupal settings file permissions${NC}${SPACER}"
       # set file permissions for settings file
       chmod 644 ${APP_ROOT}/drupal/html/sites/settings.php

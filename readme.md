@@ -37,6 +37,7 @@
       1. Generate the PKCS12 keystore: `mkcert -pkcs12 -p12-file solr.p12 127.0.0.1 localhost solr ::1 ::8981 ::8983`
 1. __Copy__ `.docker.env.example` to `.docker.env`
 1. __Copy__ `example-drupal-local-settings.php` to `drupal-local-settings.php`
+1. __Copy__ `example-drupal-services.yml` to `drupal-services.yml`
 1. __Copy__ `example-ckan.ini` to `ckan.ini`
 1. __Copy__ `example-portal.ini` to `portal.ini`
 1. __Copy__ `example-registry.ini` to `registry.ini`
