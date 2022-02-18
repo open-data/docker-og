@@ -142,7 +142,6 @@ services:
       PYTHONHTTPSVERIFY: 0
       SSL_CERT_FILE: /etc/ssl/mkcert/rootCA.pem
       SSL_CERT_DIR: /etc/ssl/mkcert
-      CKAN_CONFIG: /srv/app/ckan/default/ckan.ini
       PORTAL_CONFIG: /srv/app/ckan/portal/portal.ini
       REGISTRY_CONFIG: /srv/app/ckan/registry/registry.ini
     volumes:
@@ -206,7 +205,6 @@ services:
       PYTHONHTTPSVERIFY: 0
       SSL_CERT_FILE: /etc/ssl/mkcert/rootCA.pem
       SSL_CERT_DIR: /etc/ssl/mkcert
-      CKAN_CONFIG: /srv/app/ckan/default/ckan.ini
       PORTAL_CONFIG: /srv/app/ckan/portal/portal.ini
       REGISTRY_CONFIG: /srv/app/ckan/registry/registry.ini
     volumes:

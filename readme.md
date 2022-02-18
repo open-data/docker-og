@@ -2,6 +2,7 @@
 
 ## Prerequisites
 
+* [WSL2](https://docs.microsoft.com/en-us/windows/wsl/install) ***if using Windows***
 * [mkcert](https://github.com/FiloSottile/mkcert)
    * Make sure to run `mkcert -install` after installing mkcert.
    * If using WSL2, make sure to install mkcert within Windows and not inside of WSL2.
@@ -38,7 +39,6 @@
 1. __Copy__ `.docker.env.example` to `.docker.env`
 1. __Copy__ `example-drupal-local-settings.php` to `drupal-local-settings.php`
 1. __Copy__ `example-drupal-services.yml` to `drupal-services.yml`
-1. __Copy__ `example-ckan.ini` to `ckan.ini`
 1. __Copy__ `example-portal.ini` to `portal.ini`
 1. __Copy__ `example-registry.ini` to `registry.ini`
 1. __Copy__ `.env.example` to `.env`
@@ -102,28 +102,28 @@ Though there is an initialization script to create the databases on the initial 
    1. Username: `admin.local`
    1. Password: `12345678`
 
-### CKAN
+### CKAN (Registry & Portal)
 
-1. __Bring up__ the CKAN docker container: `docker-compose up -d ckan`
-1. __Open a shell__ into the container: `docker-compose exec ckan bash`
+1. __Bring up__ the CKAN docker container: `docker-compose up -d ckan` or `docker-compose up -d ckanapi`
+1. __Open a shell__ into the container: `docker-compose exec ckan bash` or `docker-compose exec ckanapi bash`
 1. __Change__ permissions of this file (if not already done) so you can run it as a bash script: `chmod 775 install-local.sh`
 1. __Run__ the install script: `./install-local.sh`
-   1. __Select__ `CKAN`
+   1. __Select__ `CKAN (registry)` or `CKAN (portal)`
    1. __Select__ what you want to install for CKAN:
       * `SSH (Required for Repositories)`: will install and configure the ssh command along with the ssh-agent and keys.
-      * `Portal Database`: will destroy the current `og_ckan_portal_local` database and import a fresh one from `backup/ckan_portal_db.pgdump`
+      * `Portal Database` _(only available in `ckanapi` container)_: will destroy the current `og_ckan_portal_local` database and import a fresh one from `backup/ckan_portal_db.pgdump`
          * The database for CKAN is large, so importing the database will take a long time.
          * You may recieve warnings during the pg_restore: `out of shared memory`, this can be ignored, the import will just take longer.
-      * `Portal Datastore Database`: will destroy the current `og_ckan_portal_ds_local` database and import a fresh one from `backup/ckan_portal_ds_db.pgdump`
+      * `Portal Datastore Database` _(only available in `ckanapi` container)_: will destroy the current `og_ckan_portal_ds_local` database and import a fresh one from `backup/ckan_portal_ds_db.pgdump`
          * The database for CKAN is large, so importing the database will take a long time.
          * You may recieve warnings during the pg_restore: `out of shared memory`, this can be ignored, the import will just take longer.
-      * `Registry Database`: will destroy the current `og_ckan_registry_local` database and import a fresh one from `backup/ckan_registry_db.pgdump`
+      * `Registry Database` _(only available in `ckan` container)_: will destroy the current `og_ckan_registry_local` database and import a fresh one from `backup/ckan_registry_db.pgdump`
          * The database for CKAN Registry is not too large, however it has a lot of tables so importing the database will take a long time.
          * You may recieve warnings during the pg_restore: `out of shared memory`, this can be ignored, the import will just take longer.
-      * `Registry Datastore Database`: will destroy the current `og_ckan_registry_ds_local` database and import a fresh one from `backup/ckan_registry_ds_db.pgdump`
+      * `Registry Datastore Database` _(only available in `ckan` container)_: will destroy the current `og_ckan_registry_ds_local` database and import a fresh one from `backup/ckan_registry_ds_db.pgdump`
          * The database for CKAN Registry is not too large, however it has a lot of tables so importing the database will take a long time.
          * You may recieve warnings during the pg_restore: `out of shared memory`, this can be ignored, the import will just take longer.
-      * `Repositories`: will destroy all files inside of the `ckan/default` directory, and pull & install all required repositories related to CKAN and install them into the Python environment (along with their requirements).
+      * `Repositories`: will destroy all files inside of the `ckan/registry` or `ckan/portal` directory, and pull & install all required repositories related to CKAN and install them into the Python environment (along with their requirements).
       * `Set File Permissions`: will set the correct file and directory ownerships and permissions.
       * `All`: will execute all of the above, use this for first time install or if you wish to re-install everything.
       * `Exit`: will exit the installation script.

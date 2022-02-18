@@ -576,18 +576,33 @@ function install_ckan {
 
   printf "${SPACER}${Cyan}${INDENT}Select what to install for ${BOLD}CKAN:${HAIR}${NC}${SPACER}"
 
-  # Options for the user to select from
-  options=(
-    "SSH (Required for Repositories)" 
-    "Portal Database" 
-    "Portal Datastore Database" 
-    "Registry Database" 
-    "Registry Datastore Database" 
-    "Repositories (Installs them into Python venv)" 
-    "Set File Permissions" 
-    "All" 
-    "Exit"
-  )
+  if [[ $CKAN_ROLE == 'registry' ]]; then
+
+    # Options for the user to select from
+    options=(
+      "SSH (Required for Repositories)" 
+      "Registry Database" 
+      "Registry Datastore Database" 
+      "Repositories (Installs them into Python venv ckan/${CKAN_ROLE})" 
+      "Set File Permissions" 
+      "All" 
+      "Exit"
+    )
+
+  elif [[ $CKAN_ROLE == 'portal' ]]; then
+
+    # Options for the user to select from
+    options=(
+      "SSH (Required for Repositories)" 
+      "Portal Database" 
+      "Portal Datastore Database" 
+      "Repositories (Installs them into Python venv ckan/${CKAN_ROLE})" 
+      "Set File Permissions" 
+      "All" 
+      "Exit"
+    )
+
+  fi
 
   # IMPORTANT: select_option will return the index of the options and not the value.
   select_option "${options[@]}"
@@ -601,44 +616,44 @@ function install_ckan {
       installSSH_CKAN='true'
       ;;
 
-    # "Portal Database"
+    # "Registry Database / Portal Database"
     (1) 
       exitScript='false'
-      installDB_Portal_CKAN='true'
+      if [[ $CKAN_ROLE == 'registry' ]]; then
+        installDB_Registry_CKAN='true'
+        installDB_Portal_CKAN='false'
+      elif [[ $CKAN_ROLE == 'portal' ]]; then
+        installDB_Portal_CKAN='true'
+        installDB_Registry_CKAN='false'
+      fi
       ;;
 
-    # "Portal Datastore Database"
+    # "Registry Datastore Database / Portal Datastore Database"
     (2) 
       exitScript='false'
-      installDB_Portal_DS_CKAN='true'
-      ;;
-
-    # "Registry Database"
-    (3)
-      exitScript='false'
-      installDB_Registry_CKAN='true'
-      ;;
-
-    # "Registry Datastore Database"
-    (4) 
-      exitScript='false'
-      installDB_Registry_DS_CKAN='true'
+      if [[ $CKAN_ROLE == 'registry' ]]; then
+        installDB_Registry_DS_CKAN='true'
+        installDB_Portal_DS_CKAN='false'
+      elif [[ $CKAN_ROLE == 'portal' ]]; then
+        installDB_Portal_DS_CKAN='true'
+        installDB_Registry_DS_CKAN='false'
+      fi
       ;;
 
     # "Repositories (Installs them into Python venv)"
-    (5) 
+    (3) 
       exitScript='false'
       installRepos_CKAN='true'
       ;;
 
     # "Set File Permissions"
-    (6)
+    (4)
       exitScript='false'
       installFilePermissions_CKAN='true'
       ;;
 
     # "All"
-    (7) 
+    (5) 
       exitScript='false'
       installSSH_CKAN='true'
       installDB_Portal_CKAN='true'
@@ -650,7 +665,7 @@ function install_ckan {
       ;;
 
     # "Exit"
-    (8)
+    (6)
       exitScript='true'
       ;;
 
@@ -662,7 +677,7 @@ function install_ckan {
   if [[ $exitScript != "true" ]]; then
 
     #
-    # Confirm CKAN core database destruction
+    # Confirm CKAN Portal database destruction
     #
     if [[ $installDB_Portal_CKAN == "true" ]]; then
 
@@ -680,11 +695,11 @@ function install_ckan {
 
     fi
     # END
-    # Confirm CKAN core database destruction
+    # Confirm CKAN Portal database destruction
     # END
 
     #
-    # Confirm CKAN core database destruction
+    # Confirm CKAN Portal Datastore database destruction
     #
     if [[ $installDB_Portal_DS_CKAN == "true" ]]; then
 
@@ -702,11 +717,11 @@ function install_ckan {
 
     fi
     # END
-    # Confirm CKAN core database destruction
+    # Confirm CKAN Portal Datastore database destruction
     # END
 
     #
-    # Confirm CKAN END database destruction
+    # Confirm CKAN Registry database destruction
     #
     if [[ $installDB_Registry_CKAN == "true" ]]; then
 
@@ -724,11 +739,11 @@ function install_ckan {
 
     fi
     # END
-    # Confirm CKAN registry database destruction
+    # Confirm CKAN Registry database destruction
     # END
 
     #
-    # Confirm CKAN registry datastore database destruction
+    # Confirm CKAN Registry Datastore database destruction
     #
     if [[ $installDB_Registry_DS_CKAN == "true" ]]; then
 
@@ -746,7 +761,7 @@ function install_ckan {
 
     fi
     # END
-    # Confirm CKAN registry datastore database destruction
+    # Confirm CKAN Registry Datase database destruction
     # END
 
     #
@@ -884,71 +899,40 @@ function install_ckan {
 
       fi
 
-      mkdir -p ${APP_ROOT}/ckan/default
-      mkdir -p ${APP_ROOT}/ckan/registry
-      mkdir -p ${APP_ROOT}/ckan/portal
+      mkdir -p ${APP_ROOT}/ckan/${CKAN_ROLE}
 
       # nuke the entire folder
-      printf "${SPACER}${Cyan}${INDENT}Pre-nuke the existing CKAN install${NC}${SPACER}"
+      printf "${SPACER}${Cyan}${INDENT}Pre-nuke the existing CKAN (${CKAN_ROLE}) install${NC}${SPACER}"
       # destroy all files
-      cd ${APP_ROOT}/ckan/default
+      cd ${APP_ROOT}/ckan/${CKAN_ROLE}
       rm -rf ./*
       if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Remove all files in ckan/default: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Remove all files in ckan/${CKAN_ROLE}: OK${NC}${EOL}"
       else
-        printf "${Red}${INDENT}${INDENT}Remove all files in ckan/default: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Remove all files in ckan/${CKAN_ROLE}: FAIL${NC}${EOL}"
       fi
-      cd ${APP_ROOT}/ckan/registry
-      rm -rf ./*
-      if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Remove all files in ckan/registry: OK${NC}${EOL}"
-      else
-        printf "${Red}${INDENT}${INDENT}Remove all files in ckan/registry: FAIL${NC}${EOL}"
-      fi
-      cd ${APP_ROOT}/ckan/portal
-      rm -rf ./*
-      if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Remove all files in ckan/portal: OK${NC}${EOL}"
-      else
-        printf "${Red}${INDENT}${INDENT}Remove all files in ckan/portal: FAIL${NC}${EOL}"
-      fi
-      # destroy all hidden files
-      cd ${APP_ROOT}/ckan/default
+      cd ${APP_ROOT}/ckan/${CKAN_ROLE}
       rm -rf ./.??*
       if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Remove all hidden files in ckan/default: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Remove all hidden files in ckan/${CKAN_ROLE}: OK${NC}${EOL}"
       else
-        printf "${Red}${INDENT}${INDENT}Remove all hidden files in ckan/default: FAIL${NC}${EOL}"
-      fi
-      cd ${APP_ROOT}/ckan/registry
-      rm -rf ./.??*
-      if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Remove all hidden files in ckan/registry: OK${NC}${EOL}"
-      else
-        printf "${Red}${INDENT}${INDENT}Remove all hidden files in ckan/registry: FAIL${NC}${EOL}"
-      fi
-      cd ${APP_ROOT}/ckan/portal
-      rm -rf ./.??*
-      if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Remove all hidden files in ckan/portal: OK${NC}${EOL}"
-      else
-        printf "${Red}${INDENT}${INDENT}Remove all hidden files in ckan/portal: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Remove all hidden files in ckan/${CKAN_ROLE}: FAIL${NC}${EOL}"
       fi
 
       # create virtual environment
-      virtualenv --python=python2 ${APP_ROOT}/ckan/default
-      cd ${APP_ROOT}/ckan/default
+      virtualenv --python=python2 ${APP_ROOT}/ckan/${CKAN_ROLE}
+      cd ${APP_ROOT}/ckan/${CKAN_ROLE}
 
       # set ownership
-      chown ckan:ckan -R ${APP_ROOT}/ckan
+      chown ckan:ckan -R ${APP_ROOT}/ckan/${CKAN_ROLE}
       if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Set ckan ownership to ckan:ckan: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Set ckan/${CKAN_ROLE} ownership to ckan:ckan: OK${NC}${EOL}"
       else
-        printf "${Red}${INDENT}${INDENT}Set ckan ownership to ckan:ckan: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Set ckan/${CKAN_ROLE} ownership to ckan:ckan: FAIL${NC}${EOL}"
       fi
 
       # activate python environment
-      . ${APP_ROOT}/ckan/default/bin/activate
+      . ${APP_ROOT}/ckan/${CKAN_ROLE}/bin/activate
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Activate Python environment: OK${NC}${EOL}"
       else
@@ -963,28 +947,28 @@ function install_ckan {
       # update certifi
       pip install --upgrade certifi
       # copy CA root pem chain
-      cp /etc/ssl/mkcert/rootCA.pem /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem
+      cp /etc/ssl/mkcert/rootCA.pem /srv/app/ckan/${CKAN_ROLE}/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem
 
       # install ckan core into the python environment
       printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Core repository${HAIR}${Cyan} from git@github.com:open-data/ckan.git@canada-v2.8 and installing into Python environment${NC}${SPACER}"
       pip install --force-reinstall -e 'git+ssh://git@github.com/open-data/ckan.git@canada-v2.8#egg=ckan' -r 'https://raw.githubusercontent.com/open-data/ckan/canada-v2.8/requirements.txt'
 
       # copy local ckan config file
-      cp ${APP_ROOT}/ckan.ini ${APP_ROOT}/ckan/default/ckan.ini
-      printf "${SPACER}${Cyan}${INDENT}Copying local CKAN config file to into Python environment${NC}${SPACER}"
+      cp ${APP_ROOT}/${CKAN_ROLE}.ini ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini
+      printf "${SPACER}${Cyan}${INDENT}Copying local ${CKAN_ROLE} config file to into Python environment${NC}${SPACER}"
       if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Copy ckan.ini to ckan/default/ckan.ini: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Copy ${CKAN_ROLE}.ini to ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini: OK${NC}${EOL}"
       else
-        printf "${Red}${INDENT}${INDENT}Copy ckan.ini to ckan/default/ckan.ini: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Copy ${CKAN_ROLE}.ini to ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini: FAIL${NC}${EOL}"
       fi
 
       # copy core who config file
-      cp ${APP_ROOT}/ckan/default/src/ckan/ckan/config/who.ini ${APP_ROOT}/ckan/default/who.ini
+      cp ${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckan/ckan/config/who.ini ${APP_ROOT}/ckan/${CKAN_ROLE}/who.ini
       printf "${SPACER}${Cyan}${INDENT}Copying Core CKAN who config file to into root Python environment${NC}${SPACER}"
       if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Copy ckan/default/src/ckan/ckan/config/who.ini to ckan/default/who.ini: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Copy ckan/${CKAN_ROLE}/src/ckan/ckan/config/who.ini to ckan/${CKAN_ROLE}/who.ini: OK${NC}${EOL}"
       else
-        printf "${Red}${INDENT}${INDENT}Copy ckan/default/src/ckan/ckan/config/who.ini to ckan/default/who.ini: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Copy ckan/${CKAN_ROLE}/src/ckan/ckan/config/who.ini to ckan/${CKAN_ROLE}/who.ini: FAIL${NC}${EOL}"
       fi
 
       # install ckanapi into the python environment
@@ -1024,16 +1008,24 @@ function install_ckan {
       pip install --force-reinstall -e 'git+ssh://git@github.com/ckan/ckanext-scheming.git#egg=ckanext-scheming'
 
       # install ckan security into the python environment
-      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Security repository${HAIR}${Cyan} from git@github.com:open-data/ckanext-security.git and installing into Python environment${NC}${SPACER}"
-      pip install --force-reinstall -e 'git+ssh://git@github.com/open-data/ckanext-security.git#egg=ckanext-security'
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Security repository${HAIR}${Cyan} from git@github.com:open-data/ckanext-security@canada-v2.8.git and installing into Python environment${NC}${SPACER}"
+      pip install --force-reinstall -e 'git+ssh://git@github.com/open-data/ckanext-security.git@canada-v2.8#egg=ckanext-security'
 
       # install ckan validation into the python environment
-      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Validation repository${HAIR}${Cyan} from git@github.com:open-data/ckanext-validation.git and installing into Python environment${NC}${SPACER}"
-      pip install --force-reinstall -e 'git+ssh://git@github.com/open-data/ckanext-validation.git#egg=ckanext-validation' -r 'https://raw.githubusercontent.com/open-data/ckanext-validation/master/requirements.txt'
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Validation repository${HAIR}${Cyan} from git@github.com:open-data/ckanext-validation.git@canada and installing into Python environment${NC}${SPACER}"
+      pip install --force-reinstall -e 'git+ssh://git@github.com/open-data/ckanext-validation.git@canada#egg=ckanext-validation' -r 'https://raw.githubusercontent.com/open-data/ckanext-validation/canada/requirements.txt'
 
       # install ckan xloader into the python environment
-      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Xloader repository${HAIR}${Cyan} from git@github.com:open-data/ckanext-xloader.git and installing into Python environment${NC}${SPACER}"
-      pip install --force-reinstall -e 'git+ssh://git@github.com/open-data/ckanext-xloader.git#egg=ckanext-xloader' -r 'https://raw.githubusercontent.com/open-data/ckanext-xloader/master/requirements.txt'
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Xloader repository${HAIR}${Cyan} from git@github.com:open-data/ckanext-xloader.git@canada-v2.8  and installing into Python environment${NC}${SPACER}"
+      pip install --force-reinstall -e 'git+ssh://git@github.com/open-data/ckanext-xloader.git@canada-v2.8#egg=ckanext-xloader' -r 'https://raw.githubusercontent.com/open-data/ckanext-xloader/canada-v2.8/requirements.txt'
+
+      # install ckantoolkit into the python environment
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Toolkit repository${HAIR}${Cyan} from git@github.com:ckan/ckantoolkit.git and installing into Python environment${NC}${SPACER}"
+      pip install --force-reinstall -e 'git+ssh://git@github.com/ckan/ckantoolkit.git#egg=ckantoolkit' -r 'https://raw.githubusercontent.com/ckan/ckantoolkit/master/requirements.txt'
+
+      # install goodtables into the python environment
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}Goodtables repository${HAIR}${Cyan} from git@github.com:open-data/goodtables.git@canada and installing into Python environment${NC}${SPACER}"
+      pip install --force-reinstall -e 'git+ssh://git@github.com/open-data/goodtables.git@canada#egg=goodtables' -r 'https://raw.githubusercontent.com/open-data/goodtables/canada/requirements.txt'
 
       # decativate python environment
       deactivate
@@ -1044,65 +1036,20 @@ function install_ckan {
       fi
 
       # set ownership
-      chown ckan:ckan -R ${APP_ROOT}/ckan
+      chown ckan:ckan -R ${APP_ROOT}/ckan/${CKAN_ROLE}
       if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Set ckan ownership to ckan:ckan: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Set ckan/${CKAN_ROLE} ownership to ckan:ckan: OK${NC}${EOL}"
       else
-        printf "${Red}${INDENT}${INDENT}Set ckan ownership to ckan:ckan: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Set ckan/${CKAN_ROLE} ownership to ckan:ckan: FAIL${NC}${EOL}"
       fi
 
-      # copy default environment into portal and registry environments
-      printf "${SPACER}${Cyan}${INDENT}Copying default Python environment into ckan/portal and ckan/registry${NC}${SPACER}"
-      cp -R ${APP_ROOT}/ckan/default/* ${APP_ROOT}/ckan/portal/
+      # create storage path
+      printf "${SPACER}${Cyan}${INDENT}Create storage path${NC}${SPACER}"
+      mkdir -p ${APP_ROOT}/ckan/${CKAN_ROLE}/storage
       if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Copy ckan/default to ckan/portal: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Create ckan/${CKAN_ROLE}/storage: OK${NC}${EOL}"
       else
-        printf "${Red}${INDENT}${INDENT}Copy ckan/default to ckan/portal: FAIL${NC}${EOL}"
-      fi
-      cp -R ${APP_ROOT}/ckan/default/* ${APP_ROOT}/ckan/registry/
-      if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Copy ckan/default to ckan/registry: OK${NC}${EOL}"
-      else
-        printf "${Red}${INDENT}${INDENT}Copy ckan/default to ckan/registry: FAIL${NC}${EOL}"
-      fi
-
-      # copy portal ckan config file
-      cp ${APP_ROOT}/portal.ini ${APP_ROOT}/ckan/portal/portal.ini
-      printf "${SPACER}${Cyan}${INDENT}Copying local portal CKAN config file to into portal Python environment${NC}${SPACER}"
-      if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Copy portal.ini to ckan/portal/portal.ini: OK${NC}${EOL}"
-      else
-        printf "${Red}${INDENT}${INDENT}Copy portal.ini to ckan/portal/portal.ini: FAIL${NC}${EOL}"
-      fi
-
-      # copy registry ckan config file
-      cp ${APP_ROOT}/registry.ini ${APP_ROOT}/ckan/registry/registry.ini
-      printf "${SPACER}${Cyan}${INDENT}Copying local registry CKAN config file to into registry Python environment${NC}${SPACER}"
-      if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Copy registry.ini to ckan/registry/registry.ini: OK${NC}${EOL}"
-      else
-        printf "${Red}${INDENT}${INDENT}Copy registry.ini to ckan/registry/registry.ini: FAIL${NC}${EOL}"
-      fi
-
-      # create storage paths
-      printf "${SPACER}${Cyan}${INDENT}Create storage paths${NC}${SPACER}"
-      mkdir -p ${APP_ROOT}/ckan/default/storage
-      if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Create ckan/default/storage: OK${NC}${EOL}"
-      else
-        printf "${Red}${INDENT}${INDENT}Create ckan/default/storage: FAIL (directory may already exist)${NC}${EOL}"
-      fi
-      mkdir -p ${APP_ROOT}/ckan/portal/storage
-      if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Create ckan/portal/storage: OK${NC}${EOL}"
-      else
-        printf "${Red}${INDENT}${INDENT}Create ckan/portal/storage: FAIL (directory may already exist)${NC}${EOL}"
-      fi
-      mkdir -p ${APP_ROOT}/ckan/registry/storage
-      if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Create ckan/registry/storage: OK${NC}${EOL}"
-      else
-        printf "${Red}${INDENT}${INDENT}Create ckan/registry/storage: FAIL (directory may already exist)${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Create ckan/${CKAN_ROLE}/storage: FAIL (directory may already exist)${NC}${EOL}"
       fi
 
     fi
@@ -1116,11 +1063,11 @@ function install_ckan {
     if [[ $installFilePermissions_CKAN == "true" ]]; then
 
       # set file ownership for ckan-ext files
-      chown ckan:ckan -R ${APP_ROOT}/ckan
+      chown ckan:ckan -R ${APP_ROOT}/ckan/${CKAN_ROLE}
       if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Set ckan ownership to ckan:ckan: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Set ckan/${CKAN_ROLE} ownership to ckan:ckan: OK${NC}${EOL}"
       else
-        printf "${Red}${INDENT}${INDENT}Set ckan ownership to ckan:ckan: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Set ckan/${CKAN_ROLE} ownership to ckan:ckan: FAIL${NC}${EOL}"
       fi
 
     fi
@@ -1276,7 +1223,7 @@ elif [[ ${CONTAINER_ROLE} == "ckan" ]]; then
 
   # Options for the user to select from
   options=(
-    "CKAN"
+    "CKAN (${CKAN_ROLE})"
     "Databases (fixes missing databases, privileges, and users)"
     "All" 
     "Exit"

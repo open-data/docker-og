@@ -88,8 +88,11 @@ elif [[ "$role" = "ckan" ]]; then
 #
 # CKAN Registry & Portal
 #
+
+    printf "${Cyan}The CKAN role is ${BOLD}$ckanRole${HAIR}${NC}${EOL}"
+
     # link ckan supervisord config
-    ln -sf /etc/supervisor/conf.d-available/ckan.conf /etc/supervisor/conf.d/ckan.conf
+    ln -sf /etc/supervisor/conf.d-available/ckan-${ckanRole}.conf /etc/supervisor/conf.d/ckan-${ckanRole}.conf
 
     # link mkcert certificate to the truststore
     printf "${Green}Adding mkcert to truststores${NC}${EOL}"
@@ -99,17 +102,15 @@ elif [[ "$role" = "ckan" ]]; then
     update-ca-certificates
 
     # create directory for python venv
-    mkdir -p ${APP_ROOT}/ckan/default
-    mkdir -p ${APP_ROOT}/ckan/portal
-    mkdir -p ${APP_ROOT}/ckan/registry
+    mkdir -p ${APP_ROOT}/ckan/${ckanRole}
 
     # create directories for uwsgi outputs
     mkdir -p /dev
     chown -R ckan:ckan /dev
 
     # initiate python venv and go into it
-    virtualenv --python=python2 ${APP_ROOT}/ckan/default
-    . ${APP_ROOT}/ckan/default/bin/activate
+    virtualenv --python=python2 ${APP_ROOT}/ckan/${ckanRole}
+    . ${APP_ROOT}/ckan/${ckanRole}/bin/activate
 
     # install base dependencies
     pip install setuptools==${SETUP_TOOLS_VERSION}
@@ -118,32 +119,23 @@ elif [[ "$role" = "ckan" ]]; then
     pip install --upgrade certifi
 
     # copy mkcert CA root to the python CA root
-    cp /etc/ssl/mkcert/rootCA.pem /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem
+    cp /etc/ssl/mkcert/rootCA.pem /srv/app/ckan/${ckanRole}/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem
     if [[ $? -eq 0 ]]; then
-        printf "${Green}Copied /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}"
+        printf "${Green}Copied /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/${ckanRole}/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}"
     else
-        printf "${Red}FAILED to copy /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}"
+        printf "${Red}FAILED to copy /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/${ckanRole}/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}"
     fi
 
     # exit python venv
     deactivate
 
-    # copy default environment into portal and registry environments
-    printf "${Green}Copying python environment to portal and registry${NC}${EOL}"
-    cp -R ${APP_ROOT}/ckan/default/* ${APP_ROOT}/ckan/portal/
-    cp -R ${APP_ROOT}/ckan/default/* ${APP_ROOT}/ckan/registry/
-
     # copy the ckan configs
-    printf "${Green}Copying the CKAN configuration files to their respective environments${NC}${EOL}"
-    cp ${APP_ROOT}/ckan.ini ${APP_ROOT}/ckan/default/ckan.ini
-    cp ${APP_ROOT}/portal.ini ${APP_ROOT}/ckan/portal/portal.ini
-    cp ${APP_ROOT}/registry.ini ${APP_ROOT}/ckan/registry/registry.ini
+    printf "${Green}Copying the ${ckanRole} configuration file to the virtual environment${NC}${EOL}"
+    cp ${APP_ROOT}/registry.ini ${APP_ROOT}/ckan/${ckanRole}/${ckanRole}.ini
 
     # create storage paths
-    printf "${Green}Generating storage directories${NC}${EOL}"
-    mkdir -p ${APP_ROOT}/ckan/default/storage
-    mkdir -p ${APP_ROOT}/ckan/portal/storage
-    mkdir -p ${APP_ROOT}/ckan/registry/storage
+    printf "${Green}Generating storage directory${NC}${EOL}"
+    mkdir -p ${APP_ROOT}/ckan/${ckanRole}/storage
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
