@@ -104,30 +104,32 @@ elif [[ "$role" = "ckan" ]]; then
     # create directory for python venv
     mkdir -p ${APP_ROOT}/ckan/${ckanRole}
 
+    # create directory for ckan theme
+    mkdir -p ${APP_ROOT}/ckan/theme
+
     # create directories for uwsgi outputs
     mkdir -p /dev
     chown -R ckan:ckan /dev
 
-    # initiate python venv and go into it
-    virtualenv --python=python2 ${APP_ROOT}/ckan/${ckanRole}
-    . ${APP_ROOT}/ckan/${ckanRole}/bin/activate
-
-    # install base dependencies
-    pip install setuptools==${SETUP_TOOLS_VERSION}
-    pip install uwsgi
-    pip install --upgrade pip==${PIP_VERSION}
-    pip install --upgrade certifi
-
     # copy mkcert CA root to the python CA root
-    cp /etc/ssl/mkcert/rootCA.pem /srv/app/ckan/${ckanRole}/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem
-    if [[ $? -eq 0 ]]; then
-        printf "${Green}Copied /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/${ckanRole}/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}"
-    else
-        printf "${Red}FAILED to copy /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/${ckanRole}/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}"
-    fi
+    if [[ -d "/srv/app/ckan/${ckanRole}/lib/python${PY_VERSION}/site-packages/certifi" ]]; then
+        cp /etc/ssl/mkcert/rootCA.pem /srv/app/ckan/${ckanRole}/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem;
+        if [[ $? -eq 0 ]]; then
+            printf "${Green}Copied /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/${ckanRole}/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}";
+        else
+            printf "${Red}FAILED to copy /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/${ckanRole}/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}";
+        fi;
+    fi;
 
-    # exit python venv
-    deactivate
+    # create i18n paths
+    if [[ -d "/srv/app/ckan/${ckanRole}/src/ckanext-canada" ]]; then
+        mkdir -p /srv/app/ckan/${ckanRole}/src/ckanext-canada/build;
+        if [[ $? -eq 0 ]]; then
+            printf "${Green}Created /srv/app/ckan/${ckanRole}/src/ckanext-canada/build${NC}${EOL}";
+        else
+            printf "${Red}FAILED to create /srv/app/ckan/${ckanRole}/src/ckanext-canada/build (directory may already exist)${NC}${EOL}";
+        fi;
+    fi;
 
     # copy the ckan configs
     printf "${Green}Copying the ${ckanRole} configuration file to the virtual environment${NC}${EOL}"

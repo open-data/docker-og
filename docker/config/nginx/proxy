@@ -6,13 +6,13 @@ upstream backend_host_drupal {
 
 upstream backend_host_ckanapi {
 
-    server 172.0.0.8:5000;
+    server 172.0.0.8:5002;
 
 }
 
 upstream backend_host_ckan {
 
-    server 172.0.0.7:5000;
+    server 172.0.0.7:5001;
 
 }
 
@@ -71,7 +71,7 @@ server {
         proxy_set_header HTTPS "on";
         proxy_set_header X-NginX-Proxy true;
         proxy_pass_header Server;
-        proxy_pass https://$upstreamHost;
+        proxy_pass http://$upstreamHost;
         proxy_buffering off;
         proxy_buffer_size 16k;
         proxy_busy_buffers_size 24k;
