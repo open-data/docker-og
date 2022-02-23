@@ -21,6 +21,7 @@ supervisord.log
 /.docker.env
 /.env
 /.ssh/
+/paster.log
 drupal-local-settings.php
 drupal-services.yml
 ckan.ini

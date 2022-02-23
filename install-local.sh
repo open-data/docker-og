@@ -38,6 +38,7 @@ installDB_Registry_DS_CKAN='false'
 installRepos_CKAN='false'
 installTheme_CKAN='false'
 installFilePermissions_CKAN='false'
+installLocalUser_CKAN='false'
 
 # general flags
 exitScript='false'
@@ -587,6 +588,7 @@ function install_ckan {
       "Repositories (Installs them into Python venv ckan/${CKAN_ROLE})" 
       "Download Wet-Boew Files" 
       "Set File Permissions" 
+      "Create Local User" 
       "All" 
       "Exit"
     )
@@ -601,6 +603,7 @@ function install_ckan {
       "Repositories (Installs them into Python venv ckan/${CKAN_ROLE})" 
       "Download Wet-Boew Files" 
       "Set File Permissions" 
+      "Create Local User" 
       "All" 
       "Exit"
     )
@@ -662,8 +665,14 @@ function install_ckan {
       installFilePermissions_CKAN='true'
       ;;
 
+    # "Create Local User"
+    (6)
+      exitScript='false'
+      installLocalUser_CKAN='true'
+      ;;
+
     # "All"
-    (6) 
+    (7) 
       exitScript='false'
       installSSH_CKAN='true'
       installDB_Portal_CKAN='true'
@@ -675,7 +684,7 @@ function install_ckan {
       ;;
 
     # "Exit"
-    (7)
+    (8)
       exitScript='true'
       ;;
 
@@ -805,11 +814,11 @@ function install_ckan {
     # END
 
     #
-    # Confirm CKAN Theme repos destruction
+    # Confirm CKAN Wet-Boew repo archive destruction
     #
     if [[ $installTheme_CKAN == "true" ]]; then
 
-      read -r -p $'\n\n\033[0;31m    Are you sure you want delete the\033[1m existing CKAN Wet-Boew directory (ckan/theme)\033[0m\033[0;31m and pull fast-forwarded repositories? [y/N]:\033[0;0m    ' response
+      read -r -p $'\n\n\033[0;31m    Are you sure you want delete the\033[1m existing CKAN Wet-Boew directory (ckan/static_files)\033[0m\033[0;31m and download new files? [y/N]:\033[0;0m    ' response
 
       if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
 
@@ -823,7 +832,7 @@ function install_ckan {
 
     fi
     # END
-    # Confirm CKAN Theme repos destruction
+    # Confirm CKAN Wet-Boew repo archive destruction
     # END
 
     #
@@ -1031,6 +1040,9 @@ function install_ckan {
         printf "${Red}${INDENT}${INDENT}Create /srv/app/ckan/${CKAN_ROLE}/src/ckanext-canada/build: FAIL (directory may already exist)${NC}${EOL}"
       fi
 
+      # generate translation files
+      . /srv/app/ckan/${CKAN_ROLE}/src/ckanext-canada/bin/build-combined-ckan-mo.sh
+
       # install ckan cloud storage into the python environment
       printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Cloud Storage repository${HAIR}${Cyan} from git@github.com:open-data/ckanext-cloudstorage.git and installing into Python environment${NC}${SPACER}"
       pip install -e 'git+ssh://git@github.com/open-data/ckanext-cloudstorage.git#egg=ckanext-cloudstorage'
@@ -1091,14 +1103,6 @@ function install_ckan {
         printf "${Red}${INDENT}${INDENT}Deactivate Python environment: FAIL${NC}${EOL}"
       fi
 
-      # set ownership
-      chown ckan:ckan -R ${APP_ROOT}/ckan/${CKAN_ROLE}
-      if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Set ckan/${CKAN_ROLE} ownership to ckan:ckan: OK${NC}${EOL}"
-      else
-        printf "${Red}${INDENT}${INDENT}Set ckan/${CKAN_ROLE} ownership to ckan:ckan: FAIL${NC}${EOL}"
-      fi
-
       # create storage path
       printf "${SPACER}${Cyan}${INDENT}Create storage path${NC}${SPACER}"
       mkdir -p ${APP_ROOT}/ckan/${CKAN_ROLE}/storage
@@ -1106,6 +1110,14 @@ function install_ckan {
         printf "${Green}${INDENT}${INDENT}Create ckan/${CKAN_ROLE}/storage: OK${NC}${EOL}"
       else
         printf "${Red}${INDENT}${INDENT}Create ckan/${CKAN_ROLE}/storage: FAIL (directory may already exist)${NC}${EOL}"
+      fi
+
+      # set ownership
+      chown ckan:ckan -R ${APP_ROOT}/ckan/${CKAN_ROLE}
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Set ckan/${CKAN_ROLE} ownership to ckan:ckan: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Set ckan/${CKAN_ROLE} ownership to ckan:ckan: FAIL${NC}${EOL}"
       fi
 
     fi
@@ -1118,11 +1130,11 @@ function install_ckan {
     #
     if [[ $installTheme_CKAN == "true" ]]; then
 
-      mkdir -p ${APP_ROOT}/ckan/theme
-      cd ${APP_ROOT}/ckan/theme
+      mkdir -p ${APP_ROOT}/ckan/static_files
+      cd ${APP_ROOT}/ckan/static_files
 
       # nuke the entire folder
-      printf "${SPACER}${Cyan}${INDENT}Pre-nuke the existing CKAN Theme directory${NC}${SPACER}"
+      printf "${SPACER}${Cyan}${INDENT}Pre-nuke the existing CKAN Static Files directory${NC}${SPACER}"
       # destroy all files
       rm -rf ./*
       if [[ $? -eq 0 ]]; then
@@ -1139,12 +1151,12 @@ function install_ckan {
       fi
 
       # download wet-boew/wet-boew-cdn
-      mkdir -p ${APP_ROOT}/ckan/theme/wet-boew
-      curl -L https://github.com/wet-boew/wet-boew-cdn/archive/${WET_VERSION}.tar.gz | tar -zvx --strip-components 1 --directory=${APP_ROOT}/ckan/theme/wet-boew
+      mkdir -p ${APP_ROOT}/ckan/static_files/wet-boew
+      curl -L https://github.com/wet-boew/wet-boew-cdn/archive/${WET_VERSION}.tar.gz | tar -zvx --strip-components 1 --directory=${APP_ROOT}/ckan/static_files/wet-boew
 
       # download wet-boew/themes-cdn
-      mkdir -p ${APP_ROOT}/ckan/theme/GCWeb
-      curl -L https://github.com/wet-boew/themes-cdn/archive/${GCWEB_VERSION}.tar.gz | tar -zvx --strip-components 1 --directory=${APP_ROOT}/ckan/theme/GCWeb
+      mkdir -p ${APP_ROOT}/ckan/static_files/GCWeb
+      curl -L https://github.com/wet-boew/themes-cdn/archive/${GCWEB_VERSION}-gcweb.tar.gz | tar -zvx --strip-components 1 --directory=${APP_ROOT}/ckan/static_files/GCWeb
 
     fi
     # END
@@ -1156,7 +1168,7 @@ function install_ckan {
     #
     if [[ $installFilePermissions_CKAN == "true" ]]; then
 
-      # set file ownership for ckan-ext files
+      # set file ownership for ckan files
       chown ckan:ckan -R ${APP_ROOT}/ckan/${CKAN_ROLE}
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Set ckan/${CKAN_ROLE} ownership to ckan:ckan: OK${NC}${EOL}"
@@ -1164,9 +1176,39 @@ function install_ckan {
         printf "${Red}${INDENT}${INDENT}Set ckan/${CKAN_ROLE} ownership to ckan:ckan: FAIL${NC}${EOL}"
       fi
 
+      # set file ownership for ckan static files
+      chown ckan:ckan -R ${APP_ROOT}/ckan/static_files
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Set ckan/static_files ownership to ckan:ckan: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Set ckan/static_files ownership to ckan:ckan: FAIL${NC}${EOL}"
+      fi
+
     fi
     # END
     # Set file permissions
+    # END
+
+    #
+    # Create local user
+    #
+    if [[ $installLocalUser_CKAN == "true" ]]; then
+
+      if [[ $CKAN_ROLE == 'registry' ]]; then
+
+        #paster --plugin=ckan user add admin_local email=temp@tbs-sct.gc.ca password=12345678 -c $REGISTRY_CONFIG
+        paster --plugin=ckan sysadmin -c $REGISTRY_CONFIG -v add admin_local password=12345678 email=temp@tbs-sct.gc.ca
+
+      elif [[ $CKAN_ROLE == 'portal' ]]; then
+
+        #paster --plugin=ckan user add admin_local email=temp@tbs-sct.gc.ca password=12345678 -c $PORTAL_CONFIG
+        paster --plugin=ckan sysadmin -c $PORTAL_CONFIG -v add admin_local password=12345678 email=temp@tbs-sct.gc.ca
+
+      fi
+
+    fi
+    # END
+    # Create local user
     # END
 
   else

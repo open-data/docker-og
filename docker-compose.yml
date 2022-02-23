@@ -51,6 +51,11 @@ services:
       args:
         USER_ID: ${USER_ID:-0}
         GROUP_ID: ${GROUP_ID:-0}
+    healthcheck:
+      test: service nginx status || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
     working_dir: /var/www/html
     networks:
       og-proxy-network:
@@ -107,6 +112,11 @@ services:
       args:
         USER_ID: ${USER_ID:-0}
         GROUP_ID: ${GROUP_ID:-0}
+    healthcheck:
+      test: service apache2 status || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
     working_dir: /srv/app
     networks:
       og-proxy-network:
@@ -146,11 +156,15 @@ services:
       SSL_CERT_DIR: /etc/ssl/mkcert
       PORTAL_CONFIG: /srv/app/ckan/portal/portal.ini
       REGISTRY_CONFIG: /srv/app/ckan/registry/registry.ini
+      CKAN_INI: /srv/app/ckan/registry/registry.ini
     volumes:
       - ./docker/config/ckan:/docker-entrypoint.d
       - .:/srv/app
       - ./docker/config/nginx/certs:/usr/share/certs
       - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/config/ckan/apache:/etc/apache2/sites-available
+      - ./docker/config/ckan/apache/ports.conf:/etc/apache2/ports.conf
+      - ./docker/config/ckan/wsgi:/etc/ckan/registry
       - ~/.gitconfig:/etc/gitconfig:ro
       - ~/.ssh:/srv/app/.ssh:ro
       - $SSH_AUTH_SOCK:/ssh-agent:ro
@@ -172,6 +186,11 @@ services:
       args:
         USER_ID: ${USER_ID:-0}
         GROUP_ID: ${GROUP_ID:-0}
+    healthcheck:
+      test: service apache2 status || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
     working_dir: /srv/app
     networks:
       og-proxy-network:
@@ -211,11 +230,15 @@ services:
       SSL_CERT_DIR: /etc/ssl/mkcert
       PORTAL_CONFIG: /srv/app/ckan/portal/portal.ini
       REGISTRY_CONFIG: /srv/app/ckan/registry/registry.ini
+      CKAN_INI: /srv/app/ckan/portal/portal.ini
     volumes:
       - ./docker/config/ckan:/docker-entrypoint.d
       - .:/srv/app
       - ./docker/config/nginx/certs:/usr/share/certs
       - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/config/ckan/apache:/etc/apache2/sites-available
+      - ./docker/config/ckan/apache/ports.conf:/etc/apache2/ports.conf
+      - ./docker/config/ckan/wsgi:/etc/ckan/portal
       - ~/.gitconfig:/etc/gitconfig:ro
       - ~/.ssh:/srv/app/.ssh:ro
       - $SSH_AUTH_SOCK:/ssh-agent:ro
@@ -232,6 +255,11 @@ services:
     container_name: og-postgres
     image: postgres:9.6
     restart: always
+    healthcheck:
+      test: pg_isready -U postgres || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
     networks:
       og-local-network:
         ipv4_address: 172.0.0.9

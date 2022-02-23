@@ -124,7 +124,11 @@ Though there is an initialization script to create the databases on the initial 
          * The database for CKAN Registry is not too large, however it has a lot of tables so importing the database will take a long time.
          * You may recieve warnings during the pg_restore: `out of shared memory`, this can be ignored, the import will just take longer.
       * `Repositories`: will destroy all files inside of the `ckan/registry` directory, and pull & install all required repositories related to CKAN and install them into the Python environment (along with their requirements).
+      * `Downlod Wet-Boew Files`: will destroy all files inside of the `ckan/static_files` direcotry, and download and extract:
+         * `wet-boew-cdn` into `ckan/static_files/wet-boew`
+         * `themes-cdn` into `ckan/static_files/GCWeb`
       * `Set File Permissions`: will set the correct file and directory ownerships and permissions.
+      * `Create Local User`: will create a local admin user for CKAN Registry.
       * `All`: will execute all of the above, use this for first time install or if you wish to re-install everything.
       * `Exit`: will exit the installation script.
 
@@ -144,7 +148,11 @@ Though there is an initialization script to create the databases on the initial 
          * The database for CKAN is large, so importing the database will take a long time.
          * You may recieve warnings during the pg_restore: `out of shared memory`, this can be ignored, the import will just take longer.
       * `Repositories`: will destroy all files inside of the `ckan/portal` directory, and pull & install all required repositories related to CKAN and install them into the Python environment (along with their requirements).
+      * `Downlod Wet-Boew Files`: will destroy all files inside of the `ckan/static_files` direcotry, and download and extract:
+         * `wet-boew-cdn` into `ckan/static_files/wet-boew`
+         * `themes-cdn` into `ckan/static_files/GCWeb`
       * `Set File Permissions`: will set the correct file and directory ownerships and permissions.
+      * `Create Local User`: will create a local admin user for CKAN Portal.
       * `All`: will execute all of the above, use this for first time install or if you wish to re-install everything.
       * `Exit`: will exit the installation script.
    
@@ -168,7 +176,7 @@ _The Solr container will automatically be brought up with the CKAN and Drupal co
 1. __Bring up__ the CKAN Registry docker container: `docker-compose up -d ckan`
 1. __Open a shell__ into the container: `docker-compose exec ckan bash`
 1. __Build__ the indices:
-   1. __Registry:__ `paster --plugin=ckan search-index rebuild --config=$REGISTRY_CONFIG`
+   1. __Registry:__ `paster --plugin=ckan search-index rebuild -c $REGISTRY_CONFIG`
    1. __Inventory:__ `paster --plugin=ckanext-canada inventory rebuild --lenient -c $REGISTRY_CONFIG -f /srv/app/backup/inventory.csv`
 
 #### Portal
@@ -176,5 +184,5 @@ _The Solr container will automatically be brought up with the CKAN and Drupal co
 1. __Bring up__ the CKAN Portal docker container: `docker-compose up -d ckanapi`
 1. __Open a shell__ into the container: `docker-compose exec ckanapi bash`
 1. __Build__ the indices:
-   1. __Portal:__ `paster --plugin=ckan search-index rebuild --config=$PORTAL_CONFIG`
+   1. __Portal:__ `paster --plugin=ckan search-index rebuild -c $PORTAL_CONFIG`
    

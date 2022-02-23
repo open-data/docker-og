@@ -17,6 +17,9 @@ RUN apt-get update -yqq \
         curl \
         nano \
         vim \
+        apache2 \
+        libapache2-mod-wsgi-py3 \
+        libapache2-mod-rpaf \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
     && docker-php-ext-install pdo pdo_pgsql pgsql zip \
     && docker-php-ext-enable pdo_pgsql pgsql
@@ -35,8 +38,11 @@ ADD docker/start.sh /usr/local/bin/start
 RUN useradd ckan
 
 # Create root directory
-RUN mkdir -p /srv/app
+RUN mkdir -p /srv/app \
+    && mkdir -p /etc/ckan
 RUN chown -R ckan:ckan /srv/app \
+    && chown -R ckan:ckan /etc/ckan \
+    && chown -R ckan:ckan /etc/apache2 \
     && chmod +x /usr/local/bin/start
 
 ARG USER_ID
