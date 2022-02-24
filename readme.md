@@ -162,6 +162,9 @@ Though there is an initialization script to create the databases on the initial 
 
 1. __Bring up__ the Drupal docker container: `docker-compose up -d drupal`
 1. __Open__ a browser into: `https://open.local`
+1. Login here: `https://open.local/en/user/login`
+   1. Username: `admin.local`
+   1. Password: `12345678`
 
 ### Solr
 
@@ -169,12 +172,21 @@ _The Solr container will automatically be brought up with the CKAN and Drupal co
 
 1. __Bring up__ the Solr docker container: `docker-compose up -d solr`
 1. __Open__ a browser into: `https://solr.open.local`
+
 ### CKAN
 
 #### Registry
 
 1. __Bring up__ the CKAN Registry docker container: `docker-compose up -d ckan`
 1. __Open a shell__ into the container: `docker-compose exec ckan bash`
+1. __Open__ a browser into: `https://registry.open.local`
+   1. Login here: `https://registry.open.local/en/user/login`
+      1. Normal User:
+         1. Username: `user_local`
+         1. Password: `12345678`
+      1. Sys Admin User:
+         1. Username: `admin_local`
+         1. Password: `12345678`
 1. __Build__ the indices:
    1. __Registry:__ `paster --plugin=ckan search-index rebuild -c $REGISTRY_CONFIG`
    1. __Inventory:__ `paster --plugin=ckanext-canada inventory rebuild --lenient -c $REGISTRY_CONFIG -f /srv/app/backup/inventory.csv`

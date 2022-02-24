@@ -12,14 +12,13 @@ RUN apt-get update -yqq \
         python2-dev \
         postgresql \
         libpq-dev \
+        libpcre3 \
+        libpcre3-dev \
         virtualenv \
         redis-server \
         curl \
         nano \
         vim \
-        apache2 \
-        libapache2-mod-wsgi-py3 \
-        libapache2-mod-rpaf \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
     && docker-php-ext-install pdo pdo_pgsql pgsql zip \
     && docker-php-ext-enable pdo_pgsql pgsql
@@ -42,7 +41,6 @@ RUN mkdir -p /srv/app \
     && mkdir -p /etc/ckan
 RUN chown -R ckan:ckan /srv/app \
     && chown -R ckan:ckan /etc/ckan \
-    && chown -R ckan:ckan /etc/apache2 \
     && chmod +x /usr/local/bin/start
 
 ARG USER_ID

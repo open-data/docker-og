@@ -1112,6 +1112,15 @@ function install_ckan {
         printf "${Red}${INDENT}${INDENT}Create ckan/${CKAN_ROLE}/storage: FAIL (directory may already exist)${NC}${EOL}"
       fi
 
+      # copy wsgi files
+      printf "${SPACER}${Cyan}${INDENT}Copy ${CKAN_ROLE} wsgi config file to virtual environment${NC}${SPACER}"
+      cp ${APP_ROOT}/docker/config/ckan/wsgi/${CKAN_ROLE}.py ${APP_ROOT}/ckan/${CKAN_ROLE}/wsgi.py
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Copy ${APP_ROOT}/docker/config/ckan/wsgi/${CKAN_ROLE}.py to ${APP_ROOT}/ckan/${CKAN_ROLE}/wsgi.py: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}Copy ${APP_ROOT}/docker/config/ckan/wsgi/${CKAN_ROLE}.py to ${APP_ROOT}/ckan/${CKAN_ROLE}/wsgi.py: FAIL${NC}${EOL}"
+      fi
+
       # set ownership
       chown ckan:ckan -R ${APP_ROOT}/ckan/${CKAN_ROLE}
       if [[ $? -eq 0 ]]; then
@@ -1196,12 +1205,12 @@ function install_ckan {
 
       if [[ $CKAN_ROLE == 'registry' ]]; then
 
-        #paster --plugin=ckan user add admin_local email=temp@tbs-sct.gc.ca password=12345678 -c $REGISTRY_CONFIG
+        paster --plugin=ckan user add user_local email=temp+user@tbs-sct.gc.ca password=12345678 -c $REGISTRY_CONFIG
         paster --plugin=ckan sysadmin -c $REGISTRY_CONFIG -v add admin_local password=12345678 email=temp@tbs-sct.gc.ca
 
       elif [[ $CKAN_ROLE == 'portal' ]]; then
 
-        #paster --plugin=ckan user add admin_local email=temp@tbs-sct.gc.ca password=12345678 -c $PORTAL_CONFIG
+        paster --plugin=ckan user add user_local email=temp+user@tbs-sct.gc.ca password=12345678 -c $PORTAL_CONFIG
         paster --plugin=ckan sysadmin -c $PORTAL_CONFIG -v add admin_local password=12345678 email=temp@tbs-sct.gc.ca
 
       fi

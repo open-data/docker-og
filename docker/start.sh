@@ -94,14 +94,6 @@ elif [[ "$role" = "ckan" ]]; then
     # link ckan supervisord config
     ln -sf /etc/supervisor/conf.d-available/ckan-${ckanRole}.conf /etc/supervisor/conf.d/ckan-${ckanRole}.conf
 
-    # link apache server block
-    a2ensite ${ckanRole}.open.local
-
-    # remove apache default server block
-    if [[ $( a2query -s | grep 000-default ) ]]; then
-        a2dissite 000-default;
-    fi
-
     # link mkcert certificate to the truststore
     printf "${Green}Adding mkcert to truststores${NC}${EOL}"
     ln -sf /etc/ssl/mkcert/rootCA.pem /etc/ssl/certs/mkcert-certificate.pem
@@ -143,6 +135,11 @@ elif [[ "$role" = "ckan" ]]; then
     printf "${Green}Copying the ${ckanRole} configuration file to the virtual environment${NC}${EOL}"
     cp ${APP_ROOT}/registry.ini ${APP_ROOT}/ckan/${ckanRole}/${ckanRole}.ini
 
+    # copy the wsgi.py files
+    printf "${Green}Copying the ${ckanRole} wsgi configuration file to the virtual environment${NC}${EOL}"
+    cp ${APP_ROOT}/docker/config/ckan/wsgi/${ckanRole}.py ${APP_ROOT}/ckan/${ckanRole}/wsgi.py
+    chown ckan:ckan ${APP_ROOT}/ckan/${ckanRole}/wsgi.py
+
     # create storage paths
     printf "${Green}Generating storage directory${NC}${EOL}"
     mkdir -p ${APP_ROOT}/ckan/${ckanRole}/storage
@@ -150,6 +147,10 @@ elif [[ "$role" = "ckan" ]]; then
     # create cache paths
     printf "${Green}Generating cache directory${NC}${EOL}"
     mkdir -p ${APP_ROOT}/ckan/${ckanRole}/tmp
+
+    # create misc paths
+    mkdir -p /opt/tbs
+    chown -R ckan:ckan /opt/tbs
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
