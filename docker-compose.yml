@@ -138,6 +138,7 @@ services:
     environment:
       CONTAINER_ROLE: ckan
       CKAN_ROLE: registry
+      LOCAL_CKAN_INSTALL: 1
       PGHOST: postgres
       PGDATABASE: postgres
       PGUSER: homestead
@@ -154,6 +155,7 @@ services:
       PYTHONHTTPSVERIFY: 0
       SSL_CERT_FILE: /etc/ssl/mkcert/rootCA.pem
       SSL_CERT_DIR: /etc/ssl/mkcert
+      SSL_VERIFY: 0
       PORTAL_CONFIG: /srv/app/ckan/portal/portal.ini
       REGISTRY_CONFIG: /srv/app/ckan/registry/registry.ini
       CKAN_INI: /srv/app/ckan/registry/registry.ini
@@ -213,6 +215,7 @@ services:
     environment:
       CONTAINER_ROLE: ckan
       CKAN_ROLE: portal
+      LOCAL_CKAN_INSTALL: 1
       PGHOST: postgres
       PGDATABASE: og_ckan_local
       PGUSER: homestead
@@ -229,6 +232,7 @@ services:
       PYTHONHTTPSVERIFY: 0
       SSL_CERT_FILE: /etc/ssl/mkcert/rootCA.pem
       SSL_CERT_DIR: /etc/ssl/mkcert
+      SSL_VERIFY: 0
       PORTAL_CONFIG: /srv/app/ckan/portal/portal.ini
       REGISTRY_CONFIG: /srv/app/ckan/registry/registry.ini
       CKAN_INI: /srv/app/ckan/portal/portal.ini

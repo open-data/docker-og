@@ -129,6 +129,8 @@ Though there is an initialization script to create the databases on the initial 
          * `themes-cdn` into `ckan/static_files/GCWeb`
       * `Set File Permissions`: will set the correct file and directory ownerships and permissions.
       * `Create Local User`: will create a local admin user for CKAN Registry.
+      * `Import Organizations`: will dump the most recent Organizations from the ckanapi and import them into the database.
+      * `Import Datasets`: will download the most recent dataset file and import them into the datase.
       * `All`: will execute all of the above, use this for first time install or if you wish to re-install everything.
       * `Exit`: will exit the installation script.
 
@@ -153,6 +155,8 @@ Though there is an initialization script to create the databases on the initial 
          * `themes-cdn` into `ckan/static_files/GCWeb`
       * `Set File Permissions`: will set the correct file and directory ownerships and permissions.
       * `Create Local User`: will create a local admin user for CKAN Portal.
+      * `Import Organizations`: will dump the most recent Organizations from the ckanapi and import them into the database.
+      * `Import Datasets`: will download the most recent dataset file and import them into the datase.
       * `All`: will execute all of the above, use this for first time install or if you wish to re-install everything.
       * `Exit`: will exit the installation script.
    

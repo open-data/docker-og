@@ -39,6 +39,8 @@ installRepos_CKAN='false'
 installTheme_CKAN='false'
 installFilePermissions_CKAN='false'
 installLocalUser_CKAN='false'
+installOrgs_CKAN='false'
+installDatasets_CKAN='false'
 
 # general flags
 exitScript='false'
@@ -589,6 +591,8 @@ function install_ckan {
       "Download Wet-Boew Files" 
       "Set File Permissions" 
       "Create Local User" 
+      "Import Organizations" 
+      "Import Datasets" 
       "All" 
       "Exit"
     )
@@ -604,6 +608,8 @@ function install_ckan {
       "Download Wet-Boew Files" 
       "Set File Permissions" 
       "Create Local User" 
+      "Import Organizations" 
+      "Import Datasets" 
       "All" 
       "Exit"
     )
@@ -671,8 +677,20 @@ function install_ckan {
       installLocalUser_CKAN='true'
       ;;
 
+    # "Import Organizations"
+    (7)
+      exitScript='false'
+      installOrgs_CKAN='true'
+      ;;
+
+    # "Import Datasets"
+    (8)
+      exitScript='false'
+      installDatasets_CKAN='true'
+      ;;
+
     # "All"
-    (7) 
+    (9) 
       exitScript='false'
       installSSH_CKAN='true'
       installDB_Portal_CKAN='true'
@@ -684,7 +702,7 @@ function install_ckan {
       ;;
 
     # "Exit"
-    (8)
+    (10)
       exitScript='true'
       ;;
 
@@ -833,6 +851,50 @@ function install_ckan {
     fi
     # END
     # Confirm CKAN Wet-Boew repo archive destruction
+    # END
+
+    #
+    # Confirm CKAN Organizations re-import
+    #
+    if [[ $installOrgs_CKAN == "true" ]]; then
+
+      read -r -p $'\n\n\033[0;31m    Are you sure you want to re-import all of the\033[1m CKAN Organizations\033[0m\033[0;31m? [y/N]:\033[0;0m    ' response
+
+      if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+
+        installOrgs_CKAN='true'
+
+      else
+
+        installOrgs_CKAN='false'
+
+      fi
+
+    fi
+    # END
+    # Confirm CKAN Organizations re-import
+    # END
+
+    #
+    # Confirm CKAN Datasets re-import
+    #
+    if [[ $installDatasets_CKAN == "true" ]]; then
+
+      read -r -p $'\n\n\033[0;31m    Are you sure you want to re-import all of the\033[1m CKAN Datasets\033[0m\033[0;31m? [y/N]:\033[0;0m    ' response
+
+      if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+
+        installDatasets_CKAN='true'
+
+      else
+
+        installDatasets_CKAN='false'
+
+      fi
+
+    fi
+    # END
+    # Confirm CKAN Datasets re-import
     # END
 
     #
@@ -1095,6 +1157,24 @@ function install_ckan {
       printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Wet-Boew repository${HAIR}${Cyan} from git@github.com:open-data/ckanext-wet-boew.git and installing into Python environment${NC}${SPACER}"
       pip install -e 'git+ssh://git@github.com/open-data/ckanext-wet-boew.git#egg=ckanext-wet-boew' -r 'https://raw.githubusercontent.com/open-data/ckanext-wet-boew/master/requirements.txt'
 
+      # install flask admin
+      pip install Flask-Admin==1.4.0
+
+      # install flask login
+      pip install Flask-Login==0.3.0
+
+      # install flask sql alchemy
+      pip install Flask-SQLAlchemy==2.5.1
+
+      # install correct version of slugify
+      pip install python-slugify==1.2.0
+
+      # install request with security modules
+      pip install requests[security]==2.11.1
+
+      # install correct version of certifi
+      pip install certifi==2015.04.28
+
       # decativate python environment
       deactivate
       if [[ $? -eq 0 ]]; then
@@ -1111,6 +1191,16 @@ function install_ckan {
       else
         printf "${Red}${INDENT}${INDENT}Create ckan/${CKAN_ROLE}/storage: FAIL (directory may already exist)${NC}${EOL}"
       fi
+
+      # copy ckanext-canada static files to static_files
+      printf "${SPACER}${Cyan}${INDENT}Copy CKAN Canada static files${NC}${SPACER}"
+      cp -R ${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/static ${APP_ROOT}/ckan/static_files/
+      if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/static to ${APP_ROOT}/ckan/static_files/static: OK${NC}${EOL}"
+      else
+        printf "${Red}${INDENT}${INDENT}${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/static to ${APP_ROOT}/ckan/static_files/statice: FAIL${NC}${EOL}"
+      fi
+      chown -R ckan:ckan ${APP_ROOT}/ckan/static_files
 
       # copy wsgi files
       printf "${SPACER}${Cyan}${INDENT}Copy ${CKAN_ROLE} wsgi config file to virtual environment${NC}${SPACER}"
@@ -1218,6 +1308,47 @@ function install_ckan {
     fi
     # END
     # Create local user
+    # END
+
+    #
+    # Import Organizations
+    #
+    if [[ $installOrgs_CKAN == "true" ]]; then
+
+      # remove old orgs file
+      rm -rf ${APP_ROOT}/backup/orgs.jsonl
+
+      # dump new orgs
+      #TODO: fix SSL certificate verify failed issues. Seems to only happen inside of the container.
+      ckanapi dump organizations --all --insecure -r https://open.canada.ca/data -O ${APP_ROOT}/backup/orgs.jsonl
+      chown ckan:ckan ${APP_ROOT}/backup/orgs.jsonl
+
+      # import the orgs
+      ckanapi load organizations -I ${APP_ROOT}/backup/orgs.jsonl -c ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini
+
+    fi
+    # END
+    # Import Organizations
+    # END
+
+    #
+    # Import Datasets
+    #
+    if [[ $installDatasets_CKAN == "true" ]]; then
+
+      # remove old datasets file
+      rm -rf ${APP_ROOT}/backup/od-do-canada.jsonl.gz
+
+      # download new datasets
+      curl --output ${APP_ROOT}/backup/od-do-canada.jsonl.gz https://open.canada.ca/static/od-do-canada.jsonl.gz
+      chown ckan:ckan ${APP_ROOT}/backup/od-do-canada.jsonl.gz
+
+      # import the datasets
+      ckanapi load datasets -I ${APP_ROOT}/backup/od-do-canada.jsonl.gz -z -p 4 -c ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini
+
+    fi
+    # END
+    # Import Datasets
     # END
 
   else

@@ -103,9 +103,6 @@ server {
         disable_symlinks off;
         tcp_nodelay on;
 
-        # default_type text/plain;
-        # default_type application/xml;
-
     }
 
     client_max_body_size 100M;
