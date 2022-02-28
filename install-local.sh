@@ -1172,9 +1172,6 @@ function install_ckan {
       # install request with security modules
       pip install requests[security]==2.11.1
 
-      # install correct version of certifi
-      pip install certifi==2015.04.28
-
       # decativate python environment
       deactivate
       if [[ $? -eq 0 ]]; then
@@ -1295,12 +1292,22 @@ function install_ckan {
 
       if [[ $CKAN_ROLE == 'registry' ]]; then
 
+        # create member user
+        printf "${SPACER}${Cyan}${INDENT}Create default user${NC}${SPACER}"
         paster --plugin=ckan user add user_local email=temp+user@tbs-sct.gc.ca password=12345678 -c $REGISTRY_CONFIG
+
+        # create system admin
+        printf "${SPACER}${Cyan}${INDENT}Create system admin user${NC}${SPACER}"
         paster --plugin=ckan sysadmin -c $REGISTRY_CONFIG -v add admin_local password=12345678 email=temp@tbs-sct.gc.ca
 
       elif [[ $CKAN_ROLE == 'portal' ]]; then
 
+        # create member user
+        printf "${SPACER}${Cyan}${INDENT}Create default user${NC}${SPACER}"
         paster --plugin=ckan user add user_local email=temp+user@tbs-sct.gc.ca password=12345678 -c $PORTAL_CONFIG
+
+        # create system admin
+        printf "${SPACER}${Cyan}${INDENT}Create system admin user${NC}${SPACER}"
         paster --plugin=ckan sysadmin -c $PORTAL_CONFIG -v add admin_local password=12345678 email=temp@tbs-sct.gc.ca
 
       fi
@@ -1316,14 +1323,16 @@ function install_ckan {
     if [[ $installOrgs_CKAN == "true" ]]; then
 
       # remove old orgs file
+      printf "${SPACER}${Cyan}${INDENT}Remove old orgs.jsonl file${NC}${SPACER}"
       rm -rf ${APP_ROOT}/backup/orgs.jsonl
 
       # dump new orgs
-      #TODO: fix SSL certificate verify failed issues. Seems to only happen inside of the container.
-      ckanapi dump organizations --all --insecure -r https://open.canada.ca/data -O ${APP_ROOT}/backup/orgs.jsonl
+      printf "${SPACER}${Cyan}${INDENT}Dump latest Organizations into orgs.jsonl file${NC}${SPACER}"
+      ckanapi dump organizations --all -r https://open.canada.ca/data -O ${APP_ROOT}/backup/orgs.jsonl
       chown ckan:ckan ${APP_ROOT}/backup/orgs.jsonl
 
       # import the orgs
+      printf "${SPACER}${Cyan}${INDENT}Import Organizations${NC}${SPACER}"
       ckanapi load organizations -I ${APP_ROOT}/backup/orgs.jsonl -c ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini
 
     fi
@@ -1337,13 +1346,16 @@ function install_ckan {
     if [[ $installDatasets_CKAN == "true" ]]; then
 
       # remove old datasets file
+      printf "${SPACER}${Cyan}${INDENT}Remove old Datasets file${NC}${SPACER}"
       rm -rf ${APP_ROOT}/backup/od-do-canada.jsonl.gz
 
       # download new datasets
+      printf "${SPACER}${Cyan}${INDENT}Download new Datasets file${NC}${SPACER}"
       curl --output ${APP_ROOT}/backup/od-do-canada.jsonl.gz https://open.canada.ca/static/od-do-canada.jsonl.gz
       chown ckan:ckan ${APP_ROOT}/backup/od-do-canada.jsonl.gz
 
       # import the datasets
+      printf "${SPACER}${Cyan}${INDENT}Import Datasets${NC}${SPACER}"
       ckanapi load datasets -I ${APP_ROOT}/backup/od-do-canada.jsonl.gz -z -p 4 -c ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini
 
     fi
