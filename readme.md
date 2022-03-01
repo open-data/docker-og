@@ -30,7 +30,7 @@
     1. `127.0.0.1 portal.open.local`
     1. `127.0.0.1 solr.open.local`
 1. __Use [mkcert](https://github.com/FiloSottile/mkcert)__ to make a certificate for nginx(Drupal, CKAN, and Solr) and solr if you're using Windows with WSL2, makes sure to make the certificates in Powershell running as an Administrator, not within WSL2:
-   * __nginx(Drupal):__
+   * __nginx(Drupal, CKAN, and Solr):__
       1. cd inside of the `docker/config/nginx/certs` directory.
       1. Generate the pem chain: `mkcert -cert-file open.local.pem -key-file open.local-key.pem open.local registry.open.local portal.open.local solr.open.local 127.0.0.1 localhost ::1 ::5001 ::5000 ::8981 ::8983 ::4430`
    * __solr:__
@@ -51,13 +51,13 @@
       1. `id` <- this should get your current user ID and group ID in WSL2 or whatever shell you're using. If you're using WSL2 and only ever made your default user, it will likely be `1000`
 1. __Create__ a folder in the root of this repository called `backup`, in it, place the following files:
    * __For Drupal:__
-      1. `drupal_db.pgdump` <- the database backup for the Drupal site.
-      1. `drupal_files.tgz` <- the compressed folder of the public files from the Drupal site.
+      1. `drupal_db.pgdump` _(Required)_ <- the database backup for the Drupal site.
+      1. `drupal_files.tgz` _(Required)_ <- the compressed folder of the public files from the Drupal site.
    * __For CKAN:__
-      1. `ckan_portal_db.pgdump` <- the database backup for the CKAN Portal app.
-      1. `ckan_portal_ds_db.pgdump` <- the database backup for the CKAN Portal Datastore.
-      1. `ckan_registry_db.pgdump` <- the database backup for the CKAN Registry app.
-      1. `ckan_registry_ds_db.pgdump` <- the database backup for the CKAN Registry Datastore.
+      1. `ckan_portal_db.pgdump` _(Optional)_ <- the database backup for the CKAN Portal app.
+      1. `ckan_portal_ds_db.pgdump` _(Optional)_ <- the database backup for the CKAN Portal Datastore.
+      1. `ckan_registry_db.pgdump` _(Optional)_ <- the database backup for the CKAN Registry app.
+      1. `ckan_registry_ds_db.pgdump` _(Optional)_ <- the database backup for the CKAN Registry Datastore.
    * __For Solr:__
       1. `inventory.csv` <- Open Data Inventory data set csv file.
 1. __Create__ a folder in the root of this repository called `postgres`. This folder will hold the data for imported databases to persist during Docker container restarts.
@@ -118,9 +118,11 @@ Though there is an initialization script to create the databases on the initial 
    1. __Select__ what you want to install for CKAN Registry:
       * `SSH (Required for Repositories)`: will install and configure the ssh command along with the ssh-agent and keys.
       * `Registry Database`: will destroy the current `og_ckan_registry_local` database and import a fresh one from `backup/ckan_registry_db.pgdump`
+         * Importing a database is optional, if the file does not exist, this step will be skipped automatically.
          * The database for CKAN Registry is not too large, however it has a lot of tables so importing the database will take a long time.
          * You may recieve warnings during the pg_restore: `out of shared memory`, this can be ignored, the import will just take longer.
       * `Registry Datastore Database`: will destroy the current `og_ckan_registry_ds_local` database and import a fresh one from `backup/ckan_registry_ds_db.pgdump`
+         * Importing a database is optional, if the file does not exist, this step will be skipped automatically.
          * The database for CKAN Registry is not too large, however it has a lot of tables so importing the database will take a long time.
          * You may recieve warnings during the pg_restore: `out of shared memory`, this can be ignored, the import will just take longer.
       * `Repositories`: will destroy all files inside of the `ckan/registry` directory, and pull & install all required repositories related to CKAN and install them into the Python environment (along with their requirements).
@@ -131,6 +133,7 @@ Though there is an initialization script to create the databases on the initial 
       * `Create Local User`: will create a local admin user for CKAN Registry.
       * `Import Organizations`: will dump the most recent Organizations from the ckanapi and import them into the database.
       * `Import Datasets`: will download the most recent dataset file and import them into the datase.
+         * ***This will import all 30k+ resources. This will take an extremely long time (~24 hours).***
       * `All`: will execute all of the above, use this for first time install or if you wish to re-install everything.
       * `Exit`: will exit the installation script.
 
@@ -144,9 +147,11 @@ Though there is an initialization script to create the databases on the initial 
    1. __Select__ what you want to install for CKAN Portal:
       * `SSH (Required for Repositories)`: will install and configure the ssh command along with the ssh-agent and keys.
       * `Portal Database`: will destroy the current `og_ckan_portal_local` database and import a fresh one from `backup/ckan_portal_db.pgdump`
+         * Importing a database is optional, if the file does not exist, this step will be skipped automatically.
          * The database for CKAN is large, so importing the database will take a long time.
          * You may recieve warnings during the pg_restore: `out of shared memory`, this can be ignored, the import will just take longer.
       * `Portal Datastore Database`: will destroy the current `og_ckan_portal_ds_local` database and import a fresh one from `backup/ckan_portal_ds_db.pgdump`
+         * Importing a database is optional, if the file does not exist, this step will be skipped automatically.
          * The database for CKAN is large, so importing the database will take a long time.
          * You may recieve warnings during the pg_restore: `out of shared memory`, this can be ignored, the import will just take longer.
       * `Repositories`: will destroy all files inside of the `ckan/portal` directory, and pull & install all required repositories related to CKAN and install them into the Python environment (along with their requirements).
@@ -157,6 +162,7 @@ Though there is an initialization script to create the databases on the initial 
       * `Create Local User`: will create a local admin user for CKAN Portal.
       * `Import Organizations`: will dump the most recent Organizations from the ckanapi and import them into the database.
       * `Import Datasets`: will download the most recent dataset file and import them into the datase.
+         * ***This will import all 30k+ resources. This will take an extremely long time (~24 hours).***
       * `All`: will execute all of the above, use this for first time install or if you wish to re-install everything.
       * `Exit`: will exit the installation script.
    
@@ -177,6 +183,18 @@ _The Solr container will automatically be brought up with the CKAN and Drupal co
 1. __Bring up__ the Solr docker container: `docker-compose up -d solr`
 1. __Open__ a browser into: `https://solr.open.local`
 
+### Postgres
+
+_The Postgres container will automatically be brought up with the CKAN and Drupal containers._
+
+1. __Bring up__ the Postgres docker container: `docker-compose up -d postgres`
+1. You can use the [pgAdmin](https://www.pgadmin.org/download/) software to connect to the Postgres container and query the databases.
+1. For the connection info:
+   * Hostname/address: `127.0.0.1`
+   * Port: `15438`
+   * Username: `homestead`
+   * Maintenance database: `postgres`
+
 ### CKAN
 
 #### Registry
@@ -192,13 +210,10 @@ _The Solr container will automatically be brought up with the CKAN and Drupal co
          1. Username: `admin_local`
          1. Password: `12345678`
 1. __Build__ the indices:
-   1. __Registry:__ `paster --plugin=ckan search-index rebuild -c $REGISTRY_CONFIG`
    1. __Inventory:__ `paster --plugin=ckanext-canada inventory rebuild --lenient -c $REGISTRY_CONFIG -f /srv/app/backup/inventory.csv`
 
 #### Portal
 
 1. __Bring up__ the CKAN Portal docker container: `docker-compose up -d ckanapi`
 1. __Open a shell__ into the container: `docker-compose exec ckanapi bash`
-1. __Build__ the indices:
-   1. __Portal:__ `paster --plugin=ckan search-index rebuild -c $PORTAL_CONFIG`
    
