@@ -12,6 +12,8 @@ RUN apt-get update -yqq \
         python2-dev \
         postgresql \
         libpq-dev \
+        libpcre3 \
+        libpcre3-dev \
         virtualenv \
         redis-server \
         curl \
@@ -35,8 +37,10 @@ ADD docker/start.sh /usr/local/bin/start
 RUN useradd ckan
 
 # Create root directory
-RUN mkdir -p /srv/app
+RUN mkdir -p /srv/app \
+    && mkdir -p /etc/ckan
 RUN chown -R ckan:ckan /srv/app \
+    && chown -R ckan:ckan /etc/ckan \
     && chmod +x /usr/local/bin/start
 
 ARG USER_ID

@@ -88,8 +88,11 @@ elif [[ "$role" = "ckan" ]]; then
 #
 # CKAN Registry & Portal
 #
+
+    printf "${Cyan}The CKAN role is ${BOLD}$ckanRole${HAIR}${NC}${EOL}"
+
     # link ckan supervisord config
-    ln -sf /etc/supervisor/conf.d-available/ckan.conf /etc/supervisor/conf.d/ckan.conf
+    ln -sf /etc/supervisor/conf.d-available/ckan-${ckanRole}.conf /etc/supervisor/conf.d/ckan-${ckanRole}.conf
 
     # link mkcert certificate to the truststore
     printf "${Green}Adding mkcert to truststores${NC}${EOL}"
@@ -99,48 +102,64 @@ elif [[ "$role" = "ckan" ]]; then
     update-ca-certificates
 
     # create directory for python venv
-    mkdir -p ${APP_ROOT}/ckan/default
-    mkdir -p ${APP_ROOT}/ckan/portal
-    mkdir -p ${APP_ROOT}/ckan/registry
+    mkdir -p ${APP_ROOT}/ckan/${ckanRole}
+
+    # create directory for ckan static files
+    mkdir -p ${APP_ROOT}/ckan/static_files
 
     # create directories for uwsgi outputs
     mkdir -p /dev
     chown -R ckan:ckan /dev
 
-    # initiate python venv and go into it
-    virtualenv --python=python2 ${APP_ROOT}/ckan/default
-    . ${APP_ROOT}/ckan/default/bin/activate
-
-    # install base dependencies
-    pip install setuptools==${SETUP_TOOLS_VERSION}
-    pip install uwsgi
-    pip install --upgrade pip==${PIP_VERSION}
-    pip install --upgrade certifi
-
     # copy mkcert CA root to the python CA root
-    cp /etc/ssl/mkcert/rootCA.pem /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem
-    if [[ $? -eq 0 ]]; then
-        printf "${Green}Copied /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}"
-    else
-        printf "${Red}FAILED to copy /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/default/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}"
-    fi
+    if [[ -d "/srv/app/ckan/${ckanRole}/lib/python${PY_VERSION}/site-packages/certifi" ]]; then
+        cp /etc/ssl/mkcert/rootCA.pem /srv/app/ckan/${ckanRole}/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem;
+        if [[ $? -eq 0 ]]; then
+            printf "${Green}Copied /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/${ckanRole}/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}";
+        else
+            printf "${Red}FAILED to copy /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/${ckanRole}/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}";
+        fi;
+    fi;
 
-    # exit python venv
-    deactivate
-
-    # copy default environment into portal and registry environments
-    cp -R ${APP_ROOT}/ckan/default/* ${APP_ROOT}/ckan/portal/
-    cp -R ${APP_ROOT}/ckan/default/* ${APP_ROOT}/ckan/registry/
+    # create i18n paths
+    if [[ -d "/srv/app/ckan/${ckanRole}/src/ckanext-canada" ]]; then
+        mkdir -p /srv/app/ckan/${ckanRole}/src/ckanext-canada/build;
+        if [[ $? -eq 0 ]]; then
+            printf "${Green}Created /srv/app/ckan/${ckanRole}/src/ckanext-canada/build${NC}${EOL}";
+        else
+            printf "${Red}FAILED to create /srv/app/ckan/${ckanRole}/src/ckanext-canada/build (directory may already exist)${NC}${EOL}";
+        fi;
+    fi;
 
     # copy the ckan configs
-    cp ${APP_ROOT}/ckan.ini ${APP_ROOT}/ckan/default/ckan.ini
-    cp ${APP_ROOT}/portal.ini ${APP_ROOT}/ckan/portal/portal.ini
-    cp ${APP_ROOT}/registry.ini ${APP_ROOT}/ckan/registry/registry.ini
+    printf "${Green}Copying the ${ckanRole} configuration file to the virtual environment${NC}${EOL}"
+    cp ${APP_ROOT}/registry.ini ${APP_ROOT}/ckan/${ckanRole}/${ckanRole}.ini
+
+    # copy the wsgi.py files
+    printf "${Green}Copying the ${ckanRole} wsgi configuration file to the virtual environment${NC}${EOL}"
+    cp ${APP_ROOT}/docker/config/ckan/wsgi/${ckanRole}.py ${APP_ROOT}/ckan/${ckanRole}/wsgi.py
+    chown ckan:ckan ${APP_ROOT}/ckan/${ckanRole}/wsgi.py
 
     # create storage paths
-    mkdir -p ${APP_ROOT}/ckan/default/storage
-    mkdir -p ${APP_ROOT}/ckan/portal/storage
-    mkdir -p ${APP_ROOT}/ckan/registry/storage
+    printf "${Green}Generating storage directory${NC}${EOL}"
+    mkdir -p ${APP_ROOT}/ckan/${ckanRole}/storage
+    chown -R ckan:ckan ${APP_ROOT}/ckan/${ckanRole}/storage
+
+    # create cache paths
+    printf "${Green}Generating cache directory${NC}${EOL}"
+    mkdir -p ${APP_ROOT}/ckan/${ckanRole}/tmp
+    chown -R ckan:ckan ${APP_ROOT}/ckan/${ckanRole}/tmp
+
+    # copy ckanext-canada static to static_files
+    if [[ -d "${APP_ROOT}/ckan/${ckanRole}/src/ckanext-canada/ckanext/canada/public/static" ]]; then
+        cp -R ${APP_ROOT}/ckan/${ckanRole}/src/ckanext-canada/ckanext/canada/public/static ${APP_ROOT}/ckan/static_files/;
+        if [[ $? -eq 0 ]]; then
+            printf "${Green}Copied ${APP_ROOT}/ckan/${ckanRole}/src/ckanext-canada/ckanext/canada/public/static to ${APP_ROOT}/ckan/static_files/static${NC}${EOL}";
+        else
+            printf "${Red}FAILED to copy ${APP_ROOT}/ckan/${ckanRole}/src/ckanext-canada/ckanext/canada/public/static to ${APP_ROOT}/ckan/static_files/static${NC}${EOL}";
+        fi;
+        chown -R ckan:ckan ${APP_ROOT}/ckan/static_files
+    fi;
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
