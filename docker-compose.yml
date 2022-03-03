@@ -158,6 +158,7 @@ services:
       PORTAL_CONFIG: /srv/app/ckan/portal/portal.ini
       REGISTRY_CONFIG: /srv/app/ckan/registry/registry.ini
       CKAN_INI: /srv/app/ckan/registry/registry.ini
+      DATA_URI: https://open.canada.ca/data
       REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
     volumes:
       - ./docker/config/ckan:/docker-entrypoint.d
@@ -235,6 +236,7 @@ services:
       PORTAL_CONFIG: /srv/app/ckan/portal/portal.ini
       REGISTRY_CONFIG: /srv/app/ckan/registry/registry.ini
       CKAN_INI: /srv/app/ckan/portal/portal.ini
+      DATA_URI: https://open.canada.ca/data
       REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
     volumes:
       - ./docker/config/ckan:/docker-entrypoint.d
@@ -284,6 +286,14 @@ services:
       - 15438:5432
 # END
 # Postgres
+# END
+#
+# Redis
+#
+#TODO: create a redis container.
+
+# END
+# Redis
 # END
 #
 # Solr

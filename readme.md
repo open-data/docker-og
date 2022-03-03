@@ -130,6 +130,7 @@ Though there is an initialization script to create the databases on the initial 
          * `wet-boew-cdn` into `ckan/static_files/wet-boew`
          * `themes-cdn` into `ckan/static_files/GCWeb`
       * `Set File Permissions`: will set the correct file and directory ownerships and permissions.
+         * This will also set the correct database permissions for CKAN.
       * `Create Local User`: will create a local admin user for CKAN Registry.
       * `Import Organizations`: will dump the most recent Organizations from the ckanapi and import them into the database.
       * `Import Datasets`: will download the most recent dataset file and import them into the datase.
@@ -159,6 +160,7 @@ Though there is an initialization script to create the databases on the initial 
          * `wet-boew-cdn` into `ckan/static_files/wet-boew`
          * `themes-cdn` into `ckan/static_files/GCWeb`
       * `Set File Permissions`: will set the correct file and directory ownerships and permissions.
+         * This will also set the correct database permissions for CKAN.
       * `Create Local User`: will create a local admin user for CKAN Portal.
       * `Import Organizations`: will dump the most recent Organizations from the ckanapi and import them into the database.
       * `Import Datasets`: will download the most recent dataset file and import them into the datase.
