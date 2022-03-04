@@ -62,8 +62,10 @@
       1. `inventory.csv` <- Open Data Inventory data set csv file.
 1. __Create__ a folder in the root of this repository called `postgres`. This folder will hold the data for imported databases to persist during Docker container restarts.
 1. __Create__ a folder in the root of this repository called `solr`. This folder will hold the data for imported indices to persist during Docker container restarts.
+1. __Create__ a folder in the root of this repository called `redis`. This folder will hold the system dump logs from Redis.
+   * By default, the volume is commented out in the `docker-compose.yml` file as the system dumps can get large. You can uncomment the line if you are having issues with Redis.
 1. __Create__ a folder in the root of this repository called `nginx`. This folder will hold the nginx logs for the Docker environments.
-   * By default, the volume is commented out in the `docker-compose.yml` file as the nginx logs can get large. You can uncomment the lines if you are having issues with nginx.
+   * By default, the volume is commented out in the `docker-compose.yml` file as the nginx logs can get large. You can uncomment the line if you are having issues with nginx.
 
 ## Build
 
@@ -130,6 +132,7 @@ Though there is an initialization script to create the databases on the initial 
          * `wet-boew-cdn` into `ckan/static_files/wet-boew`
          * `themes-cdn` into `ckan/static_files/GCWeb`
       * `Set File Permissions`: will set the correct file and directory ownerships and permissions.
+         * This will also set the correct database permissions for CKAN.
       * `Create Local User`: will create a local admin user for CKAN Registry.
       * `Import Organizations`: will dump the most recent Organizations from the ckanapi and import them into the database.
       * `Import Datasets`: will download the most recent dataset file and import them into the datase.
@@ -159,6 +162,7 @@ Though there is an initialization script to create the databases on the initial 
          * `wet-boew-cdn` into `ckan/static_files/wet-boew`
          * `themes-cdn` into `ckan/static_files/GCWeb`
       * `Set File Permissions`: will set the correct file and directory ownerships and permissions.
+         * This will also set the correct database permissions for CKAN.
       * `Create Local User`: will create a local admin user for CKAN Portal.
       * `Import Organizations`: will dump the most recent Organizations from the ckanapi and import them into the database.
       * `Import Datasets`: will download the most recent dataset file and import them into the datase.
