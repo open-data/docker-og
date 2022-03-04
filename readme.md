@@ -62,8 +62,10 @@
       1. `inventory.csv` <- Open Data Inventory data set csv file.
 1. __Create__ a folder in the root of this repository called `postgres`. This folder will hold the data for imported databases to persist during Docker container restarts.
 1. __Create__ a folder in the root of this repository called `solr`. This folder will hold the data for imported indices to persist during Docker container restarts.
+1. __Create__ a folder in the root of this repository called `redis`. This folder will hold the system dump logs from Redis.
+   * By default, the volume is commented out in the `docker-compose.yml` file as the system dumps can get large. You can uncomment the line if you are having issues with Redis.
 1. __Create__ a folder in the root of this repository called `nginx`. This folder will hold the nginx logs for the Docker environments.
-   * By default, the volume is commented out in the `docker-compose.yml` file as the nginx logs can get large. You can uncomment the lines if you are having issues with nginx.
+   * By default, the volume is commented out in the `docker-compose.yml` file as the nginx logs can get large. You can uncomment the line if you are having issues with nginx.
 
 ## Build
 

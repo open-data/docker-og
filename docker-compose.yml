@@ -129,6 +129,8 @@ services:
         condition: service_started
       solr:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     links:
       - proxy
       - postgres
@@ -206,6 +208,8 @@ services:
       postgres:
         condition: service_started
       solr:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     links:
       - proxy
@@ -288,14 +292,6 @@ services:
 # Postgres
 # END
 #
-# Redis
-#
-#TODO: create a redis container.
-
-# END
-# Redis
-# END
-#
 # Solr
 #
   solr:
@@ -355,6 +351,35 @@ services:
       - 8981:8983
 # END
 # Solr
+# END
+#
+# Redis
+#
+  redis:
+    container_name: og-redis
+    image: redis
+    restart: always
+    healthcheck:
+      test: redis-cli info server || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    working_dir: /data
+    networks:
+      og-proxy-network:
+      og-local-network:
+        ipv4_address: 172.0.0.11
+    volumes:
+      - ./docker/config/nginx/certs:/usr/share/certs
+      # - ./redis:/data
+    environment:
+      - CONTAINER_ROLE=redis
+      - NGINX_UNAME=root
+    user: "root:root"
+    ports:
+      - 6979:6379
+# END
+# Redis
 # END
 
 volumes:
