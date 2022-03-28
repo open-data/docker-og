@@ -20,6 +20,7 @@ HAIR='\033[0m'
 # core flags
 installDrupal='false'
 installCKAN='false'
+installDjango='false'
 installDatabases='false'
 
 # drupal flags
@@ -1420,6 +1421,133 @@ function install_ckan {
 # END
 
 #
+# Install Djanog
+#
+function install_django {
+
+  read -r -p $'\n\n\033[0;31m    Are you sure you want to destroy the current Django install and re-install the\033[1m Python environment and code base\033[0m\033[0;31m? [y/N]:\033[0;0m    ' response
+
+  if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+
+    installDjango='true'
+
+  else
+
+    installDjango='false'
+
+  fi
+
+  if [[ $installDjango == "true" ]]; then
+
+    # install SSH
+    printf "${SPACER}${Cyan}${INDENT}Install SSH for GIT use${NC}${SPACER}"
+    which ssh || apt install ssh -y
+
+    # set strict host checking to false
+    printf "${SPACER}${Cyan}${INDENT}Set strict SSH host checking to false${NC}${SPACER}"
+    echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
+    if [[ $? -eq 0 ]]; then
+      printf "${Green}${INDENT}${INDENT}Set StrictHostKeyChecking to no: OK${NC}${EOL}"
+    else
+      printf "${Red}${INDENT}${INDENT}Set StrictHostKeyChecking to no: FAIL${NC}${EOL}"
+    fi
+
+    mkdir -p ${APP_ROOT}/django
+
+    # nuke the entire folder
+    printf "${SPACER}${Cyan}${INDENT}Pre-nuke the existing Django install${NC}${SPACER}"
+    # destroy all files
+    cd ${APP_ROOT}/django
+    rm -rf ./*
+    if [[ $? -eq 0 ]]; then
+      printf "${Green}${INDENT}${INDENT}Remove all files in django: OK${NC}${EOL}"
+    else
+      printf "${Red}${INDENT}${INDENT}Remove all files in django: FAIL${NC}${EOL}"
+    fi
+    cd ${APP_ROOT}/django
+    rm -rf ./.??*
+    if [[ $? -eq 0 ]]; then
+      printf "${Green}${INDENT}${INDENT}Remove all hidden files in django: OK${NC}${EOL}"
+    else
+      printf "${Red}${INDENT}${INDENT}Remove all hidden files in django: FAIL${NC}${EOL}"
+    fi
+
+    # create virtual environment
+    python3 -m venv ${APP_ROOT}/django
+    cd ${APP_ROOT}/django
+
+    # set ownership
+    chown www-data:www-data -R ${APP_ROOT}/django
+    if [[ $? -eq 0 ]]; then
+      printf "${Green}${INDENT}${INDENT}Set django ownership to www-data:www-data: OK${NC}${EOL}"
+    else
+      printf "${Red}${INDENT}${INDENT}Set django ownership to www-data:www-data: FAIL${NC}${EOL}"
+    fi
+
+    # activate python environment
+    . ${APP_ROOT}/django/bin/activate
+    if [[ $? -eq 0 ]]; then
+      printf "${Green}${INDENT}${INDENT}Activate Python environment: OK${NC}${EOL}"
+    else
+      printf "${Red}${INDENT}${INDENT}Activate Python environment: FAIL${NC}${EOL}"
+    fi
+
+    # install setup tools
+    pip install --upgrade setuptools
+    # install wheel
+    pip install wheel
+    # install py solr
+    pip install pysolr
+    # set github as a trusted host
+    ssh -T git@github.com
+
+    # install ogc search into the python environment
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}OGC Search repository${HAIR}${Cyan} from git@github.com:open-data/ogc_search.git and installing into Python environment${NC}${SPACER}"
+    pip install -e 'git+ssh://git@github.com/open-data/ogc_search.git#egg=ogc_search' -r 'https://raw.githubusercontent.com/open-data/ogc_search/master/requirements.txt'
+
+    # install correct Django version
+    pip install Django==2.2
+
+    # apply migrations
+    ${APP_ROOT}/django/bin/python3 ${APP_ROOT}/django/src/ogc-search/ogc_search/manage.py migrate
+
+    # decativate python environment
+    deactivate
+    if [[ $? -eq 0 ]]; then
+      printf "${Green}${INDENT}${INDENT}Deactivate Python environment: OK${NC}${EOL}"
+    else
+      printf "${Red}${INDENT}${INDENT}Deactivate Python environment: FAIL${NC}${EOL}"
+    fi
+
+    # copy local search settings file
+    printf "${SPACER}${Cyan}${INDENT}Copy django config file to virtual environment${NC}${SPACER}"
+    cp ${APP_ROOT}/search-settings.py ${APP_ROOT}/django/src/ogc-search/ogc_search/ogc_search/settings.py
+    if [[ $? -eq 0 ]]; then
+      printf "${Green}${INDENT}${INDENT}Copy ${APP_ROOT}/search-settings.py to ${APP_ROOT}/django/src/ogc_search/ogc_search/settings.py: OK${NC}${EOL}"
+    else
+      printf "${Red}${INDENT}${INDENT}Copy ${APP_ROOT}/search-settings.py to ${APP_ROOT}/django/src/ogc_search/ogc_search/settings.py: FAIL${NC}${EOL}"
+    fi
+
+    # set ownership
+    chown www-data:www-data -R ${APP_ROOT}/django
+    if [[ $? -eq 0 ]]; then
+      printf "${Green}${INDENT}${INDENT}Set django ownership to www-data:www-data: OK${NC}${EOL}"
+    else
+      printf "${Red}${INDENT}${INDENT}Set django ownership to www-data:www-data: FAIL${NC}${EOL}"
+    fi
+
+  else
+
+    printf "${SPACER}${Yellow}${INDENT}Exiting Django installation...${NC}${SPACER}"
+
+  fi
+
+}
+# END
+# Install Djanog
+# END
+
+#
 # Install Databases
 #
 function install_databases {
@@ -1559,6 +1687,16 @@ elif [[ ${CONTAINER_ROLE} == "ckan" ]]; then
     "Exit"
   )
 
+elif [[ ${CONTAINER_ROLE} == "search" ]]; then
+
+  # Options for the user to select from
+  options=(
+    "Django"
+    "Databases (fixes missing databases, privileges, and users)"
+    "All" 
+    "Exit"
+  )
+
 fi
 
 # IMPORTANT: select_option will return the index of the options and not the value.
@@ -1575,6 +1713,9 @@ case $opt in
     elif [[ ${CONTAINER_ROLE} == "ckan" ]]; then
       exitScript='false'
       installCKAN='true'
+    elif [[ ${CONTAINER_ROLE} == "search" ]]; then
+      exitScript='false'
+      installDjango='true'
     fi
     ;;
 
@@ -1618,6 +1759,12 @@ if [[ $exitScript != "true" ]]; then
   if [[ $installCKAN == "true" ]]; then
 
     install_ckan
+
+  fi
+
+  if [[ $installDjango == "true" ]]; then
+
+    install_django
 
   fi
 

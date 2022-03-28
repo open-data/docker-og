@@ -22,6 +22,12 @@ upstream backend_host_solr {
 
 }
 
+upstream backend_host_django {
+
+    server 172.0.0.12:8000;
+
+}
+
 server {
     
     server_name ~^(?<subdomain>.+)\.open\.local open.local;
@@ -60,6 +66,13 @@ server {
     if ($subdomain = "registry") {
 
         set $upstreamHost "backend_host_ckan";
+        set $upstremProtocol "http://";
+
+    }
+
+    if ($subdomain = "search") {
+
+        set $upstreamHost "backend_host_django";
         set $upstremProtocol "http://";
 
     }

@@ -12,6 +12,7 @@ node_modules/
 
 # Build
 /*.1
+/django/
 /drupal/
 /ckan/
 /solr/
@@ -29,7 +30,9 @@ drupal-services.yml
 ckan.ini
 portal.ini
 registry.ini
+search-settings.py
 pgrestore.log
+/Pipfile
 /docker/config/nginx/certs/*.pem
 /docker/config/solr/certs/*.pem
 /docker/config/solr/certs/*.jks

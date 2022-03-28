@@ -381,6 +381,65 @@ services:
 # END
 # Redis
 # END
+#
+# Django
+#
+  django:
+    image: og-search
+    container_name: og-search
+    build:
+      context: .
+      dockerfile: docker/django/Dockerfile
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
+    healthcheck:
+      test: netstat -ano | grep "8000" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    working_dir: /var/ocs
+    networks:
+      og-proxy-network:
+      og-local-network:
+        ipv4_address: 172.0.0.12
+    depends_on:
+      proxy:
+        condition: service_healthy
+      postgres:
+        condition: service_started
+      solr:
+        condition: service_healthy
+    links:
+      - proxy
+      - postgres
+      - solr
+    env_file:
+      - .docker.env
+    environment:
+      CONTAINER_ROLE: search
+      PGHOST: postgres
+      PGDATABASE: postgres
+      PGUSER: homestead
+      PGPASSWORD: secret
+      SSH_AUTH_SOCK: /ssh-agent
+      PATH: '$PATH:/usr/local/lib'
+      NGINX_UNAME: www-data
+      APP_ROOT: /var/ocs
+      SSL_CERT_FILE: /etc/ssl/mkcert/rootCA.pem
+      SSL_CERT_DIR: /etc/ssl/mkcert
+    volumes:
+      - .:/var/ocs
+      - ./docker/config/nginx/certs:/usr/share/certs
+      - ~/.gitconfig:/etc/gitconfig:ro
+      - ~/.ssh:/var/ocs/.ssh:ro
+      - $SSH_AUTH_SOCK:/ssh-agent:ro
+      - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
+    ports:
+      - 8080:8080
+# END
+# Django
+# END
 
 volumes:
   postgres:
