@@ -701,12 +701,22 @@ function install_ckan {
     (9) 
       exitScript='false'
       installSSH_CKAN='true'
-      installDB_Portal_CKAN='true'
-      installDB_Portal_DS_CKAN='true'
-      installDB_Registry_CKAN='true'
-      installDB_Registry_DS_CKAN='true'
+      if [[ $CKAN_ROLE == 'registry' ]]; then
+        installDB_Registry_CKAN='true'
+        installDB_Registry_DS_CKAN='true'
+        installDB_Portal_CKAN='false'
+        installDB_Portal_DS_CKAN='false'
+      elif [[ $CKAN_ROLE == 'portal' ]]; then
+        installDB_Portal_CKAN='true'
+        installDB_Portal_DS_CKAN='true'
+        installDB_Registry_CKAN='false'
+        installDB_Registry_DS_CKAN='false'
+      fi
       installRepos_CKAN='true'
       installFilePermissions_CKAN='true'
+      installLocalUser_CKAN='true'
+      installOrgs_CKAN='true'
+      installDatasets_CKAN='true'
       ;;
 
     # "Exit"
