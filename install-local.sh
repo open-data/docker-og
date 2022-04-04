@@ -2063,7 +2063,7 @@ opt=$?
 
 case $opt in
 
-  # "Drupal or CKAN"
+  # "Drupal or CKAN or Django"
   (0) 
     if [[ ${CONTAINER_ROLE} == "drupal" ]]; then
       exitScript='false'
@@ -2084,9 +2084,20 @@ case $opt in
 
   # "All"
   (2) 
+    if [[ ${CONTAINER_ROLE} == "drupal" ]]; then
+      installDrupal='true'
+      installCKAN='false'
+      installDjango='false'
+    elif [[ ${CONTAINER_ROLE} == "ckan" ]]; then
+      installCKAN='true'
+      installDjango='false'
+      installDrupal='false'
+    elif [[ ${CONTAINER_ROLE} == "search" ]]; then
+      installDjango='true'
+      installCKAN='false'
+      installDrupal='false'
+    fi
     exitScript='false'
-    installDrupal='true'
-    installCKAN='true'
     installDatabases='true'
     ;;
 
