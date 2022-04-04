@@ -221,7 +221,7 @@ services:
       CONTAINER_ROLE: ckan
       CKAN_ROLE: portal
       PGHOST: postgres
-      PGDATABASE: og_ckan_local
+      PGDATABASE: postgres
       PGUSER: homestead
       PGPASSWORD: secret
       SSH_AUTH_SOCK: /ssh-agent
