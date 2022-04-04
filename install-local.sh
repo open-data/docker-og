@@ -943,7 +943,7 @@ function install_ckan {
     #
     if [[ $installDB_Portal_CKAN == "true" ]]; then
 
-      if [[ -f "${APP_ROOT}/ckan/backup/ckan_portal_db.pgdump" ]]; then
+      if [[ -f "${APP_ROOT}/backup/ckan_portal_db.pgdump" ]]; then
 
         printf "${SPACER}${Cyan}${INDENT}Drop the ${BOLD}og_ckan_portal_local DB${HAIR}${Cyan} if it exists and then recreate it blank/clean${NC}${SPACER}"
         psql -eb --dbname=og_ckan_portal_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_portal_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
@@ -968,7 +968,7 @@ function install_ckan {
     #
     if [[ $installDB_Portal_DS_CKAN == "true" ]]; then
 
-      if [[ -f "${APP_ROOT}/ckan/backup/ckan_portal_ds_db.pgdump" ]]; then
+      if [[ -f "${APP_ROOT}/backup/ckan_portal_ds_db.pgdump" ]]; then
 
         printf "${SPACER}${Cyan}${INDENT}Drop the ${BOLD}og_ckan_portal_ds_local DB${HAIR}${Cyan} if it exists and then recreate it blank/clean${NC}${SPACER}"
         psql -eb --dbname=og_ckan_portal_ds_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_portal_ds_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
@@ -993,7 +993,7 @@ function install_ckan {
     #
     if [[ $installDB_Registry_CKAN == "true" ]]; then
 
-      if [[ -f "${APP_ROOT}/ckan/backup/ckan_registry_db.pgdump" ]]; then
+      if [[ -f "${APP_ROOT}/backup/ckan_registry_db.pgdump" ]]; then
 
         printf "${SPACER}${Cyan}${INDENT}Drop the ${BOLD}og_ckan_registry_local DB${HAIR}${Cyan} if it exists and then recreate it blank/clean${NC}${SPACER}"
         psql -eb --dbname=og_ckan_registry_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_registry_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
@@ -1018,7 +1018,7 @@ function install_ckan {
     #
     if [[ $installDB_Registry_DS_CKAN == "true" ]]; then
 
-      if [[ -f "${APP_ROOT}/ckan/backup/ckan_registry_ds_db.pgdump" ]]; then
+      if [[ -f "${APP_ROOT}/backup/ckan_registry_ds_db.pgdump" ]]; then
 
         printf "${SPACER}${Cyan}${INDENT}Drop the ${BOLD}og_ckan_registry_ds_local DB${HAIR}${Cyan} if it exists and then recreate it blank/clean${NC}${SPACER}"
         psql -eb --dbname=og_ckan_registry_ds_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_registry_ds_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
