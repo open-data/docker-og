@@ -29,10 +29,11 @@
     1. `127.0.0.1 registry.open.local`
     1. `127.0.0.1 portal.open.local`
     1. `127.0.0.1 solr.open.local`
-1. __Use [mkcert](https://github.com/FiloSottile/mkcert)__ to make a certificate for nginx(Drupal, CKAN, and Solr) and solr if you're using Windows with WSL2, makes sure to make the certificates in Powershell running as an Administrator, not within WSL2:
-   * __nginx(Drupal, CKAN, and Solr):__
+    1. `127.0.0.1 search.open.local`
+1. __Use [mkcert](https://github.com/FiloSottile/mkcert)__ to make a certificate for nginx(Drupal, CKAN, Django, and Solr) and solr. If you're using Windows with WSL2, makes sure to make the certificates in Powershell running as an Administrator, not within WSL2:
+   * __nginx(Drupal, CKAN, Django, and Solr):__
       1. cd inside of the `docker/config/nginx/certs` directory.
-      1. Generate the pem chain: `mkcert -cert-file open.local.pem -key-file open.local-key.pem open.local registry.open.local portal.open.local solr.open.local 127.0.0.1 localhost ::1 ::5001 ::5000 ::8981 ::8983 ::4430`
+      1. Generate the pem chain: `mkcert -cert-file open.local.pem -key-file open.local-key.pem open.local search.open.local registry.open.local portal.open.local solr.open.local 127.0.0.1 localhost ::1 ::5001 ::5000 ::8981 ::8983 ::4430`
    * __solr:__
       1. cd inside of the `docker/config/solr/certs` directory.
       1. Generate the PKCS12 keystore: `mkcert -pkcs12 -p12-file solr.p12 127.0.0.1 localhost solr ::1 ::8981 ::8983`
@@ -49,6 +50,7 @@
    1. You will need to __update__ the `CA_LOCAL_ROOT` variable to the output of this command: `mkcert -CAROOT`
    1. If you need to, change your user and group to match the user and group your WSL2 user or Linux/Mac user employs:
       1. `id` <- this should get your current user ID and group ID in WSL2 or whatever shell you're using. If you're using WSL2 and only ever made your default user, it will likely be `1000`
+1. __Copy__ `example-search-settings.py` to `search-settings.py`
 1. __Create__ a folder in the root of this repository called `backup`, in it, place the following files:
    * __For Drupal:__
       1. `drupal_db.pgdump` _(Required)_ <- the database backup for the Drupal site.
@@ -169,6 +171,22 @@ Though there is an initialization script to create the databases on the initial 
          * ***This will import all 30k+ resources. This will take an extremely long time (~24 hours).***
       * `All`: will execute all of the above, use this for first time install or if you wish to re-install everything.
       * `Exit`: will exit the installation script.
+
+#### Django
+
+1. __Bring up__ the Django docker container: `docker-compose up -d django`
+1. __Open a shell__ into the container: `docker-compose exec django bash`
+1. __Change__ permissions of this file (if not already done) so you can run it as a bash script: `chmod 775 install-local.sh`
+1. __Run__ the install script: `./install-local.sh`
+   1. __Select__ `Django`
+      * `SSH (Required for Repositories)`: will install and configure the ssh command along with the ssh-agent and keys.
+      * `OGC Django Search App`: will destory the current Python virtual environment (if it exists) and install a fresh one, pull the ogc_search repository and copying `search-settings.py` to the environment.
+         * This will also download the required CKAN yaml and json files.
+      * `Static Files`: will download the required files, including the GCWeb theme and GCWeb Static release from the CDTS repository.
+         * It will also copy files to the correct locations for serving them correctly.
+      * `Set File Permissions`: will set the correct file and directory ownerships and permissions.
+      * `All`: will execute all of the above, use this for first time install or if you wish to re-install everything.
+      * `Exit`: will exit the installation script.
    
 ## Usage
 
@@ -220,4 +238,10 @@ _The Postgres container will automatically be brought up with the CKAN and Drupa
 
 1. __Bring up__ the CKAN Portal docker container: `docker-compose up -d ckanapi`
 1. __Open a shell__ into the container: `docker-compose exec ckanapi bash`
+
+### Django
+
+1. __Bring up__ the Django docker container: `docker-compose up -d django`
+1. __Open a shell__ into the container: `docker-compose exec django bash`
+1. __Open__ a browser into: `https://search.open.local`
    
