@@ -99,6 +99,16 @@ elif [[ "$role" = "search" ]]; then
     cp /etc/ssl/mkcert/rootCA.pem /usr/local/share/ca-certificates/mkcert-certificate.crt
     update-ca-certificates
 
+    # copy mkcert CA root to the python CA root
+    if [[ -d "/var/ocs/django/lib/python${PY_VERSION}/site-packages/certifi" ]]; then
+        cp /etc/ssl/mkcert/rootCA.pem /var/ocs/django/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem;
+        if [[ $? -eq 0 ]]; then
+            printf "${Green}Copied /etc/ssl/mkcert/rootCA.pem to /var/ocs/django/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}";
+        else
+            printf "${Red}FAILED to copy /etc/ssl/mkcert/rootCA.pem to /var/ocs/django/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}";
+        fi;
+    fi;
+
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
     supervisord -c /etc/supervisor/supervisord.conf

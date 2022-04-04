@@ -30,7 +30,7 @@
     1. `127.0.0.1 portal.open.local`
     1. `127.0.0.1 solr.open.local`
     1. `127.0.0.1 search.open.local`
-1. __Use [mkcert](https://github.com/FiloSottile/mkcert)__ to make a certificate for nginx(Drupal, CKAN, Django, and Solr) and solr if you're using Windows with WSL2, makes sure to make the certificates in Powershell running as an Administrator, not within WSL2:
+1. __Use [mkcert](https://github.com/FiloSottile/mkcert)__ to make a certificate for nginx(Drupal, CKAN, Django, and Solr) and solr. If you're using Windows with WSL2, makes sure to make the certificates in Powershell running as an Administrator, not within WSL2:
    * __nginx(Drupal, CKAN, Django, and Solr):__
       1. cd inside of the `docker/config/nginx/certs` directory.
       1. Generate the pem chain: `mkcert -cert-file open.local.pem -key-file open.local-key.pem open.local search.open.local registry.open.local portal.open.local solr.open.local 127.0.0.1 localhost ::1 ::5001 ::5000 ::8981 ::8983 ::4430`
@@ -179,6 +179,14 @@ Though there is an initialization script to create the databases on the initial 
 1. __Change__ permissions of this file (if not already done) so you can run it as a bash script: `chmod 775 install-local.sh`
 1. __Run__ the install script: `./install-local.sh`
    1. __Select__ `Django`
+      * `SSH (Required for Repositories)`: will install and configure the ssh command along with the ssh-agent and keys.
+      * `OGC Django Search App`: will destory the current Python virtual environment (if it exists) and install a fresh one, pull the ogc_search repository and copying `search-settings.py` to the environment.
+         * This will also download the required CKAN yaml and json files.
+      * `Static Files`: will download the required files, including the GCWeb theme and GCWeb Static release from the CDTS repository.
+         * It will also copy files to the correct locations for serving them correctly.
+      * `Set File Permissions`: will set the correct file and directory ownerships and permissions.
+      * `All`: will execute all of the above, use this for first time install or if you wish to re-install everything.
+      * `Exit`: will exit the installation script.
    
 ## Usage
 

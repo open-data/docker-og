@@ -25,7 +25,7 @@ DEBUG = True
 
 ADMIN_ENABLED = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['search.open.local']
 
 INTERNAL_IPS = ['127.0.0.1']
 
@@ -225,26 +225,26 @@ SYNONYMS_FR = './open_data/solr/lang/synonyms_fr.txt'
 
 # CKAN YAML files from https://github.com/open-data/ckanext-canada/tree/master/ckanext/canada/tables
 
-CKAN_YAML_FILE = os.path.join(BASE_DIR, "ckan", "presets.yaml")
-BRIEF_NOTE_YAML_FILE = os.path.join(BASE_DIR, "ckan", "briefingt.yaml")
-CONTRACTS_YAML_FILE = os.path.join(BASE_DIR, "ckan", "contracts.yaml")
-GRANTS_YAML_FILE = os.path.join(BASE_DIR, "ckan", "grants.yaml")
-NAP_YAML_FILE = os.path.join(BASE_DIR, "ckan", "nap.yaml")
-QP_YAML_FILE = os.path.join(BASE_DIR, "ckan", "qpnotes.yaml")
+CKAN_YAML_FILE = os.path.join(BASE_DIR, "ckan_config_files", "presets.yaml")
+BRIEF_NOTE_YAML_FILE = os.path.join(BASE_DIR, "ckan_config_files", "briefingt.yaml")
+CONTRACTS_YAML_FILE = os.path.join(BASE_DIR, "ckan_config_files", "contracts.yaml")
+GRANTS_YAML_FILE = os.path.join(BASE_DIR, "ckan_config_files", "grants.yaml")
+NAP_YAML_FILE = os.path.join(BASE_DIR, "ckan_config_files", "nap.yaml")
+QP_YAML_FILE = os.path.join(BASE_DIR, "ckan_config_files", "qpnotes.yaml")
 SERVICES_YAML_FILE = os.path.join(BASE_DIR, "ckan", "service.yaml")
 COUNTRY_JSON_FILE = os.path.join(BASE_DIR, "ckan", "country.json")
 CURRENCY_JSON_FILE = os.path.join(BASE_DIR, "ckan", "currency.json")
-MINISTER_JSON_FILE = os.path.join(BASE_DIR, "ckan", "minister.json")
-SUGGESTED_DS_YAML_FILE = os.path.join(BASE_DIR, "ckan", "prop.yaml")
+MINISTER_JSON_FILE = os.path.join(BASE_DIR, "ckan_config_files", "minister.json")
+SUGGESTED_DS_YAML_FILE = os.path.join(BASE_DIR, "ckan_config_files", "prop.yaml")
 
 # Open Data App Settings
 
 OPEN_CANADA_EN_URL_BASE = "https://open.local/"
-OPEN_CANADA_FR_URL_BASE = "https://ouvert.local/"
+OPEN_CANADA_FR_URL_BASE = "https://open.local/"
 OPEN_DATA_EN_URL_BASE = "https://open.local/data/en/dataset/"
-OPEN_DATA_FR_URL_BASE = "https://ouvert.local/data/fr/dataset/"
+OPEN_DATA_FR_URL_BASE = "https://open.local/data/fr/dataset/"
 OPEN_DATA_EN_FGP_BASE = "https://open.local/data/en/fgpv_vpgf/"
-OPEN_DATA_FR_FGP_BASE = "https://ouvert.local/data/fr/fgpv_vpgf/"
+OPEN_DATA_FR_FGP_BASE = "https://open.local/data/fr/fgpv_vpgf/"
 OPEN_DATA_DATASET_ID = "c4c5c7f1-bfa6-4ff6-b4a0-c164cb2060f7"
 OPEN_DATA_DATASET_TITLE_EN = "Open Data Portal Catalogue Dataset"
 OPEN_DATA_DATASET_TITLE_FR = "Catalogue du portail de données ouvertes ensemble de données"
@@ -307,8 +307,8 @@ SOLR_BN = 'https://solr:8983/solr/core_bn_search'
 ATI_DATASET_TITLE_EN = "Access To Information"
 ATI_DATASET_TITLE_FR = "Accès à l'information"
 ATI_DATASET_ID = "0797e893-751e-4695-8229-a5066e4fe43c"
-ATI_REQUEST_URL_EN = "https://open.canada.ca/search/ati/reference/"
-ATI_REQUEST_URL_FR = "https://ouvert.canada.ca/fr/search/ati/reference/"
+ATI_REQUEST_URL_EN = "https://open.local/search/ati/reference/"
+ATI_REQUEST_URL_FR = "https://open.local/fr/search/ati/reference/"
 SOLR_ATI = 'https://solr:8983/solr/core_ati_search'
 
 # Experimentation Inventory App Settings
@@ -501,8 +501,8 @@ SOLR_QP = 'https://solr:8983/solr/core_qp_search'
 
 # Suggested Datasets
 SOLR_SD = 'https://solr:8983/solr/core_sd_search'
-SD_SUGGESTED_DS_FORM_EN = "https://open.canada.ca/en/forms/suggest-dataset"
-SD_SUGGESTED_DS_FORM_FR = "https://ouvert.canada.ca/fr/formulaire/proposez-un-formulaire-densemble-de-donnees"
+SD_SUGGESTED_DS_FORM_EN = "https://open.local/en/forms/suggest-dataset"
+SD_SUGGESTED_DS_FORM_FR = "https://open.local/fr/formulaire/proposez-un-formulaire-densemble-de-donnees"
 SD_ABOUT_EN = "Is there Government of Canada data that you would like to be released, and made available on our " \
               "site? Please let us know by filling out the Suggest a Dataset form, but first search below to see " \
               "if someone has already requested the same dataset. If you find it, you can check on its status and " \
@@ -510,8 +510,8 @@ SD_ABOUT_EN = "Is there Government of Canada data that you would like to be rele
 SD_ABOUT_FR = "En tradution"
 SD_COMMENTS_BASE_EN = "http://127.0.0.1:8000/en/external-comment/suggest-dataset/"
 SD_COMMENTS_BASE_FR = "http://127.0.0.1:8000/fr/external-comment/suggest-dataset/"
-SD_SUGGEST_A_DATASET_EN = "https://open.canada.ca/en/suggested-datasets"
-SD_SUGGEST_A_DATASET_FR = "https://ouvert.canada.ca/fr/jeux-de-donnees-suggeres"
+SD_SUGGEST_A_DATASET_EN = "https://open.local/en/suggested-datasets"
+SD_SUGGEST_A_DATASET_FR = "https://open.local/fr/jeux-de-donnees-suggeres"
 SD_VOTES_BASE_EN = "http://127.0.0.1:8000/en/external-vote/suggest-dataset/"
 SD_VOTES_BASE_FR = "http://127.0.0.1:8000/fr/external-vote/suggest-dataset/"
 
