@@ -1198,6 +1198,14 @@ function install_ckan {
       # install correct version of cryptography
       pip install cryptography==2.2.2
 
+      # install nltk punkt
+      if [[ $CKAN_ROLE == 'portal' ]]; then
+        printf "${SPACER}${Cyan}${INDENT}Installing nltk.punkt into ${CKAN_ROLE} environment${NC}${SPACER}"
+        python2 -c "import nltk; nltk.download('punkt');"
+      else
+        printf "${SPACER}${Cyan}${INDENT}Skipping nltk.punkt installation for ${CKAN_ROLE} environment${NC}${SPACER}"
+      fi
+
       # copy local ckan config file
       cp ${APP_ROOT}/${CKAN_ROLE}.ini ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini
       printf "${SPACER}${Cyan}${INDENT}Copying local ${CKAN_ROLE} config file to into Python environment${NC}${SPACER}"
