@@ -193,6 +193,14 @@ elif [[ "$role" = "ckan" ]]; then
         chown -R ckan:ckan ${APP_ROOT}/ckan/static_files
     fi;
 
+    # install nltk punkt
+    if [[ $ckanRole == 'portal' ]]; then
+        if [[ -d "${APP_ROOT}/ckan/${ckanRole}/lib/python${PY_VERSION}/site-packages/nltk" ]]; then
+            printf "${Green}Installing nltk.punkt into ${ckanRole} environment${NC}${EOL}"
+            ${APP_ROOT}/ckan/${ckanRole}/bin/python2 -c "import nltk; nltk.download('punkt');"
+        fi;
+    fi;
+
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
     supervisord -c /etc/supervisor/supervisord.conf
