@@ -165,7 +165,7 @@ elif [[ "$role" = "ckan" ]]; then
 
     # copy the ckan configs
     printf "${Green}Copying the ${ckanRole} configuration file to the virtual environment${NC}${EOL}"
-    cp ${APP_ROOT}/registry.ini ${APP_ROOT}/ckan/${ckanRole}/${ckanRole}.ini
+    cp ${APP_ROOT}/${ckanRole}.ini ${APP_ROOT}/ckan/${ckanRole}/${ckanRole}.ini
 
     # copy the wsgi.py files
     printf "${Green}Copying the ${ckanRole} wsgi configuration file to the virtual environment${NC}${EOL}"
