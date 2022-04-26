@@ -77,6 +77,8 @@ server {
 
     }
 
+    #TODO: put in a location for /data to go to the ckanapi??? (this may fix things with the drupal proxy pass...)
+
     location / {
 
         proxy_set_header Host $http_host;
