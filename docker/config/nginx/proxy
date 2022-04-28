@@ -46,6 +46,7 @@ server {
 
         set $upstreamHost "backend_host_drupal";
         set $upstremProtocol "https://";
+        set $aliasString "/var/ogproxy/null/";
 
     }
 
@@ -53,6 +54,7 @@ server {
 
         set $upstreamHost "backend_host_solr";
         set $upstremProtocol "https://";
+        set $aliasString "/var/ogproxy/null/";
 
     }
 
@@ -60,6 +62,7 @@ server {
 
         set $upstreamHost "backend_host_ckanapi";
         set $upstremProtocol "http://";
+        set $aliasString "/var/ogproxy/null/";
 
     }
 
@@ -67,6 +70,7 @@ server {
 
         set $upstreamHost "backend_host_ckan";
         set $upstremProtocol "http://";
+        set $aliasString "/var/ogproxy/null/";
 
     }
 
@@ -74,13 +78,15 @@ server {
 
         set $upstreamHost "backend_host_django";
         set $upstremProtocol "http://";
+        set $aliasString "/var/ogproxy/django/src/ogc-search/ogc_search/static/";
 
     }
 
-    if ($request_uri ^~ "/data/"){
+    if ($request_uri ~ (^/data/)) {
 
         set $upstreamHost "backend_host_ckanapi";
         set $upstremProtocol "http://";
+        set $aliasString "/var/ogproxy/null/";
 
     }
 
@@ -127,6 +133,13 @@ server {
 
     location /data/ {
 
+        #TODO: break the location if the subdomain is not empty...
+        if ($subdomain != "") {
+
+            break;
+
+        }
+
         rewrite /data/(.*) /$1 last;
 
         proxy_set_header Host $http_host;
@@ -165,6 +178,20 @@ server {
 
         disable_symlinks off;
         tcp_nodelay on;
+
+    }
+
+    location /static/ {
+
+        #TODO: break the location if the subdomain is not "search"...
+        if ($subdomain != "search") {
+
+            break;
+
+        }
+
+        alias $aliasString;
+        autoindex off;
 
     }
 

@@ -100,13 +100,19 @@ elif [[ "$role" = "search" ]]; then
     update-ca-certificates
 
     # copy mkcert CA root to the python CA root
-    if [[ -d "/var/ocs/django/lib/python${PY_VERSION}/site-packages/certifi" ]]; then
+    if [[ -d "${APP_ROOT}/django/lib/python${PY_VERSION}/site-packages/certifi" ]]; then
         cp /etc/ssl/mkcert/rootCA.pem /var/ocs/django/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem;
         if [[ $? -eq 0 ]]; then
             printf "${Green}Copied /etc/ssl/mkcert/rootCA.pem to /var/ocs/django/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}";
         else
             printf "${Red}FAILED to copy /etc/ssl/mkcert/rootCA.pem to /var/ocs/django/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}";
         fi;
+    fi;
+
+    # copy the django settings file
+    if [[ -d "${APP_ROOT}/django/src/ogc-search/ogc_search/ogc_search" ]]; then
+        printf "${Green}Copying the Django settings file to the virtual environment${NC}${EOL}"
+        cp ${APP_ROOT}/search-settings.py ${APP_ROOT}/django/src/ogc-search/ogc_search/ogc_search/settings.py
     fi;
 
     # start supervisord service
