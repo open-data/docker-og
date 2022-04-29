@@ -37,7 +37,11 @@ if [[ "$role" = "proxy" ]]; then
     rm -vf /etc/nginx/sites-enabled/default
 
     # link proxy nginx server block
-    ln -sf /etc/nginx/sites-available/proxy /etc/nginx/sites-enabled/proxy
+    ln -sf /etc/nginx/sites-available/open.local /etc/nginx/sites-enabled/open.local
+    ln -sf /etc/nginx/sites-available/portal.open.local /etc/nginx/sites-enabled/portal.open.local
+    ln -sf /etc/nginx/sites-available/registry.open.local /etc/nginx/sites-enabled/registry.open.local
+    ln -sf /etc/nginx/sites-available/search.open.local /etc/nginx/sites-enabled/search.open.local
+    ln -sf /etc/nginx/sites-available/solr.open.local /etc/nginx/sites-enabled/solr.open.local
 
     # link mkcert certificate to the truststore
     printf "${Green}Adding mkcert to truststores${NC}${EOL}"
@@ -45,6 +49,10 @@ if [[ "$role" = "proxy" ]]; then
     mkdir -p /usr/local/share/ca-certificates
     cp /etc/ssl/mkcert/rootCA.pem /usr/local/share/ca-certificates/mkcert-certificate.crt
     update-ca-certificates
+
+    # stop nginx service
+    printf "${Green}Starting nginx service${NC}${EOL}"
+    service nginx restart
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"

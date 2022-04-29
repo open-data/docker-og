@@ -1,0 +1,32 @@
+upstream backend_host_ckanapi__back {
+
+    server 172.0.0.8:5002;
+
+}
+
+#
+# CKAN Portal Back
+# portal.open.local
+#
+server {
+
+    server_name portal.open.local;
+
+    listen 443 ssl http2;
+
+    include conf/ssl_settings.conf;
+    include conf/default_settings.conf;
+
+    set $upstreamHost "backend_host_ckanapi__back";
+    set $upstremProtocol "http://";
+
+    location / {
+
+        include conf/proxy_settings.conf;
+
+    }
+
+}
+# END
+# CKAN Portal Back
+# END

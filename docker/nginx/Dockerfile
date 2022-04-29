@@ -11,7 +11,13 @@ ADD docker/config/supervisor/conf.d/*.conf /etc/supervisor/conf.d-available/
 
 # Nginx
 ADD docker/config/nginx/nginx.conf /etc/nginx/nginx.conf
-ADD docker/config/nginx/proxy /etc/nginx/sites-available/proxy
+
+ADD docker/config/nginx/proxied_sites/open.local /etc/nginx/sites-available/open.local
+ADD docker/config/nginx/proxied_sites/portal.open.local /etc/nginx/sites-available/portal.open.local
+ADD docker/config/nginx/proxied_sites/registry.open.local /etc/nginx/sites-available/registry.open.local
+ADD docker/config/nginx/proxied_sites/search.open.local /etc/nginx/sites-available/search.open.local
+ADD docker/config/nginx/proxied_sites/solr.open.local /etc/nginx/sites-available/solr.open.local
+
 ADD docker/config/nginx/h5bp/ /etc/nginx/h5bp
 
 ADD docker/start.sh /usr/local/bin/start
