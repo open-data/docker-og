@@ -28,180 +28,168 @@ upstream backend_host_django {
 
 }
 
+#TODO: solve reusing 443 port for multiple server blocks....
+
+#
+# Drupal/CKAN Portal Front
+# open.local
+#
 server {
-    
-    server_name ~^(?<subdomain>.+)\.open\.local open.local;
+
+    server_name open.local;
 
     listen 443 default_server ssl http2 reuseport;
 
-    ssl_certificate /usr/share/certs/open.local.pem;
-    ssl_certificate_key /usr/share/certs/open.local-key.pem;
-    ssl_protocols TLSv1.2;
+    include conf/ssl_settings.conf;
+    include conf/default_settings.conf;
 
-    server_tokens off;
-
-    charset utf-8;
-
-    if ($subdomain = "") {
-
-        set $upstreamHost "backend_host_drupal";
-        set $upstremProtocol "https://";
-        set $aliasString "/var/ogproxy/null/";
-
-    }
-
-    if ($subdomain = "solr") {
-
-        set $upstreamHost "backend_host_solr";
-        set $upstremProtocol "https://";
-        set $aliasString "/var/ogproxy/null/";
-
-    }
-
-    if ($subdomain = "portal") {
-
-        set $upstreamHost "backend_host_ckanapi";
-        set $upstremProtocol "http://";
-        set $aliasString "/var/ogproxy/null/";
-
-    }
-
-    if ($subdomain = "registry") {
-
-        set $upstreamHost "backend_host_ckan";
-        set $upstremProtocol "http://";
-        set $aliasString "/var/ogproxy/null/";
-
-    }
-
-    if ($subdomain = "search") {
-
-        set $upstreamHost "backend_host_django";
-        set $upstremProtocol "http://";
-        set $aliasString "/var/ogproxy/django/src/ogc-search/ogc_search/static/";
-
-    }
+    set $upstreamHost "backend_host_drupal";
+    set $upstremProtocol "https://";
 
     if ($request_uri ~ (^/data/)) {
 
         set $upstreamHost "backend_host_ckanapi";
         set $upstremProtocol "http://";
-        set $aliasString "/var/ogproxy/null/";
 
     }
 
     location / {
 
-        proxy_set_header Host $http_host;
-        proxy_set_header X-Forwarded-Host $http_host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header Cookie $http_cookie;
-        proxy_set_header X-Forwarded-Proto https;
-        proxy_set_header HTTPS "on";
-        proxy_set_header X-NginX-Proxy true;
-        proxy_set_header Referer $http_referer;
-
-        proxy_set_header Access-Control-Allow-Origin *;
-        add_header Access-Control-Allow-Origin *;
-
-        proxy_pass_header Server;
-        proxy_pass_header Set-Cookie;
-        proxy_pass $upstremProtocol$upstreamHost;
-
-        proxy_buffering off;
-        proxy_buffer_size 64k;
-        proxy_busy_buffers_size 64k;
-        proxy_temp_file_write_size 64k;
-        proxy_buffers 16 32k;
-
-        proxy_redirect off;
-        proxy_http_version 1.1;
-        proxy_set_header Connection "";
-        proxy_set_header Upgrade $http_upgrade;
-
-        proxy_connect_timeout 65s;
-        proxy_send_timeout 145s;
-        proxy_read_timeout 145s;
-        proxy_hide_header Vary;
-        proxy_ignore_headers Cache-Control Expires;
-
-        disable_symlinks off;
-        tcp_nodelay on;
+        include conf/proxy_settings.conf;
 
     }
 
     location /data/ {
 
-        #TODO: break the location if the subdomain is not empty...
-        if ($subdomain != "") {
-
-            break;
-
-        }
-
         rewrite /data/(.*) /$1 last;
 
-        proxy_set_header Host $http_host;
-        proxy_set_header X-Forwarded-Host $http_host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header Cookie $http_cookie;
-        proxy_set_header X-Forwarded-Proto https;
-        proxy_set_header HTTPS "on";
-        proxy_set_header X-NginX-Proxy true;
-        proxy_set_header Referer $http_referer;
+        include conf/proxy_settings.conf;
 
-        proxy_set_header Access-Control-Allow-Origin *;
-        add_header Access-Control-Allow-Origin *;
+    }
 
-        proxy_pass_header Server;
-        proxy_pass_header Set-Cookie;
-        proxy_pass $upstremProtocol$upstreamHost;
+}
+# END
+# Drupal/CKAN Portal Front
+# END
 
-        proxy_buffering off;
-        proxy_buffer_size 64k;
-        proxy_busy_buffers_size 64k;
-        proxy_temp_file_write_size 64k;
-        proxy_buffers 16 32k;
+#
+# Solr
+# solr.open.local
+#
+server {
 
-        proxy_redirect off;
-        proxy_http_version 1.1;
-        proxy_set_header Connection "";
-        proxy_set_header Upgrade $http_upgrade;
+    server_name solr.open.local;
 
-        proxy_connect_timeout 65s;
-        proxy_send_timeout 145s;
-        proxy_read_timeout 145s;
-        proxy_hide_header Vary;
-        proxy_ignore_headers Cache-Control Expires;
+    listen 443 ssl http2 reuseport;
 
-        disable_symlinks off;
-        tcp_nodelay on;
+    include conf/ssl_settings.conf;
+    include conf/default_settings.conf;
+
+    set $upstreamHost "backend_host_solr";
+    set $upstremProtocol "https://";
+
+    location / {
+
+        include conf/proxy_settings.conf;
+
+    }
+
+}
+# END
+# Solr
+# END
+
+#
+# CKAN Portal Back
+# portal.open.local
+#
+server {
+
+    server_name portal.open.local;
+
+    listen 443 ssl http2 reuseport;
+
+    include conf/ssl_settings.conf;
+    include conf/default_settings.conf;
+
+    set $upstreamHost "backend_host_ckanapi";
+    set $upstremProtocol "http://";
+
+    location / {
+
+        include conf/proxy_settings.conf;
+
+    }
+
+}
+# END
+# CKAN Portal Back
+# END
+
+#
+# CKAN Registry
+# registry.open.local
+#
+server {
+
+    server_name registry.open.local;
+
+    listen 443 ssl http2 reuseport;
+
+    include conf/ssl_settings.conf;
+    include conf/default_settings.conf;
+
+    set $upstreamHost "backend_host_ckan";
+    set $upstremProtocol "http://";
+
+    location / {
+
+        include conf/proxy_settings.conf;
+
+    }
+
+}
+# END
+# CKAN Registry
+# END
+
+#
+# Django
+# search.open.local
+#
+server {
+
+    server_name search.open.local;
+
+    listen 443 ssl http2 reuseport;
+
+    include conf/ssl_settings.conf;
+    include conf/default_settings.conf;
+
+    set $upstreamHost "backend_host_django";
+    set $upstremProtocol "http://";
+
+    location / {
+
+        include conf/proxy_settings.conf;
 
     }
 
     location /static/ {
 
-        #TODO: break the location if the subdomain is not "search"...
-        if ($subdomain != "search") {
-
-            break;
-
-        }
-
-        alias $aliasString;
+        alias /var/ogproxy/django/src/ogc-search/ogc_search/static/;
         autoindex off;
 
     }
 
-    client_max_body_size 100M;
-
-    add_header X-Served-By DockerCompose;
-    include h5bp/basic.conf;
-
 }
+# END
+# Django
+# END
 
+#
+# http::80 redirect
+#
 server{
 
     server_name ~^(?<subdomain>.+)\.open\.local open.local;
@@ -211,3 +199,6 @@ server{
     return https://$host$request_uri;
 
 }
+# END
+# http::80 redirect
+# END

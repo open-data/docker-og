@@ -33,6 +33,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./docker/config/nginx/certs:/usr/share/certs
+      - ./docker/config/nginx/conf:/etc/nginx/conf
       - $SSH_AUTH_SOCK:/ssh-agent:ro
       - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
       # - ./nginx:/var/log/nginx
