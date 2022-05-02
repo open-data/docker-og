@@ -1327,7 +1327,6 @@ function install_ckan {
         else
           printf "${Red}${INDENT}${INDENT}${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/static to ${APP_ROOT}/ckan/static_files/statice: FAIL${NC}${EOL}"
         fi
-        cp -R ${APP_ROOT}/ckan/static_files/static ${APP_ROOT}/ckan/static_files/data
         chown -R ckan:ckan ${APP_ROOT}/ckan/static_files
       fi;
 

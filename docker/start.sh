@@ -51,8 +51,8 @@ if [[ "$role" = "proxy" ]]; then
     update-ca-certificates
 
     # stop nginx service
-    printf "${Green}Starting nginx service${NC}${EOL}"
-    service nginx restart
+    printf "${Green}Stopping nginx service${NC}${EOL}"
+    service nginx stop
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
@@ -84,6 +84,10 @@ elif [[ "$role" = "drupal" ]]; then
     mkdir -p /usr/local/share/ca-certificates
     cp /etc/ssl/mkcert/rootCA.pem /usr/local/share/ca-certificates/mkcert-certificate.crt
     update-ca-certificates
+
+    # stop nginx service
+    printf "${Green}Stopping nginx service${NC}${EOL}"
+    service nginx stop
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"

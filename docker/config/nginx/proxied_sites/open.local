@@ -1,15 +1,3 @@
-upstream backend_host_drupal {
-
-    server 172.0.0.6:4430;
-
-}
-
-upstream backend_host_ckanapi__front {
-
-    server 172.0.0.8:5002;
-
-}
-
 #
 # Drupal/CKAN Portal Front
 # open.local
@@ -28,7 +16,7 @@ server {
 
     if ($request_uri ~ (^/data/)) {
 
-        set $upstreamHost "backend_host_ckanapi__front";
+        set $upstreamHost "backend_host_ckanapi";
         set $upstremProtocol "http://";
 
     }
@@ -44,6 +32,20 @@ server {
         rewrite /data/(.*) /$1 last;
 
         include conf/proxy_settings.conf;
+
+    }
+
+    location /GCWeb/ {
+
+        alias /var/ogproxy/ckan/static_files/GCWeb/;
+        autoindex off;
+
+    }
+    
+    location /data/static/ {
+
+        alias /var/ogproxy/ckan/static_files/static/;
+        autoindex off;
 
     }
 
