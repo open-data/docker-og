@@ -49,6 +49,13 @@ server {
 
     }
 
+    location /data/data/ {
+
+        alias /var/ogproxy/ckan/static_files/data/;
+        autoindex off;
+
+    }
+
 }
 # END
 # Drupal/CKAN Portal Front
