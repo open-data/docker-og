@@ -1,5 +1,7 @@
 # Local Docker Setup for Open Government Portal
 
+***The ``Pretty URLs`` branch only allows for <ins>a single</ins> instance of the OG applications. Use the ``master`` branch if you need to run multiple instances.***
+
 ## Prerequisites
 
 * [WSL2](https://docs.microsoft.com/en-us/windows/wsl/install) ***if using Windows***
