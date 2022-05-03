@@ -37,7 +37,11 @@ if [[ "$role" = "proxy" ]]; then
     rm -vf /etc/nginx/sites-enabled/default
 
     # link proxy nginx server block
-    ln -sf /etc/nginx/sites-available/proxy /etc/nginx/sites-enabled/proxy
+    ln -sf /etc/nginx/sites-available/open.local /etc/nginx/sites-enabled/open.local
+    ln -sf /etc/nginx/sites-available/portal.open.local /etc/nginx/sites-enabled/portal.open.local
+    ln -sf /etc/nginx/sites-available/registry.open.local /etc/nginx/sites-enabled/registry.open.local
+    ln -sf /etc/nginx/sites-available/search.open.local /etc/nginx/sites-enabled/search.open.local
+    ln -sf /etc/nginx/sites-available/solr.open.local /etc/nginx/sites-enabled/solr.open.local
 
     # link mkcert certificate to the truststore
     printf "${Green}Adding mkcert to truststores${NC}${EOL}"
@@ -45,6 +49,10 @@ if [[ "$role" = "proxy" ]]; then
     mkdir -p /usr/local/share/ca-certificates
     cp /etc/ssl/mkcert/rootCA.pem /usr/local/share/ca-certificates/mkcert-certificate.crt
     update-ca-certificates
+
+    # stop nginx service
+    printf "${Green}Stopping nginx service${NC}${EOL}"
+    service nginx stop
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
@@ -77,6 +85,10 @@ elif [[ "$role" = "drupal" ]]; then
     cp /etc/ssl/mkcert/rootCA.pem /usr/local/share/ca-certificates/mkcert-certificate.crt
     update-ca-certificates
 
+    # stop nginx service
+    printf "${Green}Stopping nginx service${NC}${EOL}"
+    service nginx stop
+
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
     supervisord -c /etc/supervisor/supervisord.conf
@@ -100,13 +112,19 @@ elif [[ "$role" = "search" ]]; then
     update-ca-certificates
 
     # copy mkcert CA root to the python CA root
-    if [[ -d "/var/ocs/django/lib/python${PY_VERSION}/site-packages/certifi" ]]; then
+    if [[ -d "${APP_ROOT}/django/lib/python${PY_VERSION}/site-packages/certifi" ]]; then
         cp /etc/ssl/mkcert/rootCA.pem /var/ocs/django/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem;
         if [[ $? -eq 0 ]]; then
             printf "${Green}Copied /etc/ssl/mkcert/rootCA.pem to /var/ocs/django/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}";
         else
             printf "${Red}FAILED to copy /etc/ssl/mkcert/rootCA.pem to /var/ocs/django/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}";
         fi;
+    fi;
+
+    # copy the django settings file
+    if [[ -d "${APP_ROOT}/django/src/ogc-search/ogc_search/ogc_search" ]]; then
+        printf "${Green}Copying the Django settings file to the virtual environment${NC}${EOL}"
+        cp ${APP_ROOT}/search-settings.py ${APP_ROOT}/django/src/ogc-search/ogc_search/ogc_search/settings.py
     fi;
 
     # start supervisord service
@@ -191,6 +209,14 @@ elif [[ "$role" = "ckan" ]]; then
             printf "${Red}FAILED to copy ${APP_ROOT}/ckan/${ckanRole}/src/ckanext-canada/ckanext/canada/public/static to ${APP_ROOT}/ckan/static_files/static${NC}${EOL}";
         fi;
         chown -R ckan:ckan ${APP_ROOT}/ckan/static_files
+    fi;
+
+    # install nltk punkt
+    if [[ $ckanRole == 'portal' ]]; then
+        if [[ -d "${APP_ROOT}/ckan/${ckanRole}/lib/python${PY_VERSION}/site-packages/nltk" ]]; then
+            printf "${Green}Installing nltk.punkt into ${ckanRole} environment${NC}${EOL}"
+            ${APP_ROOT}/ckan/${ckanRole}/bin/python2 -c "import nltk; nltk.download('punkt');"
+        fi;
     fi;
 
     # start supervisord service

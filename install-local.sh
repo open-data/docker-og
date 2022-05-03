@@ -1153,8 +1153,8 @@ function install_ckan {
       pip install -e 'git+ssh://git@github.com/open-data/ckanext-recombinant.git#egg=ckanext-recombinant' -r 'https://raw.githubusercontent.com/open-data/ckanext-recombinant/master/requirements.txt'
 
       # install ckan scheming into the python environment
-      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Scheming repository${HAIR}${Cyan} from git@github.com:ckan/ckanext-scheming.git@composite and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/ckan/ckanext-scheming.git@composite#egg=ckanext-scheming'
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Scheming repository${HAIR}${Cyan} from git@github.com:ckan/ckanext-scheming.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+ssh://git@github.com/ckan/ckanext-scheming.git#egg=ckanext-scheming'
 
       # install ckan security into the python environment
       printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Security repository${HAIR}${Cyan} from git@github.com:open-data/ckanext-security@canada-v2.8.git and installing into Python environment${NC}${SPACER}"
@@ -1197,6 +1197,14 @@ function install_ckan {
 
       # install correct version of cryptography
       pip install cryptography==2.2.2
+
+      # install nltk punkt
+      if [[ $CKAN_ROLE == 'portal' ]]; then
+        printf "${SPACER}${Cyan}${INDENT}Installing nltk.punkt into ${CKAN_ROLE} environment${NC}${SPACER}"
+        python2 -c "import nltk; nltk.download('punkt');"
+      else
+        printf "${SPACER}${Cyan}${INDENT}Skipping nltk.punkt installation for ${CKAN_ROLE} environment${NC}${SPACER}"
+      fi
 
       # copy local ckan config file
       cp ${APP_ROOT}/${CKAN_ROLE}.ini ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini
@@ -1251,9 +1259,21 @@ function install_ckan {
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/static to ${APP_ROOT}/ckan/static_files/static: OK${NC}${EOL}"
       else
-        printf "${Red}${INDENT}${INDENT}${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/static to ${APP_ROOT}/ckan/static_files/statice: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/static to ${APP_ROOT}/ckan/static_files/static: FAIL${NC}${EOL}"
       fi
-      chown -R ckan:ckan ${APP_ROOT}/ckan/static_files
+      chown -R ckan:ckan ${APP_ROOT}/ckan/static_files/static
+
+      # copy ckanext-canada data files to static_files
+      if [[ -d "${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/data" ]]; then
+        printf "${SPACER}${Cyan}${INDENT}Copy CKAN Canada data files${NC}${SPACER}"
+        cp -R ${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/data ${APP_ROOT}/ckan/static_files/
+        if [[ $? -eq 0 ]]; then
+          printf "${Green}${INDENT}${INDENT}${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/data to ${APP_ROOT}/ckan/static_files/data: OK${NC}${EOL}"
+        else
+          printf "${Red}${INDENT}${INDENT}${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/data to ${APP_ROOT}/ckan/static_files/data: FAIL${NC}${EOL}"
+        fi
+      fi;
+      chown -R ckan:ckan ${APP_ROOT}/ckan/static_files/data
 
       # copy wsgi files
       printf "${SPACER}${Cyan}${INDENT}Copy ${CKAN_ROLE} wsgi config file to virtual environment${NC}${SPACER}"
@@ -1309,6 +1329,30 @@ function install_ckan {
       # download wet-boew/themes-cdn
       mkdir -p ${APP_ROOT}/ckan/static_files/GCWeb
       curl -L https://github.com/wet-boew/themes-cdn/archive/${GCWEB_VERSION}-gcweb.tar.gz | tar -zvx --strip-components 1 --directory=${APP_ROOT}/ckan/static_files/GCWeb
+
+      # copy ckanext-canada static files to static_files
+      if [[ -d "${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/static" ]]; then
+        printf "${SPACER}${Cyan}${INDENT}Copy CKAN Canada static files${NC}${SPACER}"
+        cp -R ${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/static ${APP_ROOT}/ckan/static_files/
+        if [[ $? -eq 0 ]]; then
+          printf "${Green}${INDENT}${INDENT}${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/static to ${APP_ROOT}/ckan/static_files/static: OK${NC}${EOL}"
+        else
+          printf "${Red}${INDENT}${INDENT}${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/static to ${APP_ROOT}/ckan/static_files/static: FAIL${NC}${EOL}"
+        fi
+      fi;
+
+      # copy ckanext-canada data files to static_files
+      if [[ -d "${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/data" ]]; then
+        printf "${SPACER}${Cyan}${INDENT}Copy CKAN Canada data files${NC}${SPACER}"
+        cp -R ${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/data ${APP_ROOT}/ckan/static_files/
+        if [[ $? -eq 0 ]]; then
+          printf "${Green}${INDENT}${INDENT}${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/data to ${APP_ROOT}/ckan/static_files/data: OK${NC}${EOL}"
+        else
+          printf "${Red}${INDENT}${INDENT}${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/data to ${APP_ROOT}/ckan/static_files/data: FAIL${NC}${EOL}"
+        fi
+      fi;
+
+      chown -R ckan:ckan ${APP_ROOT}/ckan/static_files
 
     fi
     # END
@@ -1415,7 +1459,8 @@ function install_ckan {
 
       # import the datasets
       printf "${SPACER}${Cyan}${INDENT}Import Datasets${NC}${SPACER}"
-      ckanapi load datasets -I ${APP_ROOT}/backup/od-do-canada.jsonl.gz -z -p 16 -c ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini
+      ckanapi load datasets -I ${APP_ROOT}/backup/od-do-canada.jsonl.gz -z -p 16 -c ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini -l ${APP_ROOT}/backup/${CKAN_ROLE}__dataset_import__$(date +%s).log
+      chown ckan:ckan ${APP_ROOT}/backup/${CKAN_ROLE}__dataset_import__*.log
 
     fi
     # END

@@ -231,3 +231,66 @@ $settings['skip_permissions_hardening'] = TRUE;
  * the language or field module.
  */
 # $settings['config_exclude_modules'] = ['devel', 'stage_file_proxy'];
+
+/**
+ * Trusted host configuration.
+ *
+ * Drupal core can use the Symfony trusted host mechanism to prevent HTTP Host
+ * header spoofing.
+ *
+ * To enable the trusted host mechanism, you enable your allowable hosts
+ * in $settings['trusted_host_patterns']. This should be an array of regular
+ * expression patterns, without delimiters, representing the hosts you would
+ * like to allow.
+ *
+ * For example:
+ * @code
+ * $settings['trusted_host_patterns'] = array(
+ *   '^www\.example\.com$',
+ * );
+ * @endcode
+ * will allow the site to only run from www.example.com.
+ *
+ * If you are running multisite, or if you are running your site from
+ * different domain names (eg, you don't redirect http://www.example.com to
+ * http://example.com), you should specify all of the host patterns that are
+ * allowed by your site.
+ *
+ * For example:
+ * @code
+ * $settings['trusted_host_patterns'] = array(
+ *   '^example\.com$',
+ *   '^.+\.example\.com$',
+ *   '^example\.org$',
+ *   '^.+\.example\.org$',
+ * );
+ * @endcode
+ * will allow the site to run off of all variants of example.com and
+ * example.org, with all subdomains included.
+ */
+$settings['trusted_host_patterns'] = [
+    '^.+\.canada\.ca$',
+    '^.+\.open\.local$',
+    '^open\.local$',
+    '^localhost$',
+];
+
+# search domains
+$settings['search_domain'] = [
+    'en' => 'search.open.local',
+    'fr' => 'search.open.local',
+];
+
+$settings['sd_search'] = [
+    'en' => 'https://search.open.local/en/sd/id/',
+    'fr' => 'https://search.open.local/fr/sd/id/',
+];
+
+# default domains
+$settings['default_domain'] = [
+    'en' => 'search.open.local',
+    'fr' => 'search.open.local',
+];
+
+# default ati email address
+$settings['ati_email'] = 'open-ouvert@tbs-sct.gc.ca';

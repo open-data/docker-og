@@ -18,18 +18,22 @@ services:
       og-proxy-network:
       og-local-network:
         ipv4_address: 172.0.0.3
+    working_dir: /var/ogproxy
     env_file:
       - .docker.env
     environment:
       CONTAINER_ROLE: proxy
       NGINX_UNAME: www-data
+      APP_ROOT: /var/ogproxy
       SSH_AUTH_SOCK: /ssh-agent
       SSL_CERT_FILE: /etc/ssl/mkcert/rootCA.pem
       SSL_CERT_DIR: /etc/ssl/mkcert
     volumes:
+      - .:/var/ogproxy
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./docker/config/nginx/certs:/usr/share/certs
+      - ./docker/config/nginx/conf:/etc/nginx/conf
       - $SSH_AUTH_SOCK:/ssh-agent:ro
       - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
       # - ./nginx:/var/log/nginx
@@ -88,8 +92,9 @@ services:
       SSL_CERT_DIR: /etc/ssl/mkcert
     volumes:
       - .:/var/www/html
-      - ./docker/config/nginx/certs:/usr/share/certs
       - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/config/nginx/certs:/usr/share/certs
+      - ./docker/config/nginx/conf:/etc/nginx/conf
       - ~/.gitconfig:/etc/gitconfig:ro
       - ~/.ssh:/var/www/html/.ssh:ro
       - $SSH_AUTH_SOCK:/ssh-agent:ro

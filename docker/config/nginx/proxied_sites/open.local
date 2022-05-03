@@ -1,0 +1,64 @@
+#
+# Drupal/CKAN Portal Front
+# open.local
+#
+server {
+
+    server_name open.local;
+
+    listen 443 default_server ssl http2;
+
+    include conf/ssl_settings.conf;
+    include conf/default_settings.conf;
+
+    set $upstreamHost "backend_host_drupal";
+    set $upstremProtocol "https://";
+
+    if ($request_uri ~ (^/data/)) {
+
+        set $upstreamHost "backend_host_ckanapi";
+        set $upstremProtocol "http://";
+
+    }
+
+    location / {
+
+        include conf/proxy_settings.conf;
+
+    }
+
+    location /data/ {
+
+        rewrite /data/(.*) /$1 last;
+
+        include conf/proxy_settings.conf;
+
+    }
+
+    location /GCWeb/ {
+
+        alias /var/ogproxy/ckan/static_files/GCWeb/;
+        autoindex off;
+
+    }
+    
+    location /data/static/ {
+
+        alias /var/ogproxy/ckan/static_files/static/;
+        autoindex off;
+
+    }
+
+    location /data/data/ {
+
+        alias /var/ogproxy/ckan/static_files/data/;
+        autoindex off;
+
+    }
+
+}
+# END
+# Drupal/CKAN Portal Front
+# END
+
+include conf/http_redirect.conf;
