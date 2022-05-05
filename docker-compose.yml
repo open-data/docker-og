@@ -15,8 +15,8 @@ services:
       timeout: 5s
       retries: 3
     networks:
-      og-proxy-network--${PROJECT_ID}:
-      og-local-network--${PROJECT_ID}:
+      "og-proxy-network--${PROJECT_ID}":
+      "og-local-network--${PROJECT_ID}":
         ipv4_address: 172.0.0.3
     working_dir: /var/ogproxy
     env_file:
@@ -62,8 +62,8 @@ services:
       retries: 3
     working_dir: /var/www/html
     networks:
-      og-proxy-network--${PROJECT_ID}:
-      og-local-network--${PROJECT_ID}:
+      "og-proxy-network--${PROJECT_ID}":
+      "og-local-network--${PROJECT_ID}":
         ipv4_address: 172.0.0.6
     depends_on:
       proxy:
@@ -124,8 +124,8 @@ services:
       retries: 3
     working_dir: /srv/app
     networks:
-      og-proxy-network--${PROJECT_ID}:
-      og-local-network--${PROJECT_ID}:
+      "og-proxy-network--${PROJECT_ID}":
+      "og-local-network--${PROJECT_ID}":
         ipv4_address: 172.0.0.7
     depends_on:
       proxy:
@@ -198,8 +198,8 @@ services:
       retries: 3
     working_dir: /srv/app
     networks:
-      og-proxy-network--${PROJECT_ID}:
-      og-local-network--${PROJECT_ID}:
+      "og-proxy-network--${PROJECT_ID}":
+      "og-local-network--${PROJECT_ID}":
         ipv4_address: 172.0.0.8
     depends_on:
       proxy:
@@ -266,7 +266,7 @@ services:
       timeout: 5s
       retries: 3
     networks:
-      og-local-network--${PROJECT_ID}:
+      "og-local-network--${PROJECT_ID}":
         ipv4_address: 172.0.0.9
     volumes:
       - ./postgres:/var/lib/postgresql/data
@@ -303,8 +303,8 @@ services:
       retries: 3
     working_dir: /opt/solr
     networks:
-      og-proxy-network--${PROJECT_ID}:
-      og-local-network--${PROJECT_ID}:
+      "og-proxy-network--${PROJECT_ID}":
+      "og-local-network--${PROJECT_ID}":
         ipv4_address: 172.0.0.10
     depends_on:
       proxy:
@@ -367,11 +367,11 @@ services:
       retries: 3
     working_dir: /data
     networks:
-      og-proxy-network--${PROJECT_ID}:
-      og-local-network--${PROJECT_ID}:
+      "og-proxy-network--${PROJECT_ID}":
+      "og-local-network--${PROJECT_ID}":
         ipv4_address: 172.0.0.11
-    volumes:
-      # - ./redis:/data
+    # volumes:
+    #   - ./redis:/data
     environment:
       CONTAINER_ROLE: redis
       NGINX_UNAME: root
@@ -404,8 +404,8 @@ services:
       retries: 3
     working_dir: /var/ocs
     networks:
-      og-proxy-network--${PROJECT_ID}:
-      og-local-network--${PROJECT_ID}:
+      "og-proxy-network--${PROJECT_ID}":
+      "og-local-network--${PROJECT_ID}":
         ipv4_address: 172.0.0.12
     depends_on:
       proxy:
@@ -457,9 +457,9 @@ volumes:
     driver: "local"
 
 networks:
-  og-proxy-network--${PROJECT_ID}:
+  "og-proxy-network--${PROJECT_ID}":
     external : true
-  og-local-network--${PROJECT_ID}:
+  "og-local-network--${PROJECT_ID}":
     external : false
     driver: bridge
     ipam:
