@@ -9,6 +9,7 @@ node_modules/
 
 # Misc.
 .DS_Store/
+/.project.env
 
 # Build
 /*.1
