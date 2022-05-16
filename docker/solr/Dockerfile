@@ -19,7 +19,8 @@ RUN mkdir -p /var/solr/data
 
 # Copy local_data volumes into data directory
 ADD docker/config/solr/cores /var/solr/local_data
-RUN cp -R /var/solr/local_data/* /var/solr/data
+RUN mkdir -p /var/solr/data \
+    && cp -R /var/solr/local_data/* /var/solr/data
 
 # Set new files with correct user:group
 RUN chown -R solr:root /var/solr/data && \
