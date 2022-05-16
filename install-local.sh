@@ -299,10 +299,7 @@ function install_drupal {
       else
         printf "${Red}${INDENT}${INDENT}Remove .git: FAIL (local repo may not exist)${NC}${EOL}"
       fi
-      git init
-      git config pull.ff only
-      git remote add origin git@github.com:open-data/opengov.git
-      git pull git@github.com:open-data/opengov.git
+      git clone git@github.com:open-data/opengov.git .
 
       # pull the profile
       printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}Profile repository${HAIR}${Cyan} from git@github.com:open-data/og.git${NC}${SPACER}"
@@ -314,10 +311,9 @@ function install_drupal {
       else
         printf "${Red}${INDENT}${INDENT}Remove profiles/og/.git: FAIL (local repo may not exist)${NC}${EOL}"
       fi
-      git init
-      git config pull.ff only
-      git remote add origin git@github.com:open-data/og.git
-      git pull git@github.com:open-data/og.git
+      rm -rf ./*
+      rm -rf ./.??*
+      git clone git@github.com:open-data/og.git .
 
       # pull the theme
       printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}Theme repository${HAIR}${Cyan} from git@github.com:open-data/gcweb_bootstrap.git${NC}${SPACER}"
@@ -329,10 +325,9 @@ function install_drupal {
       else
         printf "${Red}${INDENT}${INDENT}Remove themes/custom/gcweb/.git: FAIL (local repo may not exist)${NC}${EOL}"
       fi
-      git init
-      git config pull.ff only
-      git remote add origin git@github.com:open-data/gcweb_bootstrap.git
-      git pull git@github.com:open-data/gcweb_bootstrap.git
+      rm -rf ./*
+      rm -rf ./.??*
+      git clone git@github.com:open-data/gcweb_bootstrap.git .
 
     fi
     # END
@@ -1784,10 +1779,7 @@ function install_django {
       cd ${APP_ROOT}/django/src/ogc-search/ogc_search/cdts/source
       rm -rf ./*
       rm -rf ./.??*
-      git init
-      git config pull.ff only
-      git remote add origin git@github.com:cenw-wscoe/sgdc-cdts.git
-      git pull git@github.com:cenw-wscoe/sgdc-cdts.git
+      git clone git@github.com:cenw-wscoe/sgdc-cdts.git .
 
       # unpack the GCWeb Static release
       printf "${SPACER}${Cyan}${INDENT}Unpack the GCWeb Static release from the CDTS repo${NC}${SPACER}"
