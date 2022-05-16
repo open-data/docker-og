@@ -2,6 +2,8 @@
 set -e
 
 psql -v ON_ERROR_STOP=0 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+    CREATE USER postgres SUPERUSER;
+    CREATE DATABASE postgres WITH OWNER postgres;
     CREATE USER homestead;
     ALTER USER homestead PASSWORD 'secret';
     CREATE USER homestead_reader;

@@ -270,7 +270,7 @@ services:
 #
   postgres:
     container_name: og-postgres
-    image: postgres:9.6
+    image: postgres:13.5
     restart: always
     healthcheck:
       test: pg_isready -U postgres || exit 1

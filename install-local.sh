@@ -1956,6 +1956,8 @@ function install_django {
 function install_databases {
 
   psql -v ON_ERROR_STOP=0 --username "homestead" --dbname "postgres" <<-EOSQL
+    CREATE USER postgres SUPERUSER;
+    CREATE DATABASE postgres WITH OWNER postgres;
     CREATE USER homestead;
     ALTER USER homestead PASSWORD 'secret';
     CREATE USER homestead_reader;
