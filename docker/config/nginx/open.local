@@ -42,11 +42,17 @@ server {
 
         include snippets/fastcgi-php.conf;
         fastcgi_pass unix:/usr/local/var/run/php-fpm.sock;
+        fastcgi_connect_timeout 3200;
+        fastcgi_send_timeout 3200;
         fastcgi_read_timeout 3200;
+        fastcgi_buffers 16 512k;
+        fastcgi_buffer_size 512k;
 
     }
 
-    client_max_body_size 10M;
+    client_max_body_size 750M;
+
+    include conf/header_settings.conf;
 
     error_page 404 /index.php;
 

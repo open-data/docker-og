@@ -10,6 +10,7 @@ server {
 
     include conf/ssl_settings.conf;
     include conf/default_settings.conf;
+    include conf/header_settings.conf;
 
     set $upstreamHost "backend_host_ckanapi";
     set $upstremProtocol "http://";
