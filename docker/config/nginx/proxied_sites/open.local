@@ -6,13 +6,13 @@ server {
 
     server_name open.local;
 
-    listen 443 default_server ssl http2;
+    listen 80 default_server;
 
-    include conf/ssl_settings.conf;
     include conf/default_settings.conf;
+    include conf/header_settings.conf;
 
     set $upstreamHost "backend_host_drupal";
-    set $upstremProtocol "https://";
+    set $upstremProtocol "http://";
 
     if ($request_uri ~ (^/data/)) {
 
@@ -60,5 +60,3 @@ server {
 # END
 # Drupal/CKAN Portal Front
 # END
-
-include conf/http_redirect.conf;
