@@ -201,11 +201,11 @@ function install_drupal {
     #
     if [[ $installDB_Drupal == "true" ]]; then
 
-      printf "${SPACER}${Cyan}${INDENT}Drop the ${BOLD}og_drupal_local DB${HAIR}${Cyan} if it exists and then recreate it blank/clean${NC}${SPACER}"
-      psql -eb --dbname=og_drupal_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_drupal_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
+      printf "${SPACER}${Cyan}${INDENT}Drop the ${BOLD}og_drupal_local__${PROJECT_ID} DB${HAIR}${Cyan} if it exists and then recreate it blank/clean${NC}${SPACER}"
+      psql -eb --dbname=og_drupal_local__${PROJECT_ID} --username=$PGUSER --command="DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_drupal_local__${PROJECT_ID} TO homestead; GRANT ALL ON SCHEMA public TO homestead;"
 
       # import the database
-      printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into ${BOLD}og_drupal_local${HAIR}${NC}${SPACER}"
+      printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into ${BOLD}og_drupal_local__${PROJECT_ID}${HAIR}${NC}${SPACER}"
       pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=$PGDATABASE --username=$PGUSER ${APP_ROOT}/backup/drupal_db.pgdump
 
     fi
@@ -859,16 +859,16 @@ function install_ckan {
 
       if [[ -f "${APP_ROOT}/backup/ckan_portal_db.pgdump" ]]; then
 
-        printf "${SPACER}${Cyan}${INDENT}Drop the ${BOLD}og_ckan_portal_local DB${HAIR}${Cyan} if it exists and then recreate it blank/clean${NC}${SPACER}"
-        psql -eb --dbname=og_ckan_portal_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_portal_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
+        printf "${SPACER}${Cyan}${INDENT}Drop the ${BOLD}og_ckan_portal_local__${PROJECT_ID} DB${HAIR}${Cyan} if it exists and then recreate it blank/clean${NC}${SPACER}"
+        psql -eb --dbname=og_ckan_portal_local__${PROJECT_ID} --username=$PGUSER --command="DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_portal_local__${PROJECT_ID} TO homestead; GRANT ALL ON SCHEMA public TO homestead;"
 
         # import the database
-        printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into ${BOLD}og_ckan_portal_local${HAIR}${NC}${SPACER}"
-        pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=og_ckan_portal_local --username=$PGUSER ${APP_ROOT}/backup/ckan_portal_db.pgdump
+        printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into ${BOLD}og_ckan_portal_local__${PROJECT_ID}${HAIR}${NC}${SPACER}"
+        pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=og_ckan_portal_local__${PROJECT_ID} --username=$PGUSER ${APP_ROOT}/backup/ckan_portal_db.pgdump
 
       else
 
-        printf "${SPACER}${Orange}${INDENT}Skipping ${BOLD}og_ckan_portal_local DB${HAIR}${Orange} import, backup/ckan_portal_db.pgdump does not exist.${NC}${SPACER}"
+        printf "${SPACER}${Orange}${INDENT}Skipping ${BOLD}og_ckan_portal_local__${PROJECT_ID} DB${HAIR}${Orange} import, backup/ckan_portal_db.pgdump does not exist.${NC}${SPACER}"
 
       fi
 
@@ -884,16 +884,16 @@ function install_ckan {
 
       if [[ -f "${APP_ROOT}/backup/ckan_portal_ds_db.pgdump" ]]; then
 
-        printf "${SPACER}${Cyan}${INDENT}Drop the ${BOLD}og_ckan_portal_ds_local DB${HAIR}${Cyan} if it exists and then recreate it blank/clean${NC}${SPACER}"
-        psql -eb --dbname=og_ckan_portal_ds_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_portal_ds_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
+        printf "${SPACER}${Cyan}${INDENT}Drop the ${BOLD}og_ckan_portal_ds_local__${PROJECT_ID} DB${HAIR}${Cyan} if it exists and then recreate it blank/clean${NC}${SPACER}"
+        psql -eb --dbname=og_ckan_portal_ds_local__${PROJECT_ID} --username=$PGUSER --command="DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_portal_ds_local__${PROJECT_ID} TO homestead; GRANT ALL ON SCHEMA public TO homestead;"
 
         # import the database
-        printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into ${BOLD}og_ckan_portal_ds_local${HAIR}${NC}${SPACER}"
-        pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=og_ckan_portal_ds_local --username=$PGUSER ${APP_ROOT}/backup/ckan_portal_ds_db.pgdump
+        printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into ${BOLD}og_ckan_portal_ds_local__${PROJECT_ID}${HAIR}${NC}${SPACER}"
+        pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=og_ckan_portal_ds_local__${PROJECT_ID} --username=$PGUSER ${APP_ROOT}/backup/ckan_portal_ds_db.pgdump
 
       else
 
-        printf "${SPACER}${Orange}${INDENT}Skipping ${BOLD}og_ckan_portal_ds_local DB${HAIR}${Orange} import, backup/ckan_portal_ds_db.pgdump does not exist.${NC}${SPACER}"
+        printf "${SPACER}${Orange}${INDENT}Skipping ${BOLD}og_ckan_portal_ds_local__${PROJECT_ID} DB${HAIR}${Orange} import, backup/ckan_portal_ds_db.pgdump does not exist.${NC}${SPACER}"
 
       fi
 
@@ -909,16 +909,16 @@ function install_ckan {
 
       if [[ -f "${APP_ROOT}/backup/ckan_registry_db.pgdump" ]]; then
 
-        printf "${SPACER}${Cyan}${INDENT}Drop the ${BOLD}og_ckan_registry_local DB${HAIR}${Cyan} if it exists and then recreate it blank/clean${NC}${SPACER}"
-        psql -eb --dbname=og_ckan_registry_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_registry_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
+        printf "${SPACER}${Cyan}${INDENT}Drop the ${BOLD}og_ckan_registry_local__${PROJECT_ID} DB${HAIR}${Cyan} if it exists and then recreate it blank/clean${NC}${SPACER}"
+        psql -eb --dbname=og_ckan_registry_local__${PROJECT_ID} --username=$PGUSER --command="DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_registry_local__${PROJECT_ID} TO homestead; GRANT ALL ON SCHEMA public TO homestead;"
 
         # import the database
-        printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into ${BOLD}og_ckan_registry_local${HAIR}${NC}${SPACER}"
-        pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=og_ckan_registry_local --username=$PGUSER ${APP_ROOT}/backup/ckan_registry_db.pgdump
+        printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into ${BOLD}og_ckan_registry_local__${PROJECT_ID}${HAIR}${NC}${SPACER}"
+        pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=og_ckan_registry_local__${PROJECT_ID} --username=$PGUSER ${APP_ROOT}/backup/ckan_registry_db.pgdump
 
       else
 
-        printf "${SPACER}${Orange}${INDENT}Skipping ${BOLD}og_ckan_registry_local DB${HAIR}${Orange} import, backup/ckan_registry_db.pgdump does not exist.${NC}${SPACER}"
+        printf "${SPACER}${Orange}${INDENT}Skipping ${BOLD}og_ckan_registry_local__${PROJECT_ID} DB${HAIR}${Orange} import, backup/ckan_registry_db.pgdump does not exist.${NC}${SPACER}"
 
       fi
 
@@ -934,16 +934,16 @@ function install_ckan {
 
       if [[ -f "${APP_ROOT}/backup/ckan_registry_ds_db.pgdump" ]]; then
 
-        printf "${SPACER}${Cyan}${INDENT}Drop the ${BOLD}og_ckan_registry_ds_local DB${HAIR}${Cyan} if it exists and then recreate it blank/clean${NC}${SPACER}"
-        psql -eb --dbname=og_ckan_registry_ds_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_registry_ds_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
+        printf "${SPACER}${Cyan}${INDENT}Drop the ${BOLD}og_ckan_registry_ds_local__${PROJECT_ID} DB${HAIR}${Cyan} if it exists and then recreate it blank/clean${NC}${SPACER}"
+        psql -eb --dbname=og_ckan_registry_ds_local__${PROJECT_ID} --username=$PGUSER --command="DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_registry_ds_local__${PROJECT_ID} TO homestead; GRANT ALL ON SCHEMA public TO homestead;"
 
         # import the database
-        printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into ${BOLD}og_ckan_registry_ds_local${HAIR}${NC}${SPACER}"
-        pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=og_ckan_registry_ds_local --username=$PGUSER ${APP_ROOT}/backup/ckan_registry_ds_db.pgdump
+        printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into ${BOLD}og_ckan_registry_ds_local__${PROJECT_ID}${HAIR}${NC}${SPACER}"
+        pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=og_ckan_registry_ds_local__${PROJECT_ID} --username=$PGUSER ${APP_ROOT}/backup/ckan_registry_ds_db.pgdump
 
       else
 
-        printf "${SPACER}${Orange}${INDENT}Skipping ${BOLD}og_ckan_registry_ds_local DB${HAIR}${Orange} import, backup/ckan_registry_ds_db.pgdump does not exist.${NC}${SPACER}"
+        printf "${SPACER}${Orange}${INDENT}Skipping ${BOLD}og_ckan_registry_ds_local__${PROJECT_ID} DB${HAIR}${Orange} import, backup/ckan_registry_ds_db.pgdump does not exist.${NC}${SPACER}"
 
       fi
 
@@ -1783,21 +1783,21 @@ function install_databases {
     ALTER USER homestead PASSWORD 'secret';
     CREATE USER homestead_reader;
     ALTER USER homestead_reader PASSWORD 'secret';
-    CREATE DATABASE og_drupal_local;
-    CREATE DATABASE og_ckan_portal_local;
-    CREATE DATABASE og_ckan_portal_ds_local;
-    CREATE DATABASE og_ckan_registry_local;
-    CREATE DATABASE og_ckan_registry_ds_local;
-    GRANT ALL PRIVILEGES ON DATABASE og_drupal_local TO homestead;
-    GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_local TO homestead;
-    GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_ds_local TO homestead;
-    GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_local TO homestead;
-    GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_ds_local TO homestead;
-    GRANT ALL PRIVILEGES ON DATABASE og_drupal_local TO homestead_reader;
-    GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_local TO homestead_reader;
-    GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_ds_local TO homestead_reader;
-    GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_local TO homestead_reader;
-    GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_ds_local TO homestead_reader;
+    CREATE DATABASE og_drupal_local__${PROJECT_ID};
+    CREATE DATABASE og_ckan_portal_local__${PROJECT_ID};
+    CREATE DATABASE og_ckan_portal_ds_local__${PROJECT_ID};
+    CREATE DATABASE og_ckan_registry_local__${PROJECT_ID};
+    CREATE DATABASE og_ckan_registry_ds_local__${PROJECT_ID};
+    GRANT ALL PRIVILEGES ON DATABASE og_drupal_local__${PROJECT_ID} TO homestead;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_local__${PROJECT_ID} TO homestead;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_ds_local__${PROJECT_ID} TO homestead;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_local__${PROJECT_ID} TO homestead;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_ds_local__${PROJECT_ID} TO homestead;
+    GRANT ALL PRIVILEGES ON DATABASE og_drupal_local__${PROJECT_ID} TO homestead_reader;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_local__${PROJECT_ID} TO homestead_reader;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_ds_local__${PROJECT_ID} TO homestead_reader;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_local__${PROJECT_ID} TO homestead_reader;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_ds_local__${PROJECT_ID} TO homestead_reader;
 EOSQL
 
 }

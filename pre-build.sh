@@ -19,29 +19,34 @@ HAIR='\033[0m'
 
 projectID='base'
 maintainLocalConfigs='false'
+noInteraction='false'
 
 function run_pre_build {
 
     printf "${SPACER}"
 
-    # check to maintain local settings files
-    if [[ -f './.docker.env' || -f './drupal-local-settings.php' || -f './drupal-services.yml' || -f './portal.ini' || -f './registry.ini' || -f './.env' || -f './search-settings.py' || -f './.project.env' ]]; then
+    if [[ $noInteraction == 'false' ]]; then
 
-        read -r -p $'\n\n\033[0;31m    Do you wish to maintain your local configuration files? (if No, backups will still be kept once in the backup/local_configs directory) [y/N]:\033[0;0m    ' response
+        # check to maintain local settings files
+        if [[ -f './.docker.env' || -f './drupal-local-settings.php' || -f './drupal-services.yml' || -f './portal.ini' || -f './registry.ini' || -f './.env' || -f './search-settings.py' || -f './.project.env' ]]; then
 
-        if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+            read -r -p $'\n\n\033[0;31m    Do you wish to maintain your local configuration files? (if No, backups will still be kept once in the backup/local_configs directory) [y/N]:\033[0;0m    ' response
 
-            maintainLocalConfigs='true'
+            if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
 
-        else
+                maintainLocalConfigs='true'
 
-            maintainLocalConfigs='false'
+            else
+
+                maintainLocalConfigs='false'
+
+            fi
 
         fi
 
-    fi
+        printf "${SPACER}"
 
-    printf "${SPACER}"
+    fi
 
     # create proxy network if it does not exist
     docker network inspect og-proxy-network--$projectID >/dev/null 2>&1 || docker network create og-proxy-network--$projectID
@@ -247,16 +252,31 @@ function run_pre_build {
 
 if [[ $1 ]]; then
 
-    read -r -p $'\n\n\033[0;31m    Are you sure you want to run the\033[1m pre build script?\033[0m\033[0;31m [y/N]:\033[0;0m    ' response
+    if [[ $2 && $2 == "no-interaction" ]]; then
 
-    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        noInteraction='true'
 
-        projectID=$1
-        run_pre_build
+    fi
+
+    if [[ $noInteraction == "false" ]]; then
+
+        read -r -p $'\n\n\033[0;31m    Are you sure you want to run the\033[1m pre build script?\033[0m\033[0;31m [y/N]:\033[0;0m    ' response
+
+        if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+
+            projectID=$1
+            run_pre_build
+
+        else
+
+            printf "${SPACER}${Yellow}${INDENT}Exiting pre build script...${NC}${SPACER}"
+
+        fi
 
     else
 
-        printf "${SPACER}${Yellow}${INDENT}Exiting pre build script...${NC}${SPACER}"
+        projectID=$1
+        run_pre_build
 
     fi
 

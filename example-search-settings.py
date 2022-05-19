@@ -10,6 +10,8 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 import logging.config
 
+PROJECT_ID = os.getenv('PROJECT_ID')
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -25,7 +27,7 @@ DEBUG = True
 
 ADMIN_ENABLED = False
 
-ALLOWED_HOSTS = ['search.open.local']
+ALLOWED_HOSTS = ['search.open-' + PROJECT_ID + '.local']
 
 INTERNAL_IPS = ['127.0.0.1']
 
@@ -239,12 +241,12 @@ SUGGESTED_DS_YAML_FILE = os.path.join(BASE_DIR, "ckan_config_files", "prop.yaml"
 
 # Open Data App Settings
 
-OPEN_CANADA_EN_URL_BASE = "https://open.local/"
-OPEN_CANADA_FR_URL_BASE = "https://open.local/"
-OPEN_DATA_EN_URL_BASE = "https://open.local/data/en/dataset/"
-OPEN_DATA_FR_URL_BASE = "https://open.local/data/fr/dataset/"
-OPEN_DATA_EN_FGP_BASE = "https://open.local/data/en/fgpv_vpgf/"
-OPEN_DATA_FR_FGP_BASE = "https://open.local/data/fr/fgpv_vpgf/"
+OPEN_CANADA_EN_URL_BASE = "http://open-" + PROJECT_ID + ".local/"
+OPEN_CANADA_FR_URL_BASE = "http://open-" + PROJECT_ID + ".local/"
+OPEN_DATA_EN_URL_BASE = "http://open-" + PROJECT_ID + ".local/data/en/dataset/"
+OPEN_DATA_FR_URL_BASE = "http://open-" + PROJECT_ID + ".local/data/fr/dataset/"
+OPEN_DATA_EN_FGP_BASE = "http://open-" + PROJECT_ID + ".local/data/en/fgpv_vpgf/"
+OPEN_DATA_FR_FGP_BASE = "http://open-" + PROJECT_ID + ".local/data/fr/fgpv_vpgf/"
 OPEN_DATA_DATASET_ID = "c4c5c7f1-bfa6-4ff6-b4a0-c164cb2060f7"
 OPEN_DATA_DATASET_TITLE_EN = "Open Data Portal Catalogue Dataset"
 OPEN_DATA_DATASET_TITLE_FR = "Catalogue du portail de données ouvertes ensemble de données"
@@ -289,7 +291,7 @@ OPEN_DATA_EXTERNAL_INFO_FR = '<div>Les applications créées par le public ont �
 #CUSTOM_OD_ALERT_EN = ""
 #CUSTOM_OD_ALERT_FR = ""
 
-SOLR_URL = 'https://solr:8983/solr/core_od_search'
+SOLR_URL = 'http://solr:8983/solr/core_od_search'
 
 # Briefing Note Title App Settings
 
@@ -300,20 +302,20 @@ BRIEF_NOTE_INFO_EN = 'A list of briefing note titles prepared for deputy ministe
 BRIEF_NOTE_INFO_FR = "Listes des notes d'information préparées à l'intention " \
                      "des sous-ministres et ministres"
 BN_ITEMS_PER_PAGE = 20
-SOLR_BN = 'https://solr:8983/solr/core_bn_search'
+SOLR_BN = 'http://solr:8983/solr/core_bn_search'
 
 # ATI App Settings
 
 ATI_DATASET_TITLE_EN = "Access To Information"
 ATI_DATASET_TITLE_FR = "Accès à l'information"
 ATI_DATASET_ID = "0797e893-751e-4695-8229-a5066e4fe43c"
-ATI_REQUEST_URL_EN = "https://open.local/search/ati/reference/"
-ATI_REQUEST_URL_FR = "https://open.local/fr/search/ati/reference/"
-SOLR_ATI = 'https://solr:8983/solr/core_ati_search'
+ATI_REQUEST_URL_EN = "http://open-" + PROJECT_ID + ".local/search/ati/reference/"
+ATI_REQUEST_URL_FR = "http://open-" + PROJECT_ID + ".local/fr/search/ati/reference/"
+SOLR_ATI = 'http://solr:8983/solr/core_ati_search'
 
 # Experimentation Inventory App Settings
 
-SOLR_EI = 'https://solr:8983/solr/core_ei_search'
+SOLR_EI = 'http://solr:8983/solr/core_ei_search'
 EI_DATASET_TITLE_EN = "Experimentation Inventory"
 EI_DATASET_TITLE_FR = "Répertoire d'expériences"
 EI_DATASET_ID = "39954bc7-ff7a-4180-8b6e-b02bee35078a"
@@ -335,7 +337,7 @@ EI_ABOUT_FR = "En relation avec l’engagement du Gouvernement du Canada d’enc
 CONTRACT_DATASET_TITLE_EN = "Contracts Dataset"
 CONTRACT_DATASET_TITLE_FR = "Jeux de données de la divulgation des contrats"
 CONTRACTS_DATASET_ID = 'd8f85d91-7dec-4fd1-8055-483b77225d8b'
-SOLR_CT = 'https://solr:8983/solr/core_ct_search'
+SOLR_CT = 'http://solr:8983/solr/core_ct_search'
 CT_DATASET_TITLE_EN = 'Proactive Disclosure - Contracts Dataset'
 CT_DATASET_TITLE_FR = 'Divulgation des contrats jeu de données'
 CT_DATASET_ID = "d8f85d91-7dec-4fd1-8055-483b77225d8b"
@@ -343,7 +345,7 @@ CT_SHOW_LATEST_FIELDS = False
 
 # Grants and Contributions App Settings
 
-SOLR_GC = 'https://solr:8983/solr/core_gc_search'
+SOLR_GC = 'http://solr:8983/solr/core_gc_search'
 GC_DATASET_TITLE_EN = 'Grants and Contributions Dataset'
 GC_DATASET_TITLE_FR = 'Subventions et contributions gouvernementales jeu de données'
 GC_DATASET_ID = "432527ab-7aac-45b5-81d6-7597107a7013"
@@ -454,7 +456,7 @@ CT_ABOUT_FR = '<p>Dans le cadre du deuxième plan d’action du Canada sur le go
 NAP_DATASET_TITLE_EN = 'National Action Plan Dataset'
 NAP_DATASET_TITLE_FR = 'Plan d’action national jeu de données'
 NAP_DATASET_ID = 'd2d72709-e4bf-412d-a1bd-8c726d19393e'
-SOLR_NAP = 'https://solr:8983/solr/core_ap_search'
+SOLR_NAP = 'http://solr:8983/solr/core_ap_search'
 NAP_INFO_FR = ""
 NAP_ABOUT_FR = ""
 NAP_INFO_EN = ""
@@ -470,7 +472,7 @@ SI_DATAVIZ_PATH_FR = "/chart/si/index-fr.html?"
 SI_ITEMS_PER_PAGE = 25
 SI_NOTE_INFO_EN = ''
 SI_NOTE_INFO_FR = ''
-SOLR_SI = 'https://solr:8983/solr/core_sv_search'
+SOLR_SI = 'http://solr:8983/solr/core_sv_search'
 
 # Question Period Settings
 QP_INFO_EN = '<p>In accordance with the Access to Information Act, the government proactively publishes the package ' \
@@ -497,26 +499,26 @@ QP_DATASET_ID = "ecd1a913-47da-47fc-8f96-2432be420986"
 QP_DATASET_TITLE_EN = "Question Period Notes"
 QP_DATASET_TITLE_FR = "Notes pour la période des questions"
 QP_ITEMS_PER_PAGE = 25
-SOLR_QP = 'https://solr:8983/solr/core_qp_search'
+SOLR_QP = 'http://solr:8983/solr/core_qp_search'
 
 # Suggested Datasets
-SOLR_SD = 'https://solr:8983/solr/core_sd_search'
-SD_SUGGESTED_DS_FORM_EN = "https://open.local/en/forms/suggest-dataset"
-SD_SUGGESTED_DS_FORM_FR = "https://open.local/fr/formulaire/proposez-un-formulaire-densemble-de-donnees"
+SOLR_SD = 'http://solr:8983/solr/core_sd_search'
+SD_SUGGESTED_DS_FORM_EN = "http://open-" + PROJECT_ID + ".local/en/forms/suggest-dataset"
+SD_SUGGESTED_DS_FORM_FR = "http://open-" + PROJECT_ID + ".local/fr/formulaire/proposez-un-formulaire-densemble-de-donnees"
 SD_ABOUT_EN = "Is there Government of Canada data that you would like to be released, and made available on our " \
               "site? Please let us know by filling out the Suggest a Dataset form, but first search below to see " \
               "if someone has already requested the same dataset. If you find it, you can check on its status and " \
               "add your request by clicking on the thumbs up."
 SD_ABOUT_FR = "En tradution"
-SD_COMMENTS_BASE_EN = "http://search.open.local/en/external-comment/suggest-dataset/"
-SD_COMMENTS_BASE_FR = "http://search.open.local/fr/external-comment/suggest-dataset/"
-SD_SUGGEST_A_DATASET_EN = "https://open.local/en/suggested-datasets"
-SD_SUGGEST_A_DATASET_FR = "https://open.local/fr/jeux-de-donnees-suggeres"
-SD_VOTES_BASE_EN = "http://search.open.local/en/external-vote/suggest-dataset/"
-SD_VOTES_BASE_FR = "http://search.open.local/fr/external-vote/suggest-dataset/"
+SD_COMMENTS_BASE_EN = "http://search.open-" + PROJECT_ID + ".local/en/external-comment/suggest-dataset/"
+SD_COMMENTS_BASE_FR = "http://search.open-" + PROJECT_ID + ".local/fr/external-comment/suggest-dataset/"
+SD_SUGGEST_A_DATASET_EN = "http://open-" + PROJECT_ID + ".local/en/suggested-datasets"
+SD_SUGGEST_A_DATASET_FR = "http://open-" + PROJECT_ID + ".local/fr/jeux-de-donnees-suggeres"
+SD_VOTES_BASE_EN = "http://search.open-" + PROJECT_ID + ".local/en/external-vote/suggest-dataset/"
+SD_VOTES_BASE_FR = "http://search.open-" + PROJECT_ID + ".local/fr/external-vote/suggest-dataset/"
 
-SD_RECORD_URL_EN = 'http://search.open.local/en/sd/id/'
-SD_RECORD_URL_FR = 'http://search.open.local/fr/sd/id/'
+SD_RECORD_URL_EN = 'http://search.open-' + PROJECT_ID + '.local/en/sd/id/'
+SD_RECORD_URL_FR = 'http://search.open-' + PROJECT_ID + '.local/fr/sd/id/'
 SD_ALERT_EMAIL_FROM = ['My Name', 'my.email', 'my.domain.org']
 
 EXPORT_FILE_CACHE_DIR = "/tmp"
