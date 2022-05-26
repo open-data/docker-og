@@ -244,7 +244,7 @@ function run_pre_build {
         printf "${Yellow}${INDENT}Create ${BOLD}${PWD}/.env${HAIR}${Green} file with Project ID of $projectID (maintain local settings set to true): SKIPPING${NC}${EOL}"
     fi
 
-    printf "${EOL}${Green}${INDENT}${BOLD}DONE PRE-BUILD!${HAIR}${NC}${SPACER}"
+    printf "${Green}${INDENT}${BOLD}DONE PRE-BUILD!${HAIR}${NC}${SPACER}"
 
 }
 
