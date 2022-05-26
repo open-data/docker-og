@@ -10,6 +10,8 @@ Yellow='\033[1;33m'
 Red='\033[0;31m'
 Orange='\033[0;33m'
 Green='\033[0;32m'
+BOLDGREEN='\033[1m'
+BOLDRED='\033[1m'
 NC='\033[0;0m'
 EOL='\n'
 SPACER='\n\n'
@@ -71,9 +73,9 @@ function run_pre_build {
     if [[ ! -d "${PWD}/backup" ]]; then
         mkdir ${PWD}/backup
         if [[ $? -eq 0 ]]; then
-            printf "${Green}${INDENT}Create ${BOLD}${PWD}/backup${HAIR}${Green} directory: OK${NC}${EOL}"
+            printf "${Green}${INDENT}Create ${BOLDGREEN}${PWD}/backup${HAIR}${Green} directory: OK${NC}${EOL}"
         else
-            printf "${Red}${INDENT}Create ${BOLD}${PWD}/backup${HAIR}${Red} directory: FAIL${NC}${EOL}"
+            printf "${Red}${INDENT}Create ${BOLDRED}${PWD}/backup${HAIR}${Red} directory: FAIL${NC}${EOL}"
         fi
     else
         printf "${Yellow}${INDENT}backup directory already exists: SKIPPING${NC}${EOL}"
@@ -83,9 +85,9 @@ function run_pre_build {
     if [[ ! -d "${PWD}/backup/local_configs" ]]; then
         mkdir ${PWD}/backup/local_configs
         if [[ $? -eq 0 ]]; then
-            printf "${Green}${INDENT}Create ${BOLD}${PWD}/backup/local_configs${HAIR}${Green} directory: OK${NC}${EOL}"
+            printf "${Green}${INDENT}Create ${BOLDGREEN}${PWD}/backup/local_configs${HAIR}${Green} directory: OK${NC}${EOL}"
         else
-            printf "${Red}${INDENT}Create ${BOLD}${PWD}/backup/local_configs${HAIR}${Red} directory: FAIL${NC}${EOL}"
+            printf "${Red}${INDENT}Create ${BOLDRED}${PWD}/backup/local_configs${HAIR}${Red} directory: FAIL${NC}${EOL}"
         fi
     else
         printf "${Yellow}${INDENT}${PWD}/backup/local_configs directory already exists: SKIPPING${NC}${EOL}"
@@ -95,9 +97,9 @@ function run_pre_build {
     if [[ ! -d "${PWD}/postgres" ]]; then
         mkdir ${PWD}/postgres
         if [[ $? -eq 0 ]]; then
-            printf "${Green}${INDENT}Create ${BOLD}${PWD}/postgres${HAIR}${Green} directory: OK${NC}${EOL}"
+            printf "${Green}${INDENT}Create ${BOLDGREEN}${PWD}/postgres${HAIR}${Green} directory: OK${NC}${EOL}"
         else
-            printf "${Red}${INDENT}Create ${BOLD}${PWD}/postgres${HAIR}${Red} directory: FAIL${NC}${EOL}"
+            printf "${Red}${INDENT}Create ${BOLDRED}${PWD}/postgres${HAIR}${Red} directory: FAIL${NC}${EOL}"
         fi
     else
         printf "${Yellow}${INDENT}${PWD}/postgres directory already exists: SKIPPING${NC}${EOL}"
@@ -107,9 +109,9 @@ function run_pre_build {
     if [[ ! -d "${PWD}/solr" ]]; then
         mkdir ${PWD}/solr
         if [[ $? -eq 0 ]]; then
-            printf "${Green}${INDENT}Create ${BOLD}${PWD}/solr${HAIR}${Green} directory: OK${NC}${EOL}"
+            printf "${Green}${INDENT}Create ${BOLDGREEN}${PWD}/solr${HAIR}${Green} directory: OK${NC}${EOL}"
         else
-            printf "${Red}${INDENT}Create ${BOLD}${PWD}/solr${HAIR}${Red} directory: FAIL${NC}${EOL}"
+            printf "${Red}${INDENT}Create ${BOLDRED}${PWD}/solr${HAIR}${Red} directory: FAIL${NC}${EOL}"
         fi
     else
         printf "${Yellow}${INDENT}${PWD}/solr directory already exists: SKIPPING${NC}${EOL}"
@@ -119,9 +121,9 @@ function run_pre_build {
     if [[ ! -d "${PWD}/redis" ]]; then
         mkdir ${PWD}/redis
         if [[ $? -eq 0 ]]; then
-            printf "${Green}${INDENT}Create ${BOLD}${PWD}/redis${HAIR}${Green} directory: OK${NC}${EOL}"
+            printf "${Green}${INDENT}Create ${BOLDGREEN}${PWD}/redis${HAIR}${Green} directory: OK${NC}${EOL}"
         else
-            printf "${Red}${INDENT}Create ${BOLD}${PWD}/redis${HAIR}${Red} directory: FAIL${NC}${EOL}"
+            printf "${Red}${INDENT}Create ${BOLDRED}${PWD}/redis${HAIR}${Red} directory: FAIL${NC}${EOL}"
         fi
     else
         printf "${Yellow}${INDENT}${PWD}/redis directory already exists: SKIPPING${NC}${EOL}"
@@ -131,9 +133,9 @@ function run_pre_build {
     if [[ ! -d "${PWD}/nginx" ]]; then
         mkdir ${PWD}/nginx
         if [[ $? -eq 0 ]]; then
-            printf "${Green}${INDENT}Create ${BOLD}${PWD}/nginx${HAIR}${Green} directory: OK${NC}${EOL}"
+            printf "${Green}${INDENT}Create ${BOLDGREEN}${PWD}/nginx${HAIR}${Green} directory: OK${NC}${EOL}"
         else
-            printf "${Red}${INDENT}Create ${BOLD}${PWD}/nginx${HAIR}${Red} directory: FAIL${NC}${EOL}"
+            printf "${Red}${INDENT}Create ${BOLDRED}${PWD}/nginx${HAIR}${Red} directory: FAIL${NC}${EOL}"
         fi
     else
         printf "${Yellow}${INDENT}${PWD}/nginx directory already exists: SKIPPING${NC}${EOL}"
@@ -146,9 +148,9 @@ function run_pre_build {
     if [[ $maintainLocalConfigs == "false" ]]; then
         cp ${PWD}/.docker.env.example ${PWD}/.docker.env
         if [[ $? -eq 0 ]]; then
-            printf "${Green}${INDENT}Copy ${BOLD}${PWD}/.docker.env.example${HAIR}${Green} to ${BOLD}${PWD}/.docker.env${HAIR}${Green}: OK${NC}${EOL}"
+            printf "${Green}${INDENT}Copy ${BOLDGREEN}${PWD}/.docker.env.example${HAIR}${Green} to ${BOLDGREEN}${PWD}/.docker.env${HAIR}${Green}: OK${NC}${EOL}"
         else
-            printf "${Red}${INDENT}Copy ${BOLD}${PWD}/.docker.env.example${HAIR}${Red} to ${BOLD}${PWD}/.docker.env${HAIR}${Red}: FAIL${NC}${EOL}"
+            printf "${Red}${INDENT}Copy ${BOLDRED}${PWD}/.docker.env.example${HAIR}${Red} to ${BOLDRED}${PWD}/.docker.env${HAIR}${Red}: FAIL${NC}${EOL}"
         fi
     else
         printf "${Yellow}${INDENT}Copy ${PWD}/.docker.env.example to ${PWD}/.docker.env (maintain local settings set to true): SKIPPING${NC}${EOL}"
@@ -161,9 +163,9 @@ function run_pre_build {
     if [[ $maintainLocalConfigs == "false" ]]; then
         cp ${PWD}/example-drupal-local-settings.php ${PWD}/drupal-local-settings.php
         if [[ $? -eq 0 ]]; then
-            printf "${Green}${INDENT}Copy ${BOLD}${PWD}/example-drupal-local-settings.php${HAIR}${Green} to ${BOLD}${PWD}/drupal-local-settings.php${HAIR}${Green}: OK${NC}${EOL}"
+            printf "${Green}${INDENT}Copy ${BOLDGREEN}${PWD}/example-drupal-local-settings.php${HAIR}${Green} to ${BOLDGREEN}${PWD}/drupal-local-settings.php${HAIR}${Green}: OK${NC}${EOL}"
         else
-            printf "${Red}${INDENT}Copy ${BOLD}${PWD}/example-drupal-local-settings.php${HAIR}${Red} to ${BOLD}${PWD}/drupal-local-settings.php${HAIR}${Red}: FAIL${NC}${EOL}"
+            printf "${Red}${INDENT}Copy ${BOLDRED}${PWD}/example-drupal-local-settings.php${HAIR}${Red} to ${BOLDRED}${PWD}/drupal-local-settings.php${HAIR}${Red}: FAIL${NC}${EOL}"
         fi
     else
         printf "${Yellow}${INDENT}Copy ${PWD}/example-drupal-local-settings.php to ${PWD}/drupal-local-settings.php (maintain local settings set to true): SKIPPING${NC}${EOL}"
@@ -176,9 +178,9 @@ function run_pre_build {
     if [[ $maintainLocalConfigs == "false" ]]; then
         cp ${PWD}/example-drupal-services.yml ${PWD}/drupal-services.yml
         if [[ $? -eq 0 ]]; then
-            printf "${Green}${INDENT}Copy ${BOLD}${PWD}/example-drupal-services.yml${HAIR}${Green} to ${BOLD}${PWD}/drupal-services.yml${HAIR}${Green}: OK${NC}${EOL}"
+            printf "${Green}${INDENT}Copy ${BOLDGREEN}${PWD}/example-drupal-services.yml${HAIR}${Green} to ${BOLDGREEN}${PWD}/drupal-services.yml${HAIR}${Green}: OK${NC}${EOL}"
         else
-            printf "${Red}${INDENT}Copy ${BOLD}${PWD}/example-drupal-services.yml${HAIR}${Red} to ${BOLD}${PWD}/drupal-services.yml${HAIR}${Red}: FAIL${NC}${EOL}"
+            printf "${Red}${INDENT}Copy ${BOLDRED}${PWD}/example-drupal-services.yml${HAIR}${Red} to ${BOLDRED}${PWD}/drupal-services.yml${HAIR}${Red}: FAIL${NC}${EOL}"
         fi
     else
         printf "${Yellow}${INDENT}Copy ${PWD}/example-drupal-services.yml to ${PWD}/drupal-services.yml (maintain local settings set to true): SKIPPING${NC}${EOL}"
@@ -191,9 +193,9 @@ function run_pre_build {
     if [[ $maintainLocalConfigs == "false" ]]; then
         cp ${PWD}/example-portal.ini ${PWD}/portal.ini
         if [[ $? -eq 0 ]]; then
-            printf "${Green}${INDENT}Copy ${BOLD}${PWD}/example-portal.ini${HAIR}${Green} to ${BOLD}${PWD}/portal.ini${HAIR}${Green}: OK${NC}${EOL}"
+            printf "${Green}${INDENT}Copy ${BOLDGREEN}${PWD}/example-portal.ini${HAIR}${Green} to ${BOLDGREEN}${PWD}/portal.ini${HAIR}${Green}: OK${NC}${EOL}"
         else
-            printf "${Red}${INDENT}Copy ${BOLD}${PWD}/example-portal.ini${HAIR}${Red} to ${BOLD}${PWD}/portal.ini${HAIR}${Red}: FAIL${NC}${EOL}"
+            printf "${Red}${INDENT}Copy ${BOLDRED}${PWD}/example-portal.ini${HAIR}${Red} to ${BOLDRED}${PWD}/portal.ini${HAIR}${Red}: FAIL${NC}${EOL}"
         fi
     else
         printf "${Yellow}${INDENT}Copy ${PWD}/example-portal.ini to ${PWD}/portal.ini (maintain local settings set to true): SKIPPING${NC}${EOL}"
@@ -206,9 +208,9 @@ function run_pre_build {
     if [[ $maintainLocalConfigs == "false" ]]; then
         cp ${PWD}/example-registry.ini ${PWD}/registry.ini
         if [[ $? -eq 0 ]]; then
-            printf "${Green}${INDENT}Copy ${BOLD}${PWD}/example-registry.ini${HAIR}${Green} to ${BOLD}${PWD}/registry.ini${HAIR}${Green}: OK${NC}${EOL}"
+            printf "${Green}${INDENT}Copy ${BOLDGREEN}${PWD}/example-registry.ini${HAIR}${Green} to ${BOLDGREEN}${PWD}/registry.ini${HAIR}${Green}: OK${NC}${EOL}"
         else
-            printf "${Red}${INDENT}Copy ${BOLD}${PWD}/example-registry.ini${HAIR}${Red} to ${BOLD}${PWD}/registry.ini${HAIR}${Red}: FAIL${NC}${EOL}"
+            printf "${Red}${INDENT}Copy ${BOLDRED}${PWD}/example-registry.ini${HAIR}${Red} to ${BOLDRED}${PWD}/registry.ini${HAIR}${Red}: FAIL${NC}${EOL}"
         fi
     else
         printf "${Yellow}${INDENT}Copy ${PWD}/example-registry.ini to ${PWD}/registry.ini (maintain local settings set to true): SKIPPING${NC}${EOL}"
@@ -221,9 +223,9 @@ function run_pre_build {
     if [[ $maintainLocalConfigs == "false" ]]; then
         cp ${PWD}/example-search-settings.py ${PWD}/search-settings.py
         if [[ $? -eq 0 ]]; then
-            printf "${Green}${INDENT}Copy ${BOLD}${PWD}/example-search-settings.py${HAIR}${Green} to ${BOLD}${PWD}/search-settings.py${HAIR}${Green}: OK${NC}${EOL}"
+            printf "${Green}${INDENT}Copy ${BOLDGREEN}${PWD}/example-search-settings.py${HAIR}${Green} to ${BOLDGREEN}${PWD}/search-settings.py${HAIR}${Green}: OK${NC}${EOL}"
         else
-            printf "${Red}${INDENT}Copy ${BOLD}${PWD}/example-search-settings.py${HAIR}${Red} to ${BOLD}${PWD}/search-settings.py${HAIR}${Red}: FAIL${NC}${EOL}"
+            printf "${Red}${INDENT}Copy ${BOLDRED}${PWD}/example-search-settings.py${HAIR}${Red} to ${BOLDRED}${PWD}/search-settings.py${HAIR}${Red}: FAIL${NC}${EOL}"
         fi
     else
         printf "${Yellow}${INDENT}Copy ${PWD}/example-search-settings.py to ${PWD}/search-settings.py (maintain local settings set to true): SKIPPING${NC}${EOL}"
@@ -236,15 +238,15 @@ function run_pre_build {
     if [[ $maintainLocalConfigs == "false" ]]; then
         touch ${PWD}/.env && echo "PROJECT_ID=$projectID"$'\r' > ${PWD}/.env
         if [[ $? -eq 0 ]]; then
-            printf "${Green}${INDENT}Create ${BOLD}${PWD}/.env${HAIR}${Green} file with Project ID of ${BOLD}$projectID${HAIR}${Green}: OK${NC}${EOL}"
+            printf "${Green}${INDENT}Create ${BOLDGREEN}${PWD}/.env${HAIR}${Green} file with Project ID of ${BOLDGREEN}$projectID${HAIR}${Green}: OK${NC}${EOL}"
         else
-            printf "${Red}${INDENT}Create ${BOLD}${PWD}/.env${HAIR}${Green} file with Project ID of ${BOLD}$projectID${HAIR}${Red}: FAIL${NC}${EOL}"
+            printf "${Red}${INDENT}Create ${BOLDRED}${PWD}/.env${HAIR}${Red} file with Project ID of ${BOLDRED}$projectID${HAIR}${Red}: FAIL${NC}${EOL}"
         fi
     else
-        printf "${Yellow}${INDENT}Create ${BOLD}${PWD}/.env${HAIR}${Green} file with Project ID of $projectID (maintain local settings set to true): SKIPPING${NC}${EOL}"
+        printf "${Yellow}${INDENT}Create ${PWD}/.env file with Project ID of $projectID (maintain local settings set to true): SKIPPING${NC}${EOL}"
     fi
 
-    printf "${Green}${INDENT}${BOLD}DONE PRE-BUILD!${HAIR}${NC}${SPACER}"
+    printf "${Green}${INDENT}${BOLDGREEN}DONE PRE-BUILD!${HAIR}${NC}${SPACER}"
 
 }
 
@@ -282,6 +284,8 @@ if [[ $1 ]]; then
         fi
 
         INDENT=$INDENT
+        BOLDGREEN=${HAIR}${Green}
+        BOLDRED=${HAIR}${Red}
         projectID=$1
         run_pre_build
 
