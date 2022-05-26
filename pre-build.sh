@@ -24,9 +24,9 @@ noInteraction='false'
 
 function run_pre_build {
 
-    printf "${SPACER}"
-
     if [[ $noInteraction == 'false' ]]; then
+
+        printf "${SPACER}"
 
         # check to maintain local settings files
         if [[ -f "${PWD}/.docker.env" || -f "${PWD}/drupal-local-settings.php" || -f "${PWD}/drupal-services.yml" || -f "${PWD}/portal.ini" || -f "${PWD}/registry.ini" || -f "${PWD}/.env" || -f "${PWD}/search-settings.py" ]]; then
@@ -244,7 +244,7 @@ function run_pre_build {
         printf "${Yellow}${INDENT}Create ${BOLD}${PWD}/.env${HAIR}${Green} file with Project ID of $projectID (maintain local settings set to true): SKIPPING${NC}${EOL}"
     fi
 
-    printf "${SPACER}${Green}${INDENT}${BOLD}DONE!${HAIR}${NC}${SPACER}"
+    printf "${EOL}${Green}${INDENT}${BOLD}DONE PRE-BUILD!${HAIR}${NC}${SPACER}"
 
 }
 
