@@ -282,6 +282,7 @@ if [[ $1 ]]; then
         fi
 
         INDENT=$INDENT
+        BOLD=${HAIR}${Green}
         projectID=$1
         run_pre_build
 
