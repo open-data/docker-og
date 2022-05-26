@@ -24,7 +24,6 @@ installDjango='false'
 installDatabases='false'
 
 # drupal flags
-installSSH_Drupal='false'
 installDB_Drupal='false'
 installRepos_Drupal='false'
 installFiles_Drupal='false'
@@ -32,7 +31,6 @@ installFilePermissions_Drupal='false'
 installLocalUser_Drupal='false'
 
 # ckan flags
-installSSH_CKAN='false'
 installDB_Portal_CKAN='false'
 installDB_Portal_DS_CKAN='false'
 installDB_Registry_CKAN='false'
@@ -45,7 +43,6 @@ installOrgs_CKAN='false'
 installDatasets_CKAN='false'
 
 # django flags
-installSSH_Django='false'
 installApp_Django='false'
 installFiles_Django='false'
 installFilePermissions_Django='false'
@@ -66,7 +63,6 @@ function install_drupal {
 
   # Options for the user to select from
   options=(
-    "SSH (Required for Repositories)" 
     "Database" 
     "Repositories" 
     "Local Files" 
@@ -82,46 +78,39 @@ function install_drupal {
 
   case $opt in
 
-    # "SSH (Required for Repositories)"
-    (0) 
-      exitScript='false'
-      installSSH_Drupal='true'
-      ;;
-
     # "Database"
-    (1) 
+    (0) 
       exitScript='false'
       installDB_Drupal='true'
       ;;
 
     # "Repositories"
-    (2) 
+    (1) 
       exitScript='false'
       installRepos_Drupal='true'
       ;;
 
     # "Local Files"
-    (3)
+    (2)
       exitScript='false'
       installFiles_Drupal='true'
       ;;
 
     # "Set File Permissions (also creates missing directories)"
-    (4)
+    (3)
       exitScript='false'
       installFilePermissions_Drupal='true'
       ;;
 
     # "Create Local User"
-    (5)
+    (4)
       exitScript='false'
       installLocalUser_Drupal='true'
       ;;
 
     # "All"
-    (6) 
+    (5) 
       exitScript='false'
-      installSSH_Drupal='true'
       installDB_Drupal='true'
       installRepos_Drupal='true'
       installFiles_Drupal='true'
@@ -130,7 +119,7 @@ function install_drupal {
       ;;
 
     # "Exit"
-    (7)
+    (6)
       exitScript='true'
       ;;
 
@@ -208,38 +197,15 @@ function install_drupal {
     # END
 
     #
-    # Install and configure SSH and Agent
-    #
-    if [[ $installSSH_Drupal == "true" ]]; then
-
-      # install SSH
-      printf "${SPACER}${Cyan}${INDENT}Install SSH for GIT use${NC}${SPACER}"
-      which ssh || apt install ssh -y
-
-      # set strict host checking to false
-      printf "${SPACER}${Cyan}${INDENT}Set strict SSH host checking to false${NC}${SPACER}"
-      echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
-      if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Set StrictHostKeyChecking to no: OK${NC}${EOL}"
-      else
-        printf "${Red}${INDENT}${INDENT}Set StrictHostKeyChecking to no: FAIL${NC}${EOL}"
-      fi
-
-    fi
-    # END
-    # Install and configure SSH and Agent
-    # END
-
-    #
     # Destroy and re-import the Drupal database
     #
     if [[ $installDB_Drupal == "true" ]]; then
 
-      printf "${SPACER}${Cyan}${INDENT}Drop the ${BOLD}og_drupal_local DB${HAIR}${Cyan} if it exists and then recreate it blank/clean${NC}${SPACER}"
-      psql -eb --dbname=og_drupal_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_drupal_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
+      printf "${SPACER}${Cyan}${INDENT}Drop the ${BOLD}og_drupal_local__${PROJECT_ID} DB${HAIR}${Cyan} if it exists and then recreate it blank/clean${NC}${SPACER}"
+      psql -eb --dbname=og_drupal_local__${PROJECT_ID} --username=$PGUSER --command="DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_drupal_local__${PROJECT_ID} TO homestead; GRANT ALL ON SCHEMA public TO homestead;"
 
       # import the database
-      printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into ${BOLD}og_drupal_local${HAIR}${NC}${SPACER}"
+      printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into ${BOLD}og_drupal_local__${PROJECT_ID}${HAIR}${NC}${SPACER}"
       pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=$PGDATABASE --username=$PGUSER ${APP_ROOT}/backup/drupal_db.pgdump
 
     fi
@@ -251,23 +217,6 @@ function install_drupal {
     # Pull Drupal Core repo, Drupal profile repo, and Drupal theme repo
     #
     if [[ $installRepos_Drupal == "true" ]]; then
-
-      if [[ $installSSH_Drupal != "true" ]]; then
-
-        # check for SSH agent
-        printf "${SPACER}${Cyan}${INDENT}Check if SSH Agent is installed and configured${NC}${SPACER}"
-        which ssh || apt install ssh -y
-
-        # set strict host checking to false
-        printf "${SPACER}${Cyan}${INDENT}Set strict SSH host checking to false${NC}${SPACER}"
-        echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
-        if [[ $? -eq 0 ]]; then
-          printf "${Green}${INDENT}${INDENT}Set StrictHostKeyChecking to no: OK${NC}${EOL}"
-        else
-          printf "${Red}${INDENT}${INDENT}Set StrictHostKeyChecking to no: FAIL${NC}${EOL}"
-        fi
-
-      fi
 
       mkdir -p ${APP_ROOT}/drupal
       cd ${APP_ROOT}/drupal
@@ -290,7 +239,7 @@ function install_drupal {
       fi
 
       # pull the core site
-      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}OG repository${HAIR}${Cyan} from git@github.com:open-data/opengov.git${NC}${SPACER}"
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}OG repository${HAIR}${Cyan} from https://github.com/open-data/opengov.git${NC}${SPACER}"
       git config --global init.defaultBranch master
       # destroy the local git repo config
       rm -rf .git
@@ -299,13 +248,12 @@ function install_drupal {
       else
         printf "${Red}${INDENT}${INDENT}Remove .git: FAIL (local repo may not exist)${NC}${EOL}"
       fi
-      git init
-      git config pull.ff only
-      git remote add origin git@github.com:open-data/opengov.git
-      git pull git@github.com:open-data/opengov.git
+      rm -rf ./*
+      rm -rf ./.??*
+      git clone https://github.com/open-data/opengov.git .
 
       # pull the profile
-      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}Profile repository${HAIR}${Cyan} from git@github.com:open-data/og.git${NC}${SPACER}"
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}Profile repository${HAIR}${Cyan} from https://github.com/open-data/og.git${NC}${SPACER}"
       # destroy the local git repo config
       cd ${APP_ROOT}/drupal/html/profiles/og
       rm -rf .git
@@ -314,13 +262,12 @@ function install_drupal {
       else
         printf "${Red}${INDENT}${INDENT}Remove profiles/og/.git: FAIL (local repo may not exist)${NC}${EOL}"
       fi
-      git init
-      git config pull.ff only
-      git remote add origin git@github.com:open-data/og.git
-      git pull git@github.com:open-data/og.git
+      rm -rf ./*
+      rm -rf ./.??*
+      git clone https://github.com/open-data/og.git .
 
       # pull the theme
-      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}Theme repository${HAIR}${Cyan} from git@github.com:open-data/gcweb_bootstrap.git${NC}${SPACER}"
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}Theme repository${HAIR}${Cyan} from https://github.com/open-data/gcweb_bootstrap.git${NC}${SPACER}"
       cd ${APP_ROOT}/drupal/html/themes/custom/gcweb
       # destroy the local git repo config
       rm -rf .git
@@ -329,10 +276,9 @@ function install_drupal {
       else
         printf "${Red}${INDENT}${INDENT}Remove themes/custom/gcweb/.git: FAIL (local repo may not exist)${NC}${EOL}"
       fi
-      git init
-      git config pull.ff only
-      git remote add origin git@github.com:open-data/gcweb_bootstrap.git
-      git pull git@github.com:open-data/gcweb_bootstrap.git
+      rm -rf ./*
+      rm -rf ./.??*
+      git clone https://github.com/open-data/gcweb_bootstrap.git .
 
     fi
     # END
@@ -592,7 +538,6 @@ function install_ckan {
 
     # Options for the user to select from
     options=(
-      "SSH (Required for Repositories)" 
       "Registry Database" 
       "Registry Datastore Database" 
       "Repositories (Installs them into Python venv ckan/${CKAN_ROLE})" 
@@ -609,7 +554,6 @@ function install_ckan {
 
     # Options for the user to select from
     options=(
-      "SSH (Required for Repositories)" 
       "Portal Database" 
       "Portal Datastore Database" 
       "Repositories (Installs them into Python venv ckan/${CKAN_ROLE})" 
@@ -630,14 +574,8 @@ function install_ckan {
 
   case $opt in
 
-    # "SSH (Required for Repositories)"
-    (0) 
-      exitScript='false'
-      installSSH_CKAN='true'
-      ;;
-
     # "Registry Database / Portal Database"
-    (1) 
+    (0) 
       exitScript='false'
       if [[ $CKAN_ROLE == 'registry' ]]; then
         installDB_Registry_CKAN='true'
@@ -649,7 +587,7 @@ function install_ckan {
       ;;
 
     # "Registry Datastore Database / Portal Datastore Database"
-    (2) 
+    (1) 
       exitScript='false'
       if [[ $CKAN_ROLE == 'registry' ]]; then
         installDB_Registry_DS_CKAN='true'
@@ -661,46 +599,45 @@ function install_ckan {
       ;;
 
     # "Repositories (Installs them into Python venv)"
-    (3) 
+    (2) 
       exitScript='false'
       installRepos_CKAN='true'
       ;;
 
     # "Download Wet-Boew Files"
-    (4)
+    (3)
       exitScript='false'
       installTheme_CKAN='true'
       ;;
 
 
     # "Set File Permissions"
-    (5)
+    (4)
       exitScript='false'
       installFilePermissions_CKAN='true'
       ;;
 
     # "Create Local User"
-    (6)
+    (5)
       exitScript='false'
       installLocalUser_CKAN='true'
       ;;
 
     # "Import Organizations"
-    (7)
+    (6)
       exitScript='false'
       installOrgs_CKAN='true'
       ;;
 
     # "Import Datasets"
-    (8)
+    (7)
       exitScript='false'
       installDatasets_CKAN='true'
       ;;
 
     # "All"
-    (9) 
+    (8) 
       exitScript='false'
-      installSSH_CKAN='true'
       if [[ $CKAN_ROLE == 'registry' ]]; then
         installDB_Registry_CKAN='true'
         installDB_Registry_DS_CKAN='true'
@@ -916,45 +853,22 @@ function install_ckan {
     # END
 
     #
-    # Install and configure SSH and Agent
-    #
-    if [[ $installSSH_CKAN == "true" ]]; then
-
-      # install SSH
-      printf "${SPACER}${Cyan}${INDENT}Install SSH for GIT use${NC}${SPACER}"
-      which ssh || apt install ssh -y
-
-      # set strict host checking to false
-      printf "${SPACER}${Cyan}${INDENT}Set strict SSH host checking to false${NC}${SPACER}"
-      echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
-      if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Set StrictHostKeyChecking to no: OK${NC}${EOL}"
-      else
-        printf "${Red}${INDENT}${INDENT}Set StrictHostKeyChecking to no: FAIL${NC}${EOL}"
-      fi
-
-    fi
-    # END
-    # Install and configure SSH and Agent
-    # END
-
-    #
     # Destroy and re-import portal database
     #
     if [[ $installDB_Portal_CKAN == "true" ]]; then
 
       if [[ -f "${APP_ROOT}/backup/ckan_portal_db.pgdump" ]]; then
 
-        printf "${SPACER}${Cyan}${INDENT}Drop the ${BOLD}og_ckan_portal_local DB${HAIR}${Cyan} if it exists and then recreate it blank/clean${NC}${SPACER}"
-        psql -eb --dbname=og_ckan_portal_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_portal_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
+        printf "${SPACER}${Cyan}${INDENT}Drop the ${BOLD}og_ckan_portal_local__${PROJECT_ID} DB${HAIR}${Cyan} if it exists and then recreate it blank/clean${NC}${SPACER}"
+        psql -eb --dbname=og_ckan_portal_local__${PROJECT_ID} --username=$PGUSER --command="DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_portal_local__${PROJECT_ID} TO homestead; GRANT ALL ON SCHEMA public TO homestead;"
 
         # import the database
-        printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into ${BOLD}og_ckan_portal_local${HAIR}${NC}${SPACER}"
-        pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=og_ckan_portal_local --username=$PGUSER ${APP_ROOT}/backup/ckan_portal_db.pgdump
+        printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into ${BOLD}og_ckan_portal_local__${PROJECT_ID}${HAIR}${NC}${SPACER}"
+        pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=og_ckan_portal_local__${PROJECT_ID} --username=$PGUSER ${APP_ROOT}/backup/ckan_portal_db.pgdump
 
       else
 
-        printf "${SPACER}${Orange}${INDENT}Skipping ${BOLD}og_ckan_portal_local DB${HAIR}${Orange} import, backup/ckan_portal_db.pgdump does not exist.${NC}${SPACER}"
+        printf "${SPACER}${Orange}${INDENT}Skipping ${BOLD}og_ckan_portal_local__${PROJECT_ID} DB${HAIR}${Orange} import, backup/ckan_portal_db.pgdump does not exist.${NC}${SPACER}"
 
       fi
 
@@ -970,16 +884,16 @@ function install_ckan {
 
       if [[ -f "${APP_ROOT}/backup/ckan_portal_ds_db.pgdump" ]]; then
 
-        printf "${SPACER}${Cyan}${INDENT}Drop the ${BOLD}og_ckan_portal_ds_local DB${HAIR}${Cyan} if it exists and then recreate it blank/clean${NC}${SPACER}"
-        psql -eb --dbname=og_ckan_portal_ds_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_portal_ds_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
+        printf "${SPACER}${Cyan}${INDENT}Drop the ${BOLD}og_ckan_portal_ds_local__${PROJECT_ID} DB${HAIR}${Cyan} if it exists and then recreate it blank/clean${NC}${SPACER}"
+        psql -eb --dbname=og_ckan_portal_ds_local__${PROJECT_ID} --username=$PGUSER --command="DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_portal_ds_local__${PROJECT_ID} TO homestead; GRANT ALL ON SCHEMA public TO homestead;"
 
         # import the database
-        printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into ${BOLD}og_ckan_portal_ds_local${HAIR}${NC}${SPACER}"
-        pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=og_ckan_portal_ds_local --username=$PGUSER ${APP_ROOT}/backup/ckan_portal_ds_db.pgdump
+        printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into ${BOLD}og_ckan_portal_ds_local__${PROJECT_ID}${HAIR}${NC}${SPACER}"
+        pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=og_ckan_portal_ds_local__${PROJECT_ID} --username=$PGUSER ${APP_ROOT}/backup/ckan_portal_ds_db.pgdump
 
       else
 
-        printf "${SPACER}${Orange}${INDENT}Skipping ${BOLD}og_ckan_portal_ds_local DB${HAIR}${Orange} import, backup/ckan_portal_ds_db.pgdump does not exist.${NC}${SPACER}"
+        printf "${SPACER}${Orange}${INDENT}Skipping ${BOLD}og_ckan_portal_ds_local__${PROJECT_ID} DB${HAIR}${Orange} import, backup/ckan_portal_ds_db.pgdump does not exist.${NC}${SPACER}"
 
       fi
 
@@ -995,16 +909,16 @@ function install_ckan {
 
       if [[ -f "${APP_ROOT}/backup/ckan_registry_db.pgdump" ]]; then
 
-        printf "${SPACER}${Cyan}${INDENT}Drop the ${BOLD}og_ckan_registry_local DB${HAIR}${Cyan} if it exists and then recreate it blank/clean${NC}${SPACER}"
-        psql -eb --dbname=og_ckan_registry_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_registry_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
+        printf "${SPACER}${Cyan}${INDENT}Drop the ${BOLD}og_ckan_registry_local__${PROJECT_ID} DB${HAIR}${Cyan} if it exists and then recreate it blank/clean${NC}${SPACER}"
+        psql -eb --dbname=og_ckan_registry_local__${PROJECT_ID} --username=$PGUSER --command="DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_registry_local__${PROJECT_ID} TO homestead; GRANT ALL ON SCHEMA public TO homestead;"
 
         # import the database
-        printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into ${BOLD}og_ckan_registry_local${HAIR}${NC}${SPACER}"
-        pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=og_ckan_registry_local --username=$PGUSER ${APP_ROOT}/backup/ckan_registry_db.pgdump
+        printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into ${BOLD}og_ckan_registry_local__${PROJECT_ID}${HAIR}${NC}${SPACER}"
+        pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=og_ckan_registry_local__${PROJECT_ID} --username=$PGUSER ${APP_ROOT}/backup/ckan_registry_db.pgdump
 
       else
 
-        printf "${SPACER}${Orange}${INDENT}Skipping ${BOLD}og_ckan_registry_local DB${HAIR}${Orange} import, backup/ckan_registry_db.pgdump does not exist.${NC}${SPACER}"
+        printf "${SPACER}${Orange}${INDENT}Skipping ${BOLD}og_ckan_registry_local__${PROJECT_ID} DB${HAIR}${Orange} import, backup/ckan_registry_db.pgdump does not exist.${NC}${SPACER}"
 
       fi
 
@@ -1020,16 +934,16 @@ function install_ckan {
 
       if [[ -f "${APP_ROOT}/backup/ckan_registry_ds_db.pgdump" ]]; then
 
-        printf "${SPACER}${Cyan}${INDENT}Drop the ${BOLD}og_ckan_registry_ds_local DB${HAIR}${Cyan} if it exists and then recreate it blank/clean${NC}${SPACER}"
-        psql -eb --dbname=og_ckan_registry_ds_local --username=$PGUSER --command='DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_registry_ds_local TO homestead; GRANT ALL ON SCHEMA public TO homestead;'
+        printf "${SPACER}${Cyan}${INDENT}Drop the ${BOLD}og_ckan_registry_ds_local__${PROJECT_ID} DB${HAIR}${Cyan} if it exists and then recreate it blank/clean${NC}${SPACER}"
+        psql -eb --dbname=og_ckan_registry_ds_local__${PROJECT_ID} --username=$PGUSER --command="DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON DATABASE og_ckan_registry_ds_local__${PROJECT_ID} TO homestead; GRANT ALL ON SCHEMA public TO homestead;"
 
         # import the database
-        printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into ${BOLD}og_ckan_registry_ds_local${HAIR}${NC}${SPACER}"
-        pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=og_ckan_registry_ds_local --username=$PGUSER ${APP_ROOT}/backup/ckan_registry_ds_db.pgdump
+        printf "${SPACER}${Cyan}${INDENT}Import the database from the pg_dump backup into ${BOLD}og_ckan_registry_ds_local__${PROJECT_ID}${HAIR}${NC}${SPACER}"
+        pg_restore -v --clean --if-exists --exit-on-error --no-privileges --no-owner --dbname=og_ckan_registry_ds_local__${PROJECT_ID} --username=$PGUSER ${APP_ROOT}/backup/ckan_registry_ds_db.pgdump
 
       else
 
-        printf "${SPACER}${Orange}${INDENT}Skipping ${BOLD}og_ckan_registry_ds_local DB${HAIR}${Orange} import, backup/ckan_registry_ds_db.pgdump does not exist.${NC}${SPACER}"
+        printf "${SPACER}${Orange}${INDENT}Skipping ${BOLD}og_ckan_registry_ds_local__${PROJECT_ID} DB${HAIR}${Orange} import, backup/ckan_registry_ds_db.pgdump does not exist.${NC}${SPACER}"
 
       fi
 
@@ -1042,23 +956,6 @@ function install_ckan {
     # Destroy and pull and install fast-forwarded repositories
     #
     if [[ $installRepos_CKAN == "true" ]]; then
-
-      if [[ $installSSH_CKAN != "true" ]]; then
-
-        # install SSH
-        printf "${SPACER}${Cyan}${INDENT}Install SSH for GIT use${NC}${SPACER}"
-        which ssh || apt install ssh -y
-
-        # set strict host checking to false
-        printf "${SPACER}${Cyan}${INDENT}Set strict SSH host checking to false${NC}${SPACER}"
-        echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
-        if [[ $? -eq 0 ]]; then
-          printf "${Green}${INDENT}${INDENT}Set StrictHostKeyChecking to no: OK${NC}${EOL}"
-        else
-          printf "${Red}${INDENT}${INDENT}Set StrictHostKeyChecking to no: FAIL${NC}${EOL}"
-        fi
-
-      fi
 
       mkdir -p ${APP_ROOT}/ckan/${CKAN_ROLE}
 
@@ -1107,78 +1004,74 @@ function install_ckan {
       pip install uwsgi
       # install future
       pip install future==0.18.2
-      # set github as a trusted host
-      ssh -T git@github.com
       # update certifi
       pip install --upgrade certifi
-      # copy CA root pem chain
-      cp /etc/ssl/mkcert/rootCA.pem ${APP_ROOT}/ckan/${CKAN_ROLE}/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem
       # install correct version of cryptography
       pip install cryptography==2.2.2
 
       # install ckan core into the python environment
-      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Core repository${HAIR}${Cyan} from git@github.com:open-data/ckan.git@canada-v2.8 and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/open-data/ckan.git@canada-v2.8#egg=ckan' -r 'https://raw.githubusercontent.com/open-data/ckan/canada-v2.8/requirements.txt' -r 'https://raw.githubusercontent.com/open-data/ckan/canada-v2.8/dev-requirements.txt'
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Core repository${HAIR}${Cyan} from https://github.com:open-data/ckan.git@canada-v2.8 and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+https://github.com/open-data/ckan.git@canada-v2.8#egg=ckan' -r 'https://raw.githubusercontent.com/open-data/ckan/canada-v2.8/requirements.txt' -r 'https://raw.githubusercontent.com/open-data/ckan/canada-v2.8/dev-requirements.txt'
 
       # install ckanapi into the python environment
-      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN API repository${HAIR}${Cyan} from git@github.com:ckan/ckanapi.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/ckan/ckanapi.git#egg=ckanapi' -r 'https://raw.githubusercontent.com/ckan/ckanapi/master/requirements.txt'
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN API repository${HAIR}${Cyan} from https://github.com:ckan/ckanapi.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+https://github.com/ckan/ckanapi.git#egg=ckanapi' -r 'https://raw.githubusercontent.com/ckan/ckanapi/master/requirements.txt'
 
       # install ckan canada into the python environment
-      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Canada repository${HAIR}${Cyan} from git@github.com:open-data/ckanext-canada.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/open-data/ckanext-canada.git#egg=ckanext-canada' -r 'https://raw.githubusercontent.com/open-data/ckanext-canada/master/requirements.txt'
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Canada repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-canada.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+https://github.com/open-data/ckanext-canada.git#egg=ckanext-canada' -r 'https://raw.githubusercontent.com/open-data/ckanext-canada/master/requirements.txt'
 
       # install ckan cloud storage into the python environment
-      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Cloud Storage repository${HAIR}${Cyan} from git@github.com:open-data/ckanext-cloudstorage.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/open-data/ckanext-cloudstorage.git#egg=ckanext-cloudstorage'
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Cloud Storage repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-cloudstorage.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+https://github.com/open-data/ckanext-cloudstorage.git#egg=ckanext-cloudstorage'
 
       # install ckan dcat into the python environment
-      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN DCat repository${HAIR}${Cyan} from git@github.com:open-data/ckanext-dcat.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/open-data/ckanext-dcat.git#egg=ckanext-dcat' -r 'https://raw.githubusercontent.com/open-data/ckanext-dcat/master/requirements.txt'
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN DCat repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-dcat.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+https://github.com/open-data/ckanext-dcat.git#egg=ckanext-dcat' -r 'https://raw.githubusercontent.com/open-data/ckanext-dcat/master/requirements.txt'
 
       # install ckan extended activity into the python environment
-      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Extended Activity${HAIR}${Cyan} repository from git@github.com:open-data/ckanext-extendedactivity.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/open-data/ckanext-extendedactivity.git#egg=ckanext-extendedactivity'
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Extended Activity${HAIR}${Cyan} repository from https://github.com:open-data/ckanext-extendedactivity.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+https://github.com/open-data/ckanext-extendedactivity.git#egg=ckanext-extendedactivity'
 
       # install ckan extractor into the python environment
-      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Extractor repository${HAIR}${Cyan} from git@github.com:open-data/ckanext-extractor.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/open-data/ckanext-extractor.git#egg=ckanext-extractor' -r 'https://raw.githubusercontent.com/open-data/ckanext-extractor/master/requirements.txt'
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Extractor repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-extractor.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+https://github.com/open-data/ckanext-extractor.git#egg=ckanext-extractor' -r 'https://raw.githubusercontent.com/open-data/ckanext-extractor/master/requirements.txt'
 
       # install ckan fluent into the python environment
-      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Fluent repository${HAIR}${Cyan} from git@github.com:ckan/ckanext-fluent.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/ckan/ckanext-fluent.git#egg=ckanext-fluent' -r 'https://raw.githubusercontent.com/ckan/ckanext-fluent/master/requirements.txt'
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Fluent repository${HAIR}${Cyan} from https://github.com:ckan/ckanext-fluent.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+https://github.com/ckan/ckanext-fluent.git#egg=ckanext-fluent' -r 'https://raw.githubusercontent.com/ckan/ckanext-fluent/master/requirements.txt'
 
       # install ckan recombinant into the python environment
-      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Recombinant repository${HAIR}${Cyan} from git@github.com:open-data/ckanext-recombinant.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/open-data/ckanext-recombinant.git#egg=ckanext-recombinant' -r 'https://raw.githubusercontent.com/open-data/ckanext-recombinant/master/requirements.txt'
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Recombinant repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-recombinant.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+https://github.com/open-data/ckanext-recombinant.git#egg=ckanext-recombinant' -r 'https://raw.githubusercontent.com/open-data/ckanext-recombinant/master/requirements.txt'
 
       # install ckan scheming into the python environment
-      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Scheming repository${HAIR}${Cyan} from git@github.com:ckan/ckanext-scheming.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/ckan/ckanext-scheming.git#egg=ckanext-scheming'
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Scheming repository${HAIR}${Cyan} from https://github.com:ckan/ckanext-scheming.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+https://github.com/ckan/ckanext-scheming.git#egg=ckanext-scheming'
 
       # install ckan security into the python environment
-      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Security repository${HAIR}${Cyan} from git@github.com:open-data/ckanext-security@canada-v2.8.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/open-data/ckanext-security.git@canada-v2.8#egg=ckanext-security'
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Security repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-security@canada-v2.8.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+https://github.com/open-data/ckanext-security.git@canada-v2.8#egg=ckanext-security'
 
       # install ckan validation into the python environment
-      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Validation repository${HAIR}${Cyan} from git@github.com:open-data/ckanext-validation.git@canada and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/open-data/ckanext-validation.git@canada#egg=ckanext-validation' -r 'https://raw.githubusercontent.com/open-data/ckanext-validation/canada/requirements.txt' -r 'https://raw.githubusercontent.com/open-data/ckanext-validation/canada/dev-requirements.txt'
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Validation repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-validation.git@canada and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+https://github.com/open-data/ckanext-validation.git@canada#egg=ckanext-validation' -r 'https://raw.githubusercontent.com/open-data/ckanext-validation/canada/requirements.txt' -r 'https://raw.githubusercontent.com/open-data/ckanext-validation/canada/dev-requirements.txt'
 
       # install ckan xloader into the python environment
-      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Xloader repository${HAIR}${Cyan} from git@github.com:open-data/ckanext-xloader.git@canada-v2.8  and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/open-data/ckanext-xloader.git@canada-v2.8#egg=ckanext-xloader' -r 'https://raw.githubusercontent.com/open-data/ckanext-xloader/canada-v2.8/requirements.txt' -r 'https://raw.githubusercontent.com/open-data/ckanext-xloader/canada-v2.8/dev-requirements.txt'
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Xloader repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-xloader.git@canada-v2.8  and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+https://github.com/open-data/ckanext-xloader.git@canada-v2.8#egg=ckanext-xloader' -r 'https://raw.githubusercontent.com/open-data/ckanext-xloader/canada-v2.8/requirements.txt' -r 'https://raw.githubusercontent.com/open-data/ckanext-xloader/canada-v2.8/dev-requirements.txt'
 
       # install ckantoolkit into the python environment
-      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Toolkit repository${HAIR}${Cyan} from git@github.com:ckan/ckantoolkit.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/ckan/ckantoolkit.git#egg=ckantoolkit' -r 'https://raw.githubusercontent.com/ckan/ckantoolkit/master/requirements.txt'
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Toolkit repository${HAIR}${Cyan} from https://github.com:ckan/ckantoolkit.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+https://github.com/ckan/ckantoolkit.git#egg=ckantoolkit' -r 'https://raw.githubusercontent.com/ckan/ckantoolkit/master/requirements.txt'
 
       # install goodtables into the python environment
-      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}Goodtables repository${HAIR}${Cyan} from git@github.com:open-data/goodtables.git@canada and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/open-data/goodtables.git@canada#egg=goodtables' -r 'https://raw.githubusercontent.com/open-data/goodtables/canada/requirements.txt'
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}Goodtables repository${HAIR}${Cyan} from https://github.com:open-data/goodtables.git@canada and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+https://github.com/open-data/goodtables.git@canada#egg=goodtables' -r 'https://raw.githubusercontent.com/open-data/goodtables/canada/requirements.txt'
 
       # install ckan wet boew into the python environment
-      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Wet-Boew repository${HAIR}${Cyan} from git@github.com:open-data/ckanext-wet-boew.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/open-data/ckanext-wet-boew.git#egg=ckanext-wet-boew' -r 'https://raw.githubusercontent.com/open-data/ckanext-wet-boew/master/requirements.txt'
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Wet-Boew repository${HAIR}${Cyan} from https://ithub.com:open-data/ckanext-wet-boew.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+https://github.com/open-data/ckanext-wet-boew.git#egg=ckanext-wet-boew' -r 'https://raw.githubusercontent.com/open-data/ckanext-wet-boew/master/requirements.txt'
 
       # install flask admin
       pip install Flask-Admin==1.4.0
@@ -1490,8 +1383,7 @@ function install_django {
 
   # Options for the user to select from
   options=(
-    "SSH (Required for Repositories)" 
-    "OGC Django Search App" 
+    "OGC Django Search App (version 1)" 
     "Static Files" 
     "Set File Permissions" 
     "All" 
@@ -1504,41 +1396,34 @@ function install_django {
 
   case $opt in
 
-    # "SSH (Required for Repositories)"
+    # "OGC Django Search App (version 1)"
     (0) 
-      exitScript='false'
-      installSSH_Django='true'
-      ;;
-
-    # "OGC Django Search App"
-    (1) 
       exitScript='false'
       installApp_Django='true'
       ;;
 
     # "Static Files"
-    (2) 
+    (1) 
       exitScript='false'
       installFiles_Django='true'
       ;;
 
     # "Set File Permissions"
-    (3)
+    (2)
       exitScript='false'
       installFilePermissions_Django='true'
       ;;
 
     # "All"
-    (4)
+    (3)
       exitScript='false'
-      installSSH_Django='true'
       installApp_Django='true'
       installFiles_Django='true'
       installFilePermissions_Django='true'
       ;;
 
     # "Exit"
-    (5)
+    (4)
       exitScript='true'
       ;;
 
@@ -1594,49 +1479,9 @@ function install_django {
     # END
 
     #
-    # Install SSH for git use
-    #
-    if [[ $installSSH_Django == "true" ]]; then
-
-      # install SSH
-      printf "${SPACER}${Cyan}${INDENT}Install SSH for GIT use${NC}${SPACER}"
-      which ssh || apt install ssh -y
-
-      # set strict host checking to false
-      printf "${SPACER}${Cyan}${INDENT}Set strict SSH host checking to false${NC}${SPACER}"
-      echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
-      if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Set StrictHostKeyChecking to no: OK${NC}${EOL}"
-      else
-        printf "${Red}${INDENT}${INDENT}Set StrictHostKeyChecking to no: FAIL${NC}${EOL}"
-      fi
-
-    fi
-    # END
-    # Install SSH for git use
-    # END
-
-    #
     # Install OGC Django App
     #
     if [[ $installApp_Django == "true" ]]; then
-
-      if [[ $installSSH_Django == "false" ]]; then
-
-        # install SSH
-        printf "${SPACER}${Cyan}${INDENT}Install SSH for GIT use${NC}${SPACER}"
-        which ssh || apt install ssh -y
-
-        # set strict host checking to false
-        printf "${SPACER}${Cyan}${INDENT}Set strict SSH host checking to false${NC}${SPACER}"
-        echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
-        if [[ $? -eq 0 ]]; then
-          printf "${Green}${INDENT}${INDENT}Set StrictHostKeyChecking to no: OK${NC}${EOL}"
-        else
-          printf "${Red}${INDENT}${INDENT}Set StrictHostKeyChecking to no: FAIL${NC}${EOL}"
-        fi
-
-      fi
 
       mkdir -p ${APP_ROOT}/django
 
@@ -1686,18 +1531,14 @@ function install_django {
       pip install wheel
       # install py solr
       pip install pysolr
-      # set github as a trusted host
-      ssh -T git@github.com
       # update certifi
       pip install --upgrade certifi
-      # copy CA root pem chain
-      cp /etc/ssl/mkcert/rootCA.pem ${APP_ROOT}/django/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem
       # install correct version of cryptography
       pip install cryptography==2.2.2
 
       # install ogc search into the python environment
-      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}OGC Search repository${HAIR}${Cyan} from git@github.com:open-data/ogc_search.git and installing into Python environment${NC}${SPACER}"
-      pip install -e 'git+ssh://git@github.com/open-data/ogc_search.git#egg=ogc_search' -r 'https://raw.githubusercontent.com/open-data/ogc_search/master/requirements.txt'
+      printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}OGC Search repository${HAIR}${Cyan} from https://github.com:open-data/ogc_search.git and installing into Python environment${NC}${SPACER}"
+      pip install -e 'git+https://github.com/open-data/ogc_search.git#egg=ogc_search' -r 'https://raw.githubusercontent.com/open-data/ogc_search/master/requirements.txt'
 
       # install request with security modules
       pip install requests[security]==2.27.1
@@ -1755,23 +1596,6 @@ function install_django {
     #
     if [[ $installFiles_Django == "true" ]]; then
 
-      if [[ $installSSH_Django == "false" ]]; then
-
-        # install SSH
-        printf "${SPACER}${Cyan}${INDENT}Install SSH for GIT use${NC}${SPACER}"
-        which ssh || apt install ssh -y
-
-        # set strict host checking to false
-        printf "${SPACER}${Cyan}${INDENT}Set strict SSH host checking to false${NC}${SPACER}"
-        echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
-        if [[ $? -eq 0 ]]; then
-          printf "${Green}${INDENT}${INDENT}Set StrictHostKeyChecking to no: OK${NC}${EOL}"
-        else
-          printf "${Red}${INDENT}${INDENT}Set StrictHostKeyChecking to no: FAIL${NC}${EOL}"
-        fi
-
-      fi
-
       # download wet-boew/themes-cdn
       printf "${SPACER}${Cyan}${INDENT}Download the wet-boew theme${NC}${SPACER}"
       mkdir -p ${APP_ROOT}/django/src/ogc-search/ogc_search/themes-dist-GCWeb
@@ -1784,10 +1608,7 @@ function install_django {
       cd ${APP_ROOT}/django/src/ogc-search/ogc_search/cdts/source
       rm -rf ./*
       rm -rf ./.??*
-      git init
-      git config pull.ff only
-      git remote add origin git@github.com:cenw-wscoe/sgdc-cdts.git
-      git pull git@github.com:cenw-wscoe/sgdc-cdts.git
+      git clone https://github.com/cenw-wscoe/sgdc-cdts.git .
 
       # unpack the GCWeb Static release
       printf "${SPACER}${Cyan}${INDENT}Unpack the GCWeb Static release from the CDTS repo${NC}${SPACER}"
@@ -1956,25 +1777,27 @@ function install_django {
 function install_databases {
 
   psql -v ON_ERROR_STOP=0 --username "homestead" --dbname "postgres" <<-EOSQL
+    CREATE USER postgres SUPERUSER;
+    CREATE DATABASE postgres WITH OWNER postgres;
     CREATE USER homestead;
     ALTER USER homestead PASSWORD 'secret';
     CREATE USER homestead_reader;
     ALTER USER homestead_reader PASSWORD 'secret';
-    CREATE DATABASE og_drupal_local;
-    CREATE DATABASE og_ckan_portal_local;
-    CREATE DATABASE og_ckan_portal_ds_local;
-    CREATE DATABASE og_ckan_registry_local;
-    CREATE DATABASE og_ckan_registry_ds_local;
-    GRANT ALL PRIVILEGES ON DATABASE og_drupal_local TO homestead;
-    GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_local TO homestead;
-    GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_ds_local TO homestead;
-    GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_local TO homestead;
-    GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_ds_local TO homestead;
-    GRANT ALL PRIVILEGES ON DATABASE og_drupal_local TO homestead_reader;
-    GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_local TO homestead_reader;
-    GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_ds_local TO homestead_reader;
-    GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_local TO homestead_reader;
-    GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_ds_local TO homestead_reader;
+    CREATE DATABASE og_drupal_local__${PROJECT_ID};
+    CREATE DATABASE og_ckan_portal_local__${PROJECT_ID};
+    CREATE DATABASE og_ckan_portal_ds_local__${PROJECT_ID};
+    CREATE DATABASE og_ckan_registry_local__${PROJECT_ID};
+    CREATE DATABASE og_ckan_registry_ds_local__${PROJECT_ID};
+    GRANT ALL PRIVILEGES ON DATABASE og_drupal_local__${PROJECT_ID} TO homestead;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_local__${PROJECT_ID} TO homestead;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_ds_local__${PROJECT_ID} TO homestead;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_local__${PROJECT_ID} TO homestead;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_ds_local__${PROJECT_ID} TO homestead;
+    GRANT ALL PRIVILEGES ON DATABASE og_drupal_local__${PROJECT_ID} TO homestead_reader;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_local__${PROJECT_ID} TO homestead_reader;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_ds_local__${PROJECT_ID} TO homestead_reader;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_local__${PROJECT_ID} TO homestead_reader;
+    GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_ds_local__${PROJECT_ID} TO homestead_reader;
 EOSQL
 
 }

@@ -43,13 +43,6 @@ if [[ "$role" = "proxy" ]]; then
     ln -sf /etc/nginx/sites-available/search.open.local /etc/nginx/sites-enabled/search.open.local
     ln -sf /etc/nginx/sites-available/solr.open.local /etc/nginx/sites-enabled/solr.open.local
 
-    # link mkcert certificate to the truststore
-    printf "${Green}Adding mkcert to truststores${NC}${EOL}"
-    ln -sf /etc/ssl/mkcert/rootCA.pem /etc/ssl/certs/mkcert-certificate.pem
-    mkdir -p /usr/local/share/ca-certificates
-    cp /etc/ssl/mkcert/rootCA.pem /usr/local/share/ca-certificates/mkcert-certificate.crt
-    update-ca-certificates
-
     # stop nginx service
     printf "${Green}Stopping nginx service${NC}${EOL}"
     service nginx stop
@@ -78,13 +71,6 @@ elif [[ "$role" = "drupal" ]]; then
     # link drupal nginx server block
     ln -sf /etc/nginx/sites-available/open.local /etc/nginx/sites-enabled/open.local
 
-    # link mkcert certificate to the truststore
-    printf "${Green}Adding mkcert to truststores${NC}${EOL}"
-    ln -sf /etc/ssl/mkcert/rootCA.pem /etc/ssl/certs/mkcert-certificate.pem
-    mkdir -p /usr/local/share/ca-certificates
-    cp /etc/ssl/mkcert/rootCA.pem /usr/local/share/ca-certificates/mkcert-certificate.crt
-    update-ca-certificates
-
     # stop nginx service
     printf "${Green}Stopping nginx service${NC}${EOL}"
     service nginx stop
@@ -103,23 +89,6 @@ elif [[ "$role" = "search" ]]; then
 
     # link django supervisord config
     ln -sf /etc/supervisor/conf.d-available/django.conf /etc/supervisor/conf.d/django.conf
-
-    # link mkcert certificate to the truststore
-    printf "${Green}Adding mkcert to truststores${NC}${EOL}"
-    ln -sf /etc/ssl/mkcert/rootCA.pem /etc/ssl/certs/mkcert-certificate.pem
-    mkdir -p /usr/local/share/ca-certificates
-    cp /etc/ssl/mkcert/rootCA.pem /usr/local/share/ca-certificates/mkcert-certificate.crt
-    update-ca-certificates
-
-    # copy mkcert CA root to the python CA root
-    if [[ -d "${APP_ROOT}/django/lib/python${PY_VERSION}/site-packages/certifi" ]]; then
-        cp /etc/ssl/mkcert/rootCA.pem /var/ocs/django/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem;
-        if [[ $? -eq 0 ]]; then
-            printf "${Green}Copied /etc/ssl/mkcert/rootCA.pem to /var/ocs/django/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}";
-        else
-            printf "${Red}FAILED to copy /etc/ssl/mkcert/rootCA.pem to /var/ocs/django/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}";
-        fi;
-    fi;
 
     # copy the django settings file
     if [[ -d "${APP_ROOT}/django/src/ogc-search/ogc_search/ogc_search" ]]; then
@@ -144,13 +113,6 @@ elif [[ "$role" = "ckan" ]]; then
     # link ckan supervisord config
     ln -sf /etc/supervisor/conf.d-available/ckan-${ckanRole}.conf /etc/supervisor/conf.d/ckan-${ckanRole}.conf
 
-    # link mkcert certificate to the truststore
-    printf "${Green}Adding mkcert to truststores${NC}${EOL}"
-    ln -sf /etc/ssl/mkcert/rootCA.pem /etc/ssl/certs/mkcert-certificate.pem
-    mkdir -p /usr/local/share/ca-certificates
-    cp /etc/ssl/mkcert/rootCA.pem /usr/local/share/ca-certificates/mkcert-certificate.crt
-    update-ca-certificates
-
     # create directory for python venv
     mkdir -p ${APP_ROOT}/ckan/${ckanRole}
 
@@ -160,16 +122,6 @@ elif [[ "$role" = "ckan" ]]; then
     # create directories for uwsgi outputs
     mkdir -p /dev
     chown -R ckan:ckan /dev
-
-    # copy mkcert CA root to the python CA root
-    if [[ -d "/srv/app/ckan/${ckanRole}/lib/python${PY_VERSION}/site-packages/certifi" ]]; then
-        cp /etc/ssl/mkcert/rootCA.pem /srv/app/ckan/${ckanRole}/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem;
-        if [[ $? -eq 0 ]]; then
-            printf "${Green}Copied /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/${ckanRole}/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}";
-        else
-            printf "${Red}FAILED to copy /etc/ssl/mkcert/rootCA.pem to /srv/app/ckan/${ckanRole}/lib/python${PY_VERSION}/site-packages/certifi/cacert.pem${NC}${EOL}";
-        fi;
-    fi;
 
     # create i18n paths
     if [[ -d "/srv/app/ckan/${ckanRole}/src/ckanext-canada" ]]; then

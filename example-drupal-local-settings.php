@@ -5,7 +5,7 @@
 $databases['default']['default'] = [
     'driver'    => 'pgsql',
     'namespace' => 'Drupal\\Core\\Database\\Driver\\pgsql',
-    'database'  => 'og_drupal_local',
+    'database'  => 'og_drupal_local__' . $_ENV["PROJECT_ID"],
     'username'  => 'homestead',
     'password'  => 'secret',
     'host'      => 'postgres',
@@ -14,67 +14,67 @@ $databases['default']['default'] = [
 
 $settings['hash_salt'] = 'this-is-a-totally-legitimate-hash';
 
-$settings['config_sync_directory'] = '/var/www/html/drupal/html/sites/default/sync';
+$settings['config_sync_directory'] = '/var/www/html/drupal/config';
 
 $settings['file_private_path'] = '/var/www/html/drupal/html/sites/default/private-files';
 
 /**
  * Config override for Search API Solr
  */
-$config['search_api.server.pd_core_ati']['backend_config']['connector_config']['scheme'] = 'https';
+$config['search_api.server.pd_core_ati']['backend_config']['connector_config']['scheme'] = 'http';
 $config['search_api.server.pd_core_ati']['backend_config']['connector_config']['host'] = 'solr';
 $config['search_api.server.pd_core_ati']['backend_config']['connector_config']['port'] = '8983';
 $config['search_api.server.pd_core_ati']['backend_config']['connector_config']['core'] = 'core_ati';
 $config['search_api.server.pd_core_ati']['backend_config']['connector_config']['path'] = '/';
 
-$config['search_api.server.pd_core_contracts']['backend_config']['connector_config']['scheme'] = 'https';
+$config['search_api.server.pd_core_contracts']['backend_config']['connector_config']['scheme'] = 'http';
 $config['search_api.server.pd_core_contracts']['backend_config']['connector_config']['host'] = 'solr';
 $config['search_api.server.pd_core_contracts']['backend_config']['connector_config']['port'] = '8983';
 $config['search_api.server.pd_core_contracts']['backend_config']['connector_config']['core'] = 'core_contracts';
 $config['search_api.server.pd_core_contracts']['backend_config']['connector_config']['path'] = '/';
 
-$config['search_api.server.pd_core_grants']['backend_config']['connector_config']['scheme'] = 'https';
+$config['search_api.server.pd_core_grants']['backend_config']['connector_config']['scheme'] = 'http';
 $config['search_api.server.pd_core_grants']['backend_config']['connector_config']['host'] = 'solr';
 $config['search_api.server.pd_core_grants']['backend_config']['connector_config']['port'] = '8983';
 $config['search_api.server.pd_core_grants']['backend_config']['connector_config']['core'] = 'core_grants';
 $config['search_api.server.pd_core_grants']['backend_config']['connector_config']['path'] = '/';
 
-$config['search_api.server.pd_core_hospitalityq']['backend_config']['connector_config']['scheme'] = 'https';
+$config['search_api.server.pd_core_hospitalityq']['backend_config']['connector_config']['scheme'] = 'http';
 $config['search_api.server.pd_core_hospitalityq']['backend_config']['connector_config']['host'] = 'solr';
 $config['search_api.server.pd_core_hospitalityq']['backend_config']['connector_config']['port'] = '8983';
 $config['search_api.server.pd_core_hospitalityq']['backend_config']['connector_config']['core'] = 'core_hospitalityq';
 
-$config['search_api.server.pd_core_inventory']['backend_config']['connector_config']['scheme'] = 'https';
+$config['search_api.server.pd_core_inventory']['backend_config']['connector_config']['scheme'] = 'http';
 $config['search_api.server.pd_core_inventory']['backend_config']['connector_config']['host'] = 'solr';
 $config['search_api.server.pd_core_inventory']['backend_config']['connector_config']['port'] = '8983';
 $config['search_api.server.pd_core_inventory']['backend_config']['connector_config']['core'] = 'core_inventory';
 $config['search_api.server.pd_core_inventory']['backend_config']['connector_config']['path'] = '/';
 
-$config['search_api.server.pd_core_reclassification']['backend_config']['connector_config']['scheme'] = 'https';
+$config['search_api.server.pd_core_reclassification']['backend_config']['connector_config']['scheme'] = 'http';
 $config['search_api.server.pd_core_reclassification']['backend_config']['connector_config']['host'] = 'solr';
 $config['search_api.server.pd_core_reclassification']['backend_config']['connector_config']['port'] = '8983';
 $config['search_api.server.pd_core_reclassification']['backend_config']['connector_config']['core'] = 'core_reclassification';
 $config['search_api.server.pd_core_reclassification']['backend_config']['connector_config']['path'] = '/';
 
-$config['search_api.server.pd_core_travela']['backend_config']['connector_config']['scheme'] = 'https';
+$config['search_api.server.pd_core_travela']['backend_config']['connector_config']['scheme'] = 'http';
 $config['search_api.server.pd_core_travela']['backend_config']['connector_config']['host'] = 'solr';
 $config['search_api.server.pd_core_travela']['backend_config']['connector_config']['port'] = '8983';
 $config['search_api.server.pd_core_travela']['backend_config']['connector_config']['core'] = 'core_travela';
 $config['search_api.server.pd_core_travela']['backend_config']['connector_config']['path'] = '/';
 
-$config['search_api.server.pd_core_travelq']['backend_config']['connector_config']['scheme'] = 'https';
+$config['search_api.server.pd_core_travelq']['backend_config']['connector_config']['scheme'] = 'http';
 $config['search_api.server.pd_core_travelq']['backend_config']['connector_config']['host'] = 'solr';
 $config['search_api.server.pd_core_travelq']['backend_config']['connector_config']['port'] = '8983';
 $config['search_api.server.pd_core_travelq']['backend_config']['connector_config']['core'] = 'core_travelq';
 $config['search_api.server.pd_core_travelq']['backend_config']['connector_config']['path'] = '/';
 
-$config['search_api.server.pd_core_wrongdoing']['backend_config']['connector_config']['scheme'] = 'https';
+$config['search_api.server.pd_core_wrongdoing']['backend_config']['connector_config']['scheme'] = 'http';
 $config['search_api.server.pd_core_wrongdoing']['backend_config']['connector_config']['host'] = 'solr';
 $config['search_api.server.pd_core_wrongdoing']['backend_config']['connector_config']['port'] = '8983';
 $config['search_api.server.pd_core_wrongdoing']['backend_config']['connector_config']['core'] = 'core_wrongdoing';
 $config['search_api.server.pd_core_wrongdoing']['backend_config']['connector_config']['path'] = '/';
 
-$config['search_api.server.drupal_content']['backend_config']['connector_config']['scheme'] = 'https';
+$config['search_api.server.drupal_content']['backend_config']['connector_config']['scheme'] = 'http';
 $config['search_api.server.drupal_content']['backend_config']['connector_config']['host'] = 'solr';
 $config['search_api.server.drupal_content']['backend_config']['connector_config']['port'] = '8983';
 $config['search_api.server.drupal_content']['backend_config']['connector_config']['core'] = 'drupal_content';
@@ -271,25 +271,27 @@ $settings['skip_permissions_hardening'] = TRUE;
 $settings['trusted_host_patterns'] = [
     '^.+\.canada\.ca$',
     '^.+\.open\.local$',
+    '^.+\.open-*\.local$',
     '^open\.local$',
+    '^open-*\.local$',
     '^localhost$',
 ];
 
 # search domains
 $settings['search_domain'] = [
-    'en' => 'search.open.local',
-    'fr' => 'search.open.local',
+    'en' => 'search.open-' . $_ENV["PROJECT_ID"] . '.local',
+    'fr' => 'search.open-' . $_ENV["PROJECT_ID"] . '.local',
 ];
 
 $settings['sd_search'] = [
-    'en' => 'https://search.open.local/en/sd/id/',
-    'fr' => 'https://search.open.local/fr/sd/id/',
+    'en' => 'http://search.open-' . $_ENV["PROJECT_ID"] . '.local/en/sd/id/',
+    'fr' => 'http://search.open-' . $_ENV["PROJECT_ID"] . '.local/fr/sd/id/',
 ];
 
 # default domains
 $settings['default_domain'] = [
-    'en' => 'search.open.local',
-    'fr' => 'search.open.local',
+    'en' => 'search.open-' . $_ENV["PROJECT_ID"] . '.local',
+    'fr' => 'search.open-' . $_ENV["PROJECT_ID"] . '.local',
 ];
 
 # default ati email address

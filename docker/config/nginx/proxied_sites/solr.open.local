@@ -6,13 +6,13 @@ server {
 
     server_name solr.open.local;
 
-    listen 443 ssl http2;
+    listen 80;
 
-    include conf/ssl_settings.conf;
     include conf/default_settings.conf;
+    include conf/header_settings.conf;
 
     set $upstreamHost "backend_host_solr";
-    set $upstremProtocol "https://";
+    set $upstremProtocol "http://";
 
     location / {
 

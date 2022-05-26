@@ -3,55 +3,23 @@
 ## Prerequisites
 
 * [WSL2](https://docs.microsoft.com/en-us/windows/wsl/install) ***if using Windows***
-* [mkcert](https://github.com/FiloSottile/mkcert)
-   * Make sure to run `mkcert -install` after installing mkcert.
-   * If using WSL2, make sure to install mkcert within Windows and not inside of WSL2.
-   * mkcert has to be run outside of WSL2 because your web browsers are not running inside of WSL2.
 * [Docker](https://docs.docker.com/get-docker/)
 * [docker-compose](https://docs.docker.com/compose/install/)
 * [Git](https://github.com/git-guides/install-git)
-   * You will also need your git configuration to be global, located by default at `~/.gitconfig`. This will be attached to the Docker container so that the build scripts can pull the repositories.
-   * If using WSL2, you will need to have this global config set up inside of WSL2.
-* SSH Keys
-   * You will need SSH keys generated in their default location at `~/.ssh`. This will be attached to the Docker container so that the build script can have access to pull the repositories.
-      * If you do not have SSH keys generated for your machine, you can generate some with `ssh-keygen -t rsa` and you can keep clicking enter for no password and to put them in their default location.
-   * If using WSL2, you will need the SSH keys inside of WSL2.
-   * You will need to add your public key to your Github profile, [instructions here.](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
-* Write access to your host file found at `/etc/hosts`.
+   * You will also need your git configuration to be accessible to your user, located by default at `~/.gitconfig`. This will be attached to the Docker container so that the build scripts can pull the repositories.
+   * If using WSL2, you will need to have this config set up inside of WSL2 for your WSL2 user.
 
 ## Prebuild
 
-1. __Create__ new Docker networks: 
-   1. `docker network create og-proxy-network`
-   1. `docker network create og-local-network`
-1. __Create__ the following hosts file(`/etc/hosts`) entries:
-    1. `127.0.0.1 open.local`
-    1. `127.0.0.1 registry.open.local`
-    1. `127.0.0.1 portal.open.local`
-    1. `127.0.0.1 solr.open.local`
-    1. `127.0.0.1 search.open.local`
-1. __Use [mkcert](https://github.com/FiloSottile/mkcert)__ to make a certificate for nginx(Drupal, CKAN, Django, and Solr) and solr. If you're using Windows with WSL2, makes sure to make the certificates in Powershell running as an Administrator, not within WSL2:
-   * __nginx(Drupal, CKAN, Django, and Solr):__
-      1. cd inside of the `docker/config/nginx/certs` directory.
-      1. Generate the pem chain: `mkcert -cert-file open.local.pem -key-file open.local-key.pem open.local search.open.local registry.open.local portal.open.local solr.open.local 127.0.0.1 localhost ::1 ::5001 ::5000 ::8981 ::8983 ::4430`
-   * __solr:__
-      1. cd inside of the `docker/config/solr/certs` directory.
-      1. Generate the PKCS12 keystore: `mkcert -pkcs12 -p12-file solr.p12 127.0.0.1 localhost solr ::1 ::8981 ::8983`
-1. __Copy__ `.docker.env.example` to `.docker.env`
-1. __Copy__ `example-drupal-local-settings.php` to `drupal-local-settings.php`
-1. __Copy__ `example-drupal-services.yml` to `drupal-services.yml`
-1. __Copy__ `example-portal.ini` to `portal.ini`
-   1. __Change__ `ckanext.cloudstorage.container_name` value to `<your user name>-dev`
-   1. __Change__ `ckanext.cloudstorage.driver_options` secret value to the secret key for `opencanadastaging`.
-1. __Copy__ `example-registry.ini` to `registry.ini`
-   1. __Change__ `ckanext.cloudstorage.container_name` value to `<your user name>-dev`
-   1. __Change__ `ckanext.cloudstorage.driver_options` secret value to the secret key for `opencanadastaging`.
-1. __Copy__ `.env.example` to `.env`
-   1. You will need to __update__ the `CA_LOCAL_ROOT` variable to the output of this command: `mkcert -CAROOT`
+1. __Change permissions__ of this file (if not already done) so you can run it as a bash script: `chmod 775 pre-build.sh`
+1. __Run__ the pre build script with a Project ID: `./pre-build.sh example`
+1. __.docker.env__ file:
    1. If you need to, change your user and group to match the user and group your WSL2 user or Linux/Mac user employs:
       1. `id` <- this should get your current user ID and group ID in WSL2 or whatever shell you're using. If you're using WSL2 and only ever made your default user, it will likely be `1000`
-1. __Copy__ `example-search-settings.py` to `search-settings.py`
-1. __Create__ a folder in the root of this repository called `backup`, in it, place the following files:
+1. __portal.ini__ and __resgirsty.ini__ files:
+   1. __Change__ `ckanext.cloudstorage.container_name` value to `<your user name>-dev`
+   1. __Change__ `ckanext.cloudstorage.driver_options` secret value to the secret key for `opencanadastaging`
+1. __backup__ directory. In it, place the following files:
    * __For Drupal:__
       1. `drupal_db.pgdump` _(Required)_ <- the database backup for the Drupal site.
       1. `drupal_files.tgz` _(Required)_ <- the compressed folder of the public files from the Drupal site.
@@ -62,12 +30,6 @@
       1. `ckan_registry_ds_db.pgdump` _(Optional)_ <- the database backup for the CKAN Registry Datastore.
    * __For Solr:__
       1. `inventory.csv` <- Open Data Inventory data set csv file.
-1. __Create__ a folder in the root of this repository called `postgres`. This folder will hold the data for imported databases to persist during Docker container restarts.
-1. __Create__ a folder in the root of this repository called `solr`. This folder will hold the data for imported indices to persist during Docker container restarts.
-1. __Create__ a folder in the root of this repository called `redis`. This folder will hold the system dump logs from Redis.
-   * By default, the volume is commented out in the `docker-compose.yml` file as the system dumps can get large. You can uncomment the line if you are having issues with Redis.
-1. __Create__ a folder in the root of this repository called `nginx`. This folder will hold the nginx logs for the Docker environments.
-   * By default, the volume is commented out in the `docker-compose.yml` file as the nginx logs can get large. You can uncomment the line if you are having issues with nginx.
 
 ## Build
 
@@ -98,7 +60,6 @@ Though there is an initialization script to create the databases on the initial 
 1. __Run__ the install script: `./install-local.sh`
    1. __Select__ `Drupal`
    1. __Select__ what you want to install for Drupal:
-      * `SSH (Required for Repositories)`: will install and configure the ssh command along with the ssh-agent and keys.
       * `Database`: will destroy the current `og_drupal_local` database and import a fresh one from `backup/drupal_db.pgdump`
       * `Repositories`: will destroy all files inside of the `drupal` directory and pull all required repositories related to Drupal.
       * `Local Files`: will destroy all Drupal local files and extract the directory from `backup/drupal_files.tgz`.
@@ -118,9 +79,8 @@ Though there is an initialization script to create the databases on the initial 
 1. __Open a shell__ into the container: `docker-compose exec ckan bash`
 1. __Change__ permissions of this file (if not already done) so you can run it as a bash script: `chmod 775 install-local.sh`
 1. __Run__ the install script: `./install-local.sh`
-1. __Select__ `CKAN (registry)`
+   1. __Select__ `CKAN (registry)`
    1. __Select__ what you want to install for CKAN Registry:
-      * `SSH (Required for Repositories)`: will install and configure the ssh command along with the ssh-agent and keys.
       * `Registry Database`: will destroy the current `og_ckan_registry_local` database and import a fresh one from `backup/ckan_registry_db.pgdump`
          * Importing a database is optional, if the file does not exist, this step will be skipped automatically.
          * The database for CKAN Registry is not too large, however it has a lot of tables so importing the database will take a long time.
@@ -138,7 +98,7 @@ Though there is an initialization script to create the databases on the initial 
       * `Create Local User`: will create a local admin user for CKAN Registry.
       * `Import Organizations`: will dump the most recent Organizations from the ckanapi and import them into the database.
       * `Import Datasets`: will download the most recent dataset file and import them into the datase.
-         * ***This will import all 30k+ resources. This will take an extremely long time (~24 hours).***
+         * ***This will import all 30k+ resources. This may take a long time.***
       * `All`: will execute all of the above, use this for first time install or if you wish to re-install everything.
       * `Exit`: will exit the installation script.
 
@@ -150,7 +110,6 @@ Though there is an initialization script to create the databases on the initial 
 1. __Run__ the install script: `./install-local.sh`
    1. __Select__ `CKAN (portal)`
    1. __Select__ what you want to install for CKAN Portal:
-      * `SSH (Required for Repositories)`: will install and configure the ssh command along with the ssh-agent and keys.
       * `Portal Database`: will destroy the current `og_ckan_portal_local` database and import a fresh one from `backup/ckan_portal_db.pgdump`
          * Importing a database is optional, if the file does not exist, this step will be skipped automatically.
          * The database for CKAN is large, so importing the database will take a long time.
@@ -168,7 +127,7 @@ Though there is an initialization script to create the databases on the initial 
       * `Create Local User`: will create a local admin user for CKAN Portal.
       * `Import Organizations`: will dump the most recent Organizations from the ckanapi and import them into the database.
       * `Import Datasets`: will download the most recent dataset file and import them into the datase.
-         * ***This will import all 30k+ resources. This will take an extremely long time (~24 hours).***
+         * ***This will import all 30k+ resources. This may take a long time.***
       * `All`: will execute all of the above, use this for first time install or if you wish to re-install everything.
       * `Exit`: will exit the installation script.
 
@@ -179,8 +138,8 @@ Though there is an initialization script to create the databases on the initial 
 1. __Change__ permissions of this file (if not already done) so you can run it as a bash script: `chmod 775 install-local.sh`
 1. __Run__ the install script: `./install-local.sh`
    1. __Select__ `Django`
-      * `SSH (Required for Repositories)`: will install and configure the ssh command along with the ssh-agent and keys.
-      * `OGC Django Search App`: will destory the current Python virtual environment (if it exists) and install a fresh one, pull the ogc_search repository and copying `search-settings.py` to the environment.
+   1. __Select__ what you want to install for Django:
+      * `OGC Django Search App (version 1)`: will destory the current Python virtual environment (if it exists) and install a fresh one, pull the ogc_search repository and copy `search-settings.py` to the environment.
          * This will also download the required CKAN yaml and json files.
       * `Static Files`: will download the required files, including the GCWeb theme and GCWeb Static release from the CDTS repository.
          * It will also copy files to the correct locations for serving them correctly.

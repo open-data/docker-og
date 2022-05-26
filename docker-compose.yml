@@ -4,18 +4,19 @@ services:
 # Proxy
 #
   proxy:
-    image: og-proxy
-    container_name: og-proxy
+    image: og-proxy--${PROJECT_ID}
+    container_name: og-proxy--${PROJECT_ID}
     build:
       context: .
       dockerfile: docker/nginx/Dockerfile
+      labels:
+        projectID: ${PROJECT_ID}
     healthcheck:
       test: service nginx status || exit 1
       interval: 10s
       timeout: 5s
       retries: 3
     networks:
-      og-proxy-network:
       og-local-network:
         ipv4_address: 172.0.0.3
     working_dir: /var/ogproxy
@@ -25,17 +26,12 @@ services:
       CONTAINER_ROLE: proxy
       NGINX_UNAME: www-data
       APP_ROOT: /var/ogproxy
-      SSH_AUTH_SOCK: /ssh-agent
-      SSL_CERT_FILE: /etc/ssl/mkcert/rootCA.pem
-      SSL_CERT_DIR: /etc/ssl/mkcert
+      PROJECT_ID: ${PROJECT_ID}
     volumes:
-      - .:/var/ogproxy
+      - ${PWD}/:/var/ogproxy
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./docker/config/nginx/certs:/usr/share/certs
       - ./docker/config/nginx/conf:/etc/nginx/conf
-      - $SSH_AUTH_SOCK:/ssh-agent:ro
-      - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
       # - ./nginx:/var/log/nginx
     ports:
       - 443:443
@@ -47,14 +43,16 @@ services:
 # Drupal
 #
   drupal:
-    image: og-drupal
-    container_name: og-drupal
+    image: og-drupal--${PROJECT_ID}
+    container_name: og-drupal--${PROJECT_ID}
     build:
       context: .
       dockerfile: docker/drupal/Dockerfile
       args:
         USER_ID: ${USER_ID:-0}
         GROUP_ID: ${GROUP_ID:-0}
+      labels:
+        projectID: ${PROJECT_ID}
     healthcheck:
       test: service nginx status || exit 1
       interval: 10s
@@ -62,7 +60,6 @@ services:
       retries: 3
     working_dir: /var/www/html
     networks:
-      og-proxy-network:
       og-local-network:
         ipv4_address: 172.0.0.6
     depends_on:
@@ -81,27 +78,22 @@ services:
     environment:
       CONTAINER_ROLE: drupal
       PGHOST: postgres
-      PGDATABASE: og_drupal_local
+      PGDATABASE: og_drupal_local__${PROJECT_ID}
       PGUSER: homestead
       PGPASSWORD: secret
-      SSH_AUTH_SOCK: /ssh-agent
       PATH: '$PATH:/var/www/html/drupal/vendor/bin'
       NGINX_UNAME: www-data
       APP_ROOT: /var/www/html
-      SSL_CERT_FILE: /etc/ssl/mkcert/rootCA.pem
-      SSL_CERT_DIR: /etc/ssl/mkcert
+      PROJECT_ID: ${PROJECT_ID}
     volumes:
-      - .:/var/www/html
+      - ${PWD}/:/var/www/html
       - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./docker/config/nginx/certs:/usr/share/certs
       - ./docker/config/nginx/conf:/etc/nginx/conf
       - ~/.gitconfig:/etc/gitconfig:ro
-      - ~/.ssh:/var/www/html/.ssh:ro
-      - $SSH_AUTH_SOCK:/ssh-agent:ro
-      - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
       # - ./nginx:/var/log/nginx
     ports:
       - 4430:4430
+      - 80:8080
 # END
 # Drupal
 # END
@@ -109,14 +101,16 @@ services:
 # CKAN Registry
 #
   ckan:
-    container_name: og-ckan-registry
-    image: openknowledge/ckan-base:2.8
+    container_name: og-ckan-registry--${PROJECT_ID}
+    image: og-ckan-registry--${PROJECT_ID}
     build:
       context: .
       dockerfile: docker/ckan/Dockerfile
       args:
         USER_ID: ${USER_ID:-0}
         GROUP_ID: ${GROUP_ID:-0}
+      labels:
+        projectID: ${PROJECT_ID}
     healthcheck:
       test: /srv/app/ckan/registry/bin/uwsgi --connect-and-read 127.0.0.1:1717 || exit 1
       interval: 10s
@@ -124,7 +118,6 @@ services:
       retries: 3
     working_dir: /srv/app
     networks:
-      og-proxy-network:
       og-local-network:
         ipv4_address: 172.0.0.7
     depends_on:
@@ -159,27 +152,18 @@ services:
       WET_VERSION: v4.0.31
       GCWEB_VERSION: v5.1
       PYTHONHTTPSVERIFY: 0
-      SSL_CERT_FILE: /etc/ssl/mkcert/rootCA.pem
-      SSL_CERT_DIR: /etc/ssl/mkcert
       SSL_VERIFY: 0
       PORTAL_CONFIG: /srv/app/ckan/portal/portal.ini
       REGISTRY_CONFIG: /srv/app/ckan/registry/registry.ini
       CKAN_INI: /srv/app/ckan/registry/registry.ini
       DATA_URI: https://open.canada.ca/data
-      REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
+      PROJECT_ID: ${PROJECT_ID}
     volumes:
+      - ${PWD}/:/srv/app
       - ./docker/config/ckan:/docker-entrypoint.d
-      - .:/srv/app
-      - ./docker/config/nginx/certs:/usr/share/certs
       - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./docker/config/ckan/apache:/etc/apache2/sites-available
-      - ./docker/config/ckan/apache/registry.apache2.conf:/etc/apache2/apache2.conf
-      - ./docker/config/ckan/apache/ports.conf:/etc/apache2/ports.conf
       - ./docker/config/ckan/wsgi:/etc/ckan/registry
       - ~/.gitconfig:/etc/gitconfig:ro
-      - ~/.ssh:/srv/app/.ssh:ro
-      - $SSH_AUTH_SOCK:/ssh-agent:ro
-      - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
     ports:
       - 5001:5001
 # END
@@ -189,14 +173,16 @@ services:
 # CKAN Portal
 #
   ckanapi:
-    container_name: og-ckan-portal
-    image: openknowledge/ckan-base:2.8
+    container_name: og-ckan-portal--${PROJECT_ID}
+    image: og-ckan-portal--${PROJECT_ID}
     build:
       context: .
       dockerfile: docker/ckan/Dockerfile
       args:
         USER_ID: ${USER_ID:-0}
         GROUP_ID: ${GROUP_ID:-0}
+      labels:
+        projectID: ${PROJECT_ID}
     healthcheck:
       test: /srv/app/ckan/portal/bin/uwsgi --connect-and-read 127.0.0.1:1717 || exit 1
       interval: 10s
@@ -204,7 +190,6 @@ services:
       retries: 3
     working_dir: /srv/app
     networks:
-      og-proxy-network:
       og-local-network:
         ipv4_address: 172.0.0.8
     depends_on:
@@ -239,27 +224,18 @@ services:
       WET_VERSION: v4.0.31
       GCWEB_VERSION: v5.1
       PYTHONHTTPSVERIFY: 0
-      SSL_CERT_FILE: /etc/ssl/mkcert/rootCA.pem
-      SSL_CERT_DIR: /etc/ssl/mkcert
       SSL_VERIFY: 0
       PORTAL_CONFIG: /srv/app/ckan/portal/portal.ini
       REGISTRY_CONFIG: /srv/app/ckan/registry/registry.ini
       CKAN_INI: /srv/app/ckan/portal/portal.ini
       DATA_URI: https://open.canada.ca/data
-      REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
+      PROJECT_ID: ${PROJECT_ID}
     volumes:
+      - ${PWD}/:/srv/app
       - ./docker/config/ckan:/docker-entrypoint.d
-      - .:/srv/app
-      - ./docker/config/nginx/certs:/usr/share/certs
       - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./docker/config/ckan/apache:/etc/apache2/sites-available
-      - ./docker/config/ckan/apache/portal.apache2.conf:/etc/apache2/apache2.conf
-      - ./docker/config/ckan/apache/ports.conf:/etc/apache2/ports.conf
       - ./docker/config/ckan/wsgi:/etc/ckan/portal
       - ~/.gitconfig:/etc/gitconfig:ro
-      - ~/.ssh:/srv/app/.ssh:ro
-      - $SSH_AUTH_SOCK:/ssh-agent:ro
-      - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
     ports:
       - 5002:5002
 # END
@@ -269,8 +245,16 @@ services:
 # Postgres
 #
   postgres:
-    container_name: og-postgres
-    image: postgres:9.6
+    container_name: og-postgres--${PROJECT_ID}
+    image: og-postgres--${PROJECT_ID}
+    build:
+      context: .
+      dockerfile: docker/postgres/Dockerfile
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
+      labels:
+        projectID: ${PROJECT_ID}
     restart: always
     healthcheck:
       test: pg_isready -U postgres || exit 1
@@ -284,10 +268,11 @@ services:
       - ./postgres:/var/lib/postgresql/data
       - ./docker/config/postgres:/docker-entrypoint-initdb.d
     environment:
-      POSTGRES_DB: og_drupal_local
+      POSTGRES_DB: postgres
       POSTGRES_USER: homestead
       POSTGRES_PASSWORD: secret
       POSTGRES_HOST_AUTH_METHOD: trust
+      PROJECT_ID: ${PROJECT_ID}
     env_file:
       - .docker.env
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
@@ -300,12 +285,14 @@ services:
 # Solr
 #
   solr:
-    container_name: og-solr
-    image: solr
+    container_name: og-solr--${PROJECT_ID}
+    image: og-solr--${PROJECT_ID}
     restart: always
     build:
       context: .
       dockerfile: docker/solr/Dockerfile
+      labels:
+        projectID: ${PROJECT_ID}
     healthcheck:
       test: solr status || exit 1
       interval: 10s
@@ -313,7 +300,6 @@ services:
       retries: 3
     working_dir: /opt/solr
     networks:
-      og-proxy-network:
       og-local-network:
         ipv4_address: 172.0.0.10
     depends_on:
@@ -322,9 +308,6 @@ services:
     links:
       - proxy
     volumes:
-      - ./docker/config/solr/certs:/opt/solr/server/certs
-      - ./docker/config/solr/certs/solr.p12:/etc/solr.p12
-      - ./docker/config/nginx/certs:/usr/share/certs
       # Persisting CKAN Solr Cores
       - ./solr/ckan_registry:/var/solr/data/ckan_registry
       - ./solr/ckan_portal:/var/solr/data/ckan_portal
@@ -353,18 +336,12 @@ services:
       # Base Solr Cores
       - ./docker/config/solr/cores:/var/solr/local_data
     environment:
-      - CONTAINER_ROLE=solr
-      - NGINX_UNAME=root
-      - SOLR_SSL_ENABLED=true
-      - SOLR_SSL_KEY_STORE=/etc/solr.p12
-      - SOLR_SSL_KEY_STORE_PASSWORD=changeit
-      - SOLR_SSL_TRUST_STORE=/etc/solr.p12
-      - SOLR_SSL_TRUST_STORE_PASSWORD=changeit
-      - SOLR_SSL_NEED_CLIENT_AUTH=false
-      - SOLR_SSL_WANT_CLIENT_AUTH=false
-      - SOLR_SSL_CHECK_PEER_NAME=true
-      - SOLR_SSL_KEY_STORE_TYPE=PKCS12
-      - SOLR_SSL_TRUST_STORE_TYPE=PKCS12
+      CONTAINER_ROLE: solr
+      NGINX_UNAME: root
+      SOLR_SSL_ENABLED: "false"
+      PROJECT_ID: ${PROJECT_ID}
+    env_file:
+      - .docker.env
     user: "root:root"
     ports:
       - 8981:8983
@@ -375,8 +352,13 @@ services:
 # Redis
 #
   redis:
-    container_name: og-redis
-    image: redis
+    container_name: og-redis--${PROJECT_ID}
+    image: og-redis--${PROJECT_ID}
+    build:
+      context: .
+      dockerfile: docker/redis/Dockerfile
+      labels:
+        projectID: ${PROJECT_ID}
     restart: always
     healthcheck:
       test: redis-cli info server || exit 1
@@ -385,15 +367,16 @@ services:
       retries: 3
     working_dir: /data
     networks:
-      og-proxy-network:
       og-local-network:
         ipv4_address: 172.0.0.11
-    volumes:
-      - ./docker/config/nginx/certs:/usr/share/certs
-      # - ./redis:/data
+    # volumes:
+    #   - ./redis:/data
     environment:
-      - CONTAINER_ROLE=redis
-      - NGINX_UNAME=root
+      CONTAINER_ROLE: redis
+      NGINX_UNAME: root
+      PROJECT_ID: ${PROJECT_ID}
+    env_file:
+      - .docker.env
     user: "root:root"
     ports:
       - 6979:6379
@@ -404,14 +387,16 @@ services:
 # Django
 #
   django:
-    image: og-search
-    container_name: og-search
+    image: og-search--${PROJECT_ID}
+    container_name: og-search--${PROJECT_ID}
     build:
       context: .
       dockerfile: docker/django/Dockerfile
       args:
         USER_ID: ${USER_ID:-0}
         GROUP_ID: ${GROUP_ID:-0}
+      labels:
+        projectID: ${PROJECT_ID}
     healthcheck:
       test: /var/ocs/django/bin/uwsgi --connect-and-read 127.0.0.1:1717 || exit 1
       interval: 10s
@@ -419,7 +404,6 @@ services:
       retries: 3
     working_dir: /var/ocs
     networks:
-      og-proxy-network:
       og-local-network:
         ipv4_address: 172.0.0.12
     depends_on:
@@ -451,17 +435,11 @@ services:
       CDTS_GCWEB_VERSION: v4_0_31
       GCWEB_VERSION: v5.1
       PYTHONHTTPSVERIFY: 0
-      SSL_CERT_FILE: /etc/ssl/mkcert/rootCA.pem
-      SSL_CERT_DIR: /etc/ssl/mkcert
       SSL_VERIFY: 0
-      REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
+      PROJECT_ID: ${PROJECT_ID}
     volumes:
-      - .:/var/ocs
-      - ./docker/config/nginx/certs:/usr/share/certs
+      - ${PWD}/:/var/ocs
       - ~/.gitconfig:/etc/gitconfig:ro
-      - ~/.ssh:/var/ocs/.ssh:ro
-      - $SSH_AUTH_SOCK:/ssh-agent:ro
-      - $CA_LOCAL_ROOT:/etc/ssl/mkcert:ro
     ports:
       - 8080:8080
 # END
@@ -475,8 +453,6 @@ volumes:
     driver: "local"
 
 networks:
-  og-proxy-network:
-    external : true
   og-local-network:
     external : false
     driver: bridge

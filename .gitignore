@@ -10,6 +10,9 @@ node_modules/
 # Misc.
 .DS_Store/
 
+# Project variables
+/.project.env
+
 # Build
 /*.1
 /django/
