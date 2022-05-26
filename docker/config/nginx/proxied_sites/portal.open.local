@@ -4,7 +4,7 @@
 #
 server {
 
-    server_name portal.open.local;
+    server_name "~^portal\.open-(.*)\.local";
 
     listen 80;
 

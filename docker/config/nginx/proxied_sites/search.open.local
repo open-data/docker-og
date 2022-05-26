@@ -4,7 +4,7 @@
 #
 server {
 
-    server_name search.open.local;
+    server_name "~^search\.open-(.*)\.local";
 
     listen 80;
 

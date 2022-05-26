@@ -1,6 +1,6 @@
 server {
 
-    server_name open.local;
+    server_name "~^open-(.*)\.local";
 
     listen 8080 default_server reuseport;
 

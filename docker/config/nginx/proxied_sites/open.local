@@ -4,7 +4,7 @@
 #
 server {
 
-    server_name open.local;
+    server_name "~^open-(.*)\.local";
 
     listen 80 default_server;
 
