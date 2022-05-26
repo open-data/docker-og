@@ -17,12 +17,10 @@ services:
       timeout: 5s
       retries: 3
     networks:
-      "og-proxy-network--${PROJECT_ID}":
-      "og-local-network--${PROJECT_ID}":
+      og-local-network:
         ipv4_address: 172.0.0.3
     working_dir: /var/ogproxy
     env_file:
-      - .project.env
       - .docker.env
     environment:
       CONTAINER_ROLE: proxy
@@ -62,8 +60,7 @@ services:
       retries: 3
     working_dir: /var/www/html
     networks:
-      "og-proxy-network--${PROJECT_ID}":
-      "og-local-network--${PROJECT_ID}":
+      og-local-network:
         ipv4_address: 172.0.0.6
     depends_on:
       proxy:
@@ -77,7 +74,6 @@ services:
       - postgres
       - solr
     env_file:
-      - .project.env
       - .docker.env
     environment:
       CONTAINER_ROLE: drupal
@@ -122,8 +118,7 @@ services:
       retries: 3
     working_dir: /srv/app
     networks:
-      "og-proxy-network--${PROJECT_ID}":
-      "og-local-network--${PROJECT_ID}":
+      og-local-network:
         ipv4_address: 172.0.0.7
     depends_on:
       proxy:
@@ -139,7 +134,6 @@ services:
       - postgres
       - solr
     env_file:
-      - .project.env
       - .docker.env
     environment:
       CONTAINER_ROLE: ckan
@@ -196,8 +190,7 @@ services:
       retries: 3
     working_dir: /srv/app
     networks:
-      "og-proxy-network--${PROJECT_ID}":
-      "og-local-network--${PROJECT_ID}":
+      og-local-network:
         ipv4_address: 172.0.0.8
     depends_on:
       proxy:
@@ -213,7 +206,6 @@ services:
       - postgres
       - solr
     env_file:
-      - .project.env
       - .docker.env
     environment:
       CONTAINER_ROLE: ckan
@@ -270,7 +262,7 @@ services:
       timeout: 5s
       retries: 3
     networks:
-      "og-local-network--${PROJECT_ID}":
+      og-local-network:
         ipv4_address: 172.0.0.9
     volumes:
       - ./postgres:/var/lib/postgresql/data
@@ -282,7 +274,6 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
       PROJECT_ID: ${PROJECT_ID}
     env_file:
-      - .project.env
       - .docker.env
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
     ports:
@@ -309,8 +300,7 @@ services:
       retries: 3
     working_dir: /opt/solr
     networks:
-      "og-proxy-network--${PROJECT_ID}":
-      "og-local-network--${PROJECT_ID}":
+      og-local-network:
         ipv4_address: 172.0.0.10
     depends_on:
       proxy:
@@ -351,7 +341,6 @@ services:
       SOLR_SSL_ENABLED: "false"
       PROJECT_ID: ${PROJECT_ID}
     env_file:
-      - .project.env
       - .docker.env
     user: "root:root"
     ports:
@@ -366,6 +355,8 @@ services:
     container_name: og-redis--${PROJECT_ID}
     image: og-redis--${PROJECT_ID}
     build:
+      context: .
+      dockerfile: docker/redis/Dockerfile
       labels:
         projectID: ${PROJECT_ID}
     restart: always
@@ -376,8 +367,7 @@ services:
       retries: 3
     working_dir: /data
     networks:
-      "og-proxy-network--${PROJECT_ID}":
-      "og-local-network--${PROJECT_ID}":
+      og-local-network:
         ipv4_address: 172.0.0.11
     # volumes:
     #   - ./redis:/data
@@ -386,7 +376,6 @@ services:
       NGINX_UNAME: root
       PROJECT_ID: ${PROJECT_ID}
     env_file:
-      - .project.env
       - .docker.env
     user: "root:root"
     ports:
@@ -415,8 +404,7 @@ services:
       retries: 3
     working_dir: /var/ocs
     networks:
-      "og-proxy-network--${PROJECT_ID}":
-      "og-local-network--${PROJECT_ID}":
+      og-local-network:
         ipv4_address: 172.0.0.12
     depends_on:
       proxy:
@@ -430,7 +418,6 @@ services:
       - postgres
       - solr
     env_file:
-      - .project.env
       - .docker.env
     environment:
       CONTAINER_ROLE: search
@@ -466,9 +453,7 @@ volumes:
     driver: "local"
 
 networks:
-  "og-proxy-network--${PROJECT_ID}":
-    external : true
-  "og-local-network--${PROJECT_ID}":
+  og-local-network:
     external : false
     driver: bridge
     ipam:

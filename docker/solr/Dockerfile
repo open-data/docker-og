@@ -22,6 +22,4 @@ RUN mkdir -p /var/solr/data \
     && chown -R solr:root /var/solr/data \
     && chmod +x /usr/local/bin/start
 
-RUN /opt/solr/bin/solr start -force
-
 CMD ["/usr/local/bin/start"]
