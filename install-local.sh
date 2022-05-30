@@ -511,7 +511,7 @@ function install_drupal {
     # Update Drupal DB and clear Drupal cache
     # END
 
-    printf "${SPACER}${Green}${INDENT}Run me: ${BOLD}https://open.local${HAIR}${NC}${SPACER}"
+    printf "${SPACER}${Green}${INDENT}Run me: ${BOLD}https://open-${PROJECT_ID}.local${HAIR}${NC}${SPACER}"
 
   else
 
@@ -1090,6 +1090,9 @@ function install_ckan {
 
       # install correct version of cryptography
       pip install cryptography==2.2.2
+
+      # install newer version of sqlalchemy
+      pip install --upgrade sqlalchemy
 
       # install nltk punkt
       if [[ $CKAN_ROLE == 'portal' ]]; then

@@ -31,7 +31,7 @@ function run_pre_build {
         printf "${SPACER}"
 
         # check to maintain local settings files
-        if [[ -f "${PWD}/.docker.env" || -f "${PWD}/drupal-local-settings.php" || -f "${PWD}/drupal-services.yml" || -f "${PWD}/portal.ini" || -f "${PWD}/registry.ini" || -f "${PWD}/.env" || -f "${PWD}/search-settings.py" ]]; then
+        if [[ -f "${PWD}/.docker.env" || -f "${PWD}/drupal-local-settings.php" || -f "${PWD}/drupal-services.yml" || -f "${PWD}/portal.ini" || -f "${PWD}/registry.ini" || -f "${PWD}/.env" || -f "${PWD}/search-settings.py" || -f "${PWD}/docker/config/nginx/conf/.env.conf" ]]; then
 
             read -r -p $'\n\n\033[0;31m    Do you wish to maintain your local configuration files? (if No, backups will still be kept once in the backup/local_configs directory) [y/N]:\033[0;0m    ' response
 
@@ -244,6 +244,21 @@ function run_pre_build {
         fi
     else
         printf "${Yellow}${INDENT}Create ${PWD}/.env file with Project ID of $projectID (maintain local settings set to true): SKIPPING${NC}${EOL}"
+    fi
+
+    # create nginx project environment file
+    if [[ -f "${PWD}/docker/config/nginx/conf/.env.conf" ]]; then
+        cp ${PWD}/docker/config/nginx/conf/.env.conf ${PWD}/backup/local_configs/.env.conf
+    fi
+    if [[ $maintainLocalConfigs == "false" ]]; then
+        touch ${PWD}/docker/config/nginx/conf/.env.conf && echo "set \$projectID \"$projectID\";"$'\r' > ${PWD}/docker/config/nginx/conf/.env.conf
+        if [[ $? -eq 0 ]]; then
+            printf "${Green}${INDENT}Create ${BOLDGREEN}${PWD}/docker/config/nginx/conf/.env.conf${HAIR}${Green} file with Project ID of ${BOLDGREEN}$projectID${HAIR}${Green}: OK${NC}${EOL}"
+        else
+            printf "${Red}${INDENT}Create ${BOLDRED}${PWD}/docker/config/nginx/conf/.env.conf${HAIR}${Red} file with Project ID of ${BOLDRED}$projectID${HAIR}${Red}: FAIL${NC}${EOL}"
+        fi
+    else
+        printf "${Yellow}${INDENT}Create ${PWD}/docker/config/nginx/conf/.env.conf file with Project ID of $projectID (maintain local settings set to true): SKIPPING${NC}${EOL}"
     fi
 
     printf "${Green}${INDENT}${BOLDGREEN}DONE PRE-BUILD!${HAIR}${NC}${SPACER}"

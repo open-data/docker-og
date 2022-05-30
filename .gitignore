@@ -12,6 +12,7 @@ node_modules/
 
 # Project variables
 /.project.env
+/docker/config/nginx/conf/.env.conf
 
 # Build
 /*.1

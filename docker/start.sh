@@ -71,6 +71,13 @@ elif [[ "$role" = "drupal" ]]; then
     # link drupal nginx server block
     ln -sf /etc/nginx/sites-available/open.local /etc/nginx/sites-enabled/open.local
 
+    # copy the drupal configs
+    if [[ -d "${APP_ROOT}/drupal/html/sites" ]]; then
+        printf "${Green}Copying the Drupal configuration file to the installation${NC}${EOL}"
+        cp ${APP_ROOT}/drupal-local-settings.php ${APP_ROOT}/drupal/html/sites/settings.php
+        cp ${APP_ROOT}/drupal-local-settings.php ${APP_ROOT}/drupal/html/sites/default/settings.php
+    fi
+
     # stop nginx service
     printf "${Green}Stopping nginx service${NC}${EOL}"
     service nginx stop

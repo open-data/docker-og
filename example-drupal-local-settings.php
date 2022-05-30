@@ -1,11 +1,11 @@
 <?php
 
 // @codingStandardsIgnoreFile
-
+$dbName = 'og_drupal_local__' . $_ENV["PROJECT_ID"];
 $databases['default']['default'] = [
     'driver'    => 'pgsql',
     'namespace' => 'Drupal\\Core\\Database\\Driver\\pgsql',
-    'database'  => 'og_drupal_local__' . $_ENV["PROJECT_ID"],
+    'database'  => $dbName,
     'username'  => 'homestead',
     'password'  => 'secret',
     'host'      => 'postgres',
@@ -274,7 +274,9 @@ $settings['trusted_host_patterns'] = [
     '^.+\.open-*\.local$',
     '^open\.local$',
     '^open-*\.local$',
+    '^open-' . $_ENV["PROJECT_ID"] . '.local$',
     '^localhost$',
+    '^127.0.0.1$',
 ];
 
 # search domains

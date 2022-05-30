@@ -93,7 +93,7 @@ services:
       # - ./nginx:/var/log/nginx
     ports:
       - 4430:4430
-      - 80:8080
+      - 8080:8080
 # END
 # Drupal
 # END
@@ -265,7 +265,7 @@ services:
       og-local-network:
         ipv4_address: 172.0.0.9
     volumes:
-      - ./postgres:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/data
       - ./docker/config/postgres:/docker-entrypoint-initdb.d
     environment:
       POSTGRES_DB: postgres
@@ -448,8 +448,6 @@ services:
 
 volumes:
   postgres:
-    driver: "local"
-  solr:
     driver: "local"
 
 networks:

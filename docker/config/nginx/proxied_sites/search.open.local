@@ -4,7 +4,15 @@
 #
 server {
 
-    server_name "~^search\.open-(.*)\.local";
+    include conf/.env.conf;
+
+    server_name "~^search\.open-(?<requestedProjectID>.+)\.local";
+
+    if ( $projectID != $requestedProjectID ){
+
+        break;
+
+    }
 
     listen 80;
 

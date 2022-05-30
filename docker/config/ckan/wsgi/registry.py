@@ -23,4 +23,10 @@ from paste.deploy import loadapp
 config_filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'registry.ini')
 from paste.script.util.logging_config import fileConfig
 fileConfig(config_filepath)
+import configparser
+config = configparser.ConfigParser()
+config.read(config_filepath)
+config['DEFAULT']['project_id'] = os.getenv('PROJECT_ID')
+with open(config_filepath,'w') as file:
+    config.write(file)
 application = loadapp('config:%s' % config_filepath)
