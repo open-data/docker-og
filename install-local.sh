@@ -1091,8 +1091,11 @@ function install_ckan {
       # install correct version of cryptography
       pip install cryptography==2.2.2
 
-      # install newer version of sqlalchemy
-      pip install --upgrade sqlalchemy
+      # install correct version of sqlalchemy
+      pip install sqlalchemy==1.3.5
+
+      # update vdm
+      pip install --upgrade vdm
 
       # install nltk punkt
       if [[ $CKAN_ROLE == 'portal' ]]; then
@@ -1276,6 +1279,9 @@ function install_ckan {
         printf "${Red}${INDENT}${INDENT}Set ckan/static_files ownership to ckan:ckan: FAIL${NC}${EOL}"
       fi
 
+      # initialize databases
+      paster --plugin=ckan db init -c ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini
+
       # set database permissions
       paster --plugin=ckan datastore set-permissions -c ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini | psql -U homestead --set ON_ERROR_STOP=1
 
@@ -1297,6 +1303,7 @@ function install_ckan {
 
         # create system admin
         printf "${SPACER}${Cyan}${INDENT}Create system admin user${NC}${SPACER}"
+        paster --plugin=ckan user add admin_local email=temp@tbs-sct.gc.ca password=12345678 -c $REGISTRY_CONFIG
         paster --plugin=ckan sysadmin -c $REGISTRY_CONFIG -v add admin_local password=12345678 email=temp@tbs-sct.gc.ca
 
       elif [[ $CKAN_ROLE == 'portal' ]]; then
@@ -1307,6 +1314,7 @@ function install_ckan {
 
         # create system admin
         printf "${SPACER}${Cyan}${INDENT}Create system admin user${NC}${SPACER}"
+        paster --plugin=ckan user add admin_local email=temp@tbs-sct.gc.ca password=12345678 -c $PORTAL_CONFIG
         paster --plugin=ckan sysadmin -c $PORTAL_CONFIG -v add admin_local password=12345678 email=temp@tbs-sct.gc.ca
 
       fi
