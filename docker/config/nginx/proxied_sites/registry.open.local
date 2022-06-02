@@ -4,7 +4,15 @@
 #
 server {
 
-    server_name registry.open.local;
+    include conf/.env.conf;
+
+    server_name "~^registry\.open-(?<requestedProjectID>.+)\.local";
+
+    if ( $projectID != $requestedProjectID ){
+
+        break;
+
+    }
 
     listen 80;
 
@@ -17,6 +25,12 @@ server {
     location / {
 
         include conf/proxy_settings.conf;
+
+    }
+
+    location /GCWeb/assets/favicon.ico{
+
+        alias /var/ogproxy/docker/assets/favicon.png;
 
     }
 

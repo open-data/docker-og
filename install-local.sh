@@ -341,34 +341,34 @@ function install_drupal {
 
       printf "${SPACER}${Cyan}${INDENT}Copy Drupal settings file${NC}${SPACER}"
       # copy docker config settings.php to drupal directory
-      cp ${APP_ROOT}/drupal-local-settings.php ${APP_ROOT}/drupal/html/sites/settings.php
+      cp ${APP_ROOT}/_config/drupal/settings.php ${APP_ROOT}/drupal/html/sites/settings.php
       if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Copied drupal-local-settings.php to sites/settings.php: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Copied settings.php to sites/settings.php: OK${NC}${EOL}"
       else
-        printf "${Red}${INDENT}${INDENT}Copied drupal-local-settings.php to sites/settings.php: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Copied settings.php to sites/settings.php: FAIL${NC}${EOL}"
       fi
       # copy docker config settings.php to drupal directory
-      cp ${APP_ROOT}/drupal-local-settings.php ${APP_ROOT}/drupal/html/sites/default/settings.php
+      cp ${APP_ROOT}/_config/drupal/settings.php ${APP_ROOT}/drupal/html/sites/default/settings.php
       if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Copied drupal-local-settings.php to sites/default/settings.php: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Copied settings.php to sites/default/settings.php: OK${NC}${EOL}"
       else
-        printf "${Red}${INDENT}${INDENT}Copied drupal-local-settings.php to sites/default/settings.php: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Copied settings.php to sites/default/settings.php: FAIL${NC}${EOL}"
       fi
 
       printf "${SPACER}${Cyan}${INDENT}Copy Drupal services file${NC}${SPACER}"
       # copy docker config development.services.yml to drupal directory
-      cp ${APP_ROOT}/drupal-services.yml ${APP_ROOT}/drupal/html/sites/development.services.yml
+      cp ${APP_ROOT}/_config/drupal/services.yml ${APP_ROOT}/drupal/html/sites/development.services.yml
       if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Copied drupal-services.yml to sites/development.services.yml: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Copied services.yml to sites/development.services.yml: OK${NC}${EOL}"
       else
-        printf "${Red}${INDENT}${INDENT}Copied drupal-services.yml to sites/development.services.yml: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Copied services.yml to sites/development.services.yml: FAIL${NC}${EOL}"
       fi
       # copy docker config development.services.yml to drupal directory
-      cp ${APP_ROOT}/drupal-services.yml ${APP_ROOT}/drupal/html/sites/default/development.services.yml
+      cp ${APP_ROOT}/_config/drupal/services.yml ${APP_ROOT}/drupal/html/sites/default/development.services.yml
       if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Copied drupal-services.yml to sites/default/development.services.yml: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Copied services.yml to sites/default/development.services.yml: OK${NC}${EOL}"
       else
-        printf "${Red}${INDENT}${INDENT}Copied drupal-services.yml to sites/default/development.services.yml: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Copied services.yml to sites/default/development.services.yml: FAIL${NC}${EOL}"
       fi
 
       printf "${SPACER}${Cyan}${INDENT}Set Drupal settings file permissions${NC}${SPACER}"
@@ -511,7 +511,7 @@ function install_drupal {
     # Update Drupal DB and clear Drupal cache
     # END
 
-    printf "${SPACER}${Green}${INDENT}Run me: ${BOLD}https://open.local${HAIR}${NC}${SPACER}"
+    printf "${SPACER}${Green}${INDENT}Run me: ${BOLD}https://open-${PROJECT_ID}.local${HAIR}${NC}${SPACER}"
 
   else
 
@@ -1091,6 +1091,12 @@ function install_ckan {
       # install correct version of cryptography
       pip install cryptography==2.2.2
 
+      # install correct version of sqlalchemy
+      pip install sqlalchemy==1.3.5
+
+      # update vdm
+      pip install --upgrade vdm
+
       # install nltk punkt
       if [[ $CKAN_ROLE == 'portal' ]]; then
         printf "${SPACER}${Cyan}${INDENT}Installing nltk.punkt into ${CKAN_ROLE} environment${NC}${SPACER}"
@@ -1100,7 +1106,7 @@ function install_ckan {
       fi
 
       # copy local ckan config file
-      cp ${APP_ROOT}/${CKAN_ROLE}.ini ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini
+      cp ${APP_ROOT}/_config/ckan/${CKAN_ROLE}.ini ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini
       printf "${SPACER}${Cyan}${INDENT}Copying local ${CKAN_ROLE} config file to into Python environment${NC}${SPACER}"
       if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Copy ${CKAN_ROLE}.ini to ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini: OK${NC}${EOL}"
@@ -1273,6 +1279,9 @@ function install_ckan {
         printf "${Red}${INDENT}${INDENT}Set ckan/static_files ownership to ckan:ckan: FAIL${NC}${EOL}"
       fi
 
+      # initialize databases
+      paster --plugin=ckan db init -c ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini
+
       # set database permissions
       paster --plugin=ckan datastore set-permissions -c ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini | psql -U homestead --set ON_ERROR_STOP=1
 
@@ -1294,6 +1303,7 @@ function install_ckan {
 
         # create system admin
         printf "${SPACER}${Cyan}${INDENT}Create system admin user${NC}${SPACER}"
+        paster --plugin=ckan user add admin_local email=temp@tbs-sct.gc.ca password=12345678 -c $REGISTRY_CONFIG
         paster --plugin=ckan sysadmin -c $REGISTRY_CONFIG -v add admin_local password=12345678 email=temp@tbs-sct.gc.ca
 
       elif [[ $CKAN_ROLE == 'portal' ]]; then
@@ -1304,6 +1314,7 @@ function install_ckan {
 
         # create system admin
         printf "${SPACER}${Cyan}${INDENT}Create system admin user${NC}${SPACER}"
+        paster --plugin=ckan user add admin_local email=temp@tbs-sct.gc.ca password=12345678 -c $PORTAL_CONFIG
         paster --plugin=ckan sysadmin -c $PORTAL_CONFIG -v add admin_local password=12345678 email=temp@tbs-sct.gc.ca
 
       fi
@@ -1556,11 +1567,11 @@ function install_django {
 
       # copy local search settings file
       printf "${SPACER}${Cyan}${INDENT}Copy django config file to virtual environment${NC}${SPACER}"
-      cp ${APP_ROOT}/search-settings.py ${APP_ROOT}/django/src/ogc-search/ogc_search/ogc_search/settings.py
+      cp ${APP_ROOT}/_config/django/settings.py ${APP_ROOT}/django/src/ogc-search/ogc_search/ogc_search/settings.py
       if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Copy ${APP_ROOT}/search-settings.py to ${APP_ROOT}/django/src/ogc_search/ogc_search/settings.py: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Copy ${APP_ROOT}/_config/django/settings.py to ${APP_ROOT}/django/src/ogc_search/ogc_search/settings.py: OK${NC}${EOL}"
       else
-        printf "${Red}${INDENT}${INDENT}Copy ${APP_ROOT}/search-settings.py to ${APP_ROOT}/django/src/ogc_search/ogc_search/settings.py: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Copy ${APP_ROOT}/_config/django/settings.py to ${APP_ROOT}/django/src/ogc_search/ogc_search/settings.py: FAIL${NC}${EOL}"
       fi
 
       # download yaml config files

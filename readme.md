@@ -13,9 +13,6 @@
 
 1. __Change permissions__ of this file (if not already done) so you can run it as a bash script: `chmod 775 pre-build.sh`
 1. __Run__ the pre build script with a Project ID: `./pre-build.sh example`
-1. __.docker.env__ file:
-   1. If you need to, change your user and group to match the user and group your WSL2 user or Linux/Mac user employs:
-      1. `id` <- this should get your current user ID and group ID in WSL2 or whatever shell you're using. If you're using WSL2 and only ever made your default user, it will likely be `1000`
 1. __portal.ini__ and __resgirsty.ini__ files:
    1. __Change__ `ckanext.cloudstorage.container_name` value to `<your user name>-dev`
    1. __Change__ `ckanext.cloudstorage.driver_options` secret value to the secret key for `opencanadastaging`
