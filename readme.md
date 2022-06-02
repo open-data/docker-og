@@ -11,7 +11,6 @@
 
 ## Prebuild
 
-1. __Change permissions__ of this file (if not already done) so you can run it as a bash script: `chmod 775 pre-build.sh`
 1. __Run__ the pre build script with a Project ID: `./pre-build.sh example`
 1. __portal.ini__ and __resgirsty.ini__ files:
    1. __Change__ `ckanext.cloudstorage.container_name` value to `<your user name>-dev`
@@ -26,7 +25,7 @@
       1. `ckan_registry_db.pgdump` _(Optional)_ <- the database backup for the CKAN Registry app.
       1. `ckan_registry_ds_db.pgdump` _(Optional)_ <- the database backup for the CKAN Registry Datastore.
    * __For Solr:__
-      1. `inventory.csv` <- Open Data Inventory data set csv file.
+      1. `inventory.csv` _(Optional)_ <- Open Data Inventory data set csv file.
 
 ## Build
 
@@ -44,17 +43,13 @@
 Though there is an initialization script to create the databases on the initial up of the `postgres` container, this script only runs once. After you have built the containers once, this script will no longer run. To fix any issues with missing databases, users, or password:
 
 1. __Bring up__ the Drupal or CKAN docker container: `docker-compose up -d <drupal or ckan>`
-1. __Open a shell__ into the container: `docker-compose exec <drupal or ckan> bash`
-1. __Change permissions__ of this file (if not already done) so you can run it as a bash script: `chmod 775 install-local.sh`
-1. __Run__ the install script: `./install-local.sh`
+1. __Run__ the install script in the docker container: `docker-compose exec <drupal or ckan> ./install.sh`
    1. __Select__ `Databases (fixes missing databases, privileges, and users)`
 
 ### Drupal
 
 1. __Bring up__ the Drupal docker container: `docker-compose up -d drupal`
-1. __Open a shell__ into the container: `docker-compose exec drupal bash`
-1. __Change__ permissions of this file (if not already done) so you can run it as a bash script: `chmod 775 install-local.sh`
-1. __Run__ the install script: `./install-local.sh`
+1. __Run__ the install script in the docker container: `docker-compose exec drupal ./install.sh`
    1. __Select__ `Drupal`
    1. __Select__ what you want to install for Drupal:
       * `Database`: will destroy the current `og_drupal_local` database and import a fresh one from `backup/drupal_db.pgdump`
@@ -73,9 +68,7 @@ Though there is an initialization script to create the databases on the initial 
 #### Registry
 
 1. __Bring up__ the CKAN Registry docker container: `docker-compose up -d ckan`
-1. __Open a shell__ into the container: `docker-compose exec ckan bash`
-1. __Change__ permissions of this file (if not already done) so you can run it as a bash script: `chmod 775 install-local.sh`
-1. __Run__ the install script: `./install-local.sh`
+1. __Run__ the install script in the docker container: `docker-compose exec ckan ./install.sh`
    1. __Select__ `CKAN (registry)`
    1. __Select__ what you want to install for CKAN Registry:
       * `Registry Database`: will destroy the current `og_ckan_registry_local` database and import a fresh one from `backup/ckan_registry_db.pgdump`
@@ -102,9 +95,7 @@ Though there is an initialization script to create the databases on the initial 
 #### Portal
 
 1. __Bring up__ the CKAN Portal docker container: `docker-compose up -d ckanapi`
-1. __Open a shell__ into the container: `docker-compose exec ckanapi bash`
-1. __Change__ permissions of this file (if not already done) so you can run it as a bash script: `chmod 775 install-local.sh`
-1. __Run__ the install script: `./install-local.sh`
+1. __Run__ the install script in the docker container: `docker-compose exec ckanapi ./install.sh`
    1. __Select__ `CKAN (portal)`
    1. __Select__ what you want to install for CKAN Portal:
       * `Portal Database`: will destroy the current `og_ckan_portal_local` database and import a fresh one from `backup/ckan_portal_db.pgdump`
@@ -131,9 +122,7 @@ Though there is an initialization script to create the databases on the initial 
 #### Django
 
 1. __Bring up__ the Django docker container: `docker-compose up -d django`
-1. __Open a shell__ into the container: `docker-compose exec django bash`
-1. __Change__ permissions of this file (if not already done) so you can run it as a bash script: `chmod 775 install-local.sh`
-1. __Run__ the install script: `./install-local.sh`
+1. __Run__ the install script in the docker container: `docker-compose exec django ./install.sh`
    1. __Select__ `Django`
    1. __Select__ what you want to install for Django:
       * `OGC Django Search App (version 1)`: will destory the current Python virtual environment (if it exists) and install a fresh one, pull the ogc_search repository and copy `search-settings.py` to the environment.
@@ -149,8 +138,8 @@ Though there is an initialization script to create the databases on the initial 
 ### Drupal
 
 1. __Bring up__ the Drupal docker container: `docker-compose up -d drupal`
-1. __Open__ a browser into: `https://open.local`
-1. Login here: `https://open.local/en/user/login`
+1. __Open__ a browser into: `http://open-${PROJECT ID}.local`
+1. Login here: `http://open-${PROJECT ID}.local/en/user/login`
    1. Username: `admin.local`
    1. Password: `12345678`
 
@@ -159,7 +148,7 @@ Though there is an initialization script to create the databases on the initial 
 _The Solr container will automatically be brought up with the CKAN and Drupal containers._
 
 1. __Bring up__ the Solr docker container: `docker-compose up -d solr`
-1. __Open__ a browser into: `https://solr.open.local`
+1. __Open__ a browser into: `http://solr.open-${PROJECT ID}.local`
 
 ### Postgres
 
@@ -178,26 +167,24 @@ _The Postgres container will automatically be brought up with the CKAN and Drupa
 #### Registry
 
 1. __Bring up__ the CKAN Registry docker container: `docker-compose up -d ckan`
-1. __Open a shell__ into the container: `docker-compose exec ckan bash`
-1. __Open__ a browser into: `https://registry.open.local`
-   1. Login here: `https://registry.open.local/en/user/login`
+1. __Open__ a browser into: `http://registry.open-${PROJECT ID}.local`
+   1. Login here: `http://registry.open-${PROJECT ID}.local/en/user/login`
       1. Normal User:
          1. Username: `user_local`
          1. Password: `12345678`
       1. Sys Admin User:
          1. Username: `admin_local`
          1. Password: `12345678`
-1. __Build__ the indices:
+1. __Build__ the indices _(Optional)_:
    1. __Inventory:__ `paster --plugin=ckanext-canada inventory rebuild --lenient -c $REGISTRY_CONFIG -f /srv/app/backup/inventory.csv`
 
 #### Portal
 
 1. __Bring up__ the CKAN Portal docker container: `docker-compose up -d ckanapi`
-1. __Open a shell__ into the container: `docker-compose exec ckanapi bash`
+1. __Open__ a browser into: `http://open-${PROJECT ID}.local/data/en/dataset`
 
 ### Django
 
 1. __Bring up__ the Django docker container: `docker-compose up -d django`
-1. __Open a shell__ into the container: `docker-compose exec django bash`
-1. __Open__ a browser into: `https://search.open.local`
+1. __Open__ a browser into: `http://search.open-${PROJECT ID}.local`
    

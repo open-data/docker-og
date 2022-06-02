@@ -261,6 +261,9 @@ function run_pre_build {
         printf "${Yellow}${INDENT}Create ${PWD}/docker/config/nginx/conf/.env.conf file with Project ID of $projectID (maintain local settings set to true): SKIPPING${NC}${EOL}"
     fi
 
+    chmod +x ${PWD}/install.sh
+    chmod +x ${PWD}/docker/install/*.sh
+
     printf "${Green}${INDENT}${BOLDGREEN}DONE PRE-BUILD!${HAIR}${NC}${SPACER}"
 
 }
