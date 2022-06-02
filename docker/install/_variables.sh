@@ -22,6 +22,7 @@ installDrupal='false'
 installCKAN='false'
 installDjango='false'
 installDatabases='false'
+installDatabaseCopies='false'
 
 # drupal flags
 installDB_Drupal='false'
@@ -46,6 +47,13 @@ installDatasets_CKAN='false'
 installApp_Django='false'
 installFiles_Django='false'
 installFilePermissions_Django='false'
+
+# test DB flags
+cloneDB_Drupal='false'
+cloneDB_Portal_CKAN='false'
+cloneDB_Portal_DS_CKAN='false'
+cloneDB_Registry_CKAN='false'
+cloneDB_Registry_DS_CKAN='false'
 
 # general flags
 exitScript='false'

@@ -1,25 +1,5 @@
 #!/bin/bash
 
-#
-# Variables
-#
-
-# text
-Cyan='\033[0;36m'
-Yellow='\033[1;33m'
-Red='\033[0;31m'
-Orange='\033[0;33m'
-Green='\033[0;32m'
-NC='\033[0;0m'
-EOL='\n'
-SPACER='\n\n'
-INDENT='    '
-BOLD='\033[1m'
-HAIR='\033[0m'
-
-# general flags
-exitScript='false'
-
 psql -v ON_ERROR_STOP=0 --username "homestead" --dbname "postgres" <<-EOSQL
     CREATE USER postgres SUPERUSER;
     CREATE DATABASE postgres WITH OWNER postgres;

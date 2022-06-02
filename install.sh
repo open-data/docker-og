@@ -58,6 +58,18 @@ function install_databases {
 # Install Databases
 # END
 
+#
+# Install Database Copies
+#
+function install_database_copies {
+
+  . docker/install/install-test-databases.sh
+
+}
+# END
+# Install Database Copies
+# END
+
 printf "${SPACER}${Cyan}${INDENT}Select what to install:${NC}${SPACER}"
 
 if [[ ${CONTAINER_ROLE} == "drupal" ]]; then
@@ -66,6 +78,7 @@ if [[ ${CONTAINER_ROLE} == "drupal" ]]; then
   options=(
     "Drupal" 
     "Databases (fixes missing databases, privileges, and users)"
+    "Test Databases (clones existing databases into empty ones)"
     "All" 
     "Exit"
   )
@@ -76,6 +89,7 @@ elif [[ ${CONTAINER_ROLE} == "ckan" ]]; then
   options=(
     "CKAN (${CKAN_ROLE})"
     "Databases (fixes missing databases, privileges, and users)"
+    "Test Databases (clones existing databases into empty ones)"
     "All" 
     "Exit"
   )
@@ -86,6 +100,7 @@ elif [[ ${CONTAINER_ROLE} == "search" ]]; then
   options=(
     "Django"
     "Databases (fixes missing databases, privileges, and users)"
+    "Test Databases (clones existing databases into empty ones)"
     "All" 
     "Exit"
   )
@@ -112,13 +127,20 @@ case $opt in
     fi
     ;;
 
+  # "Databases (fixes missing databases, privileges, and users)"
   (1)
     exitScript='false'
     installDatabases='true'
     ;;
 
+  # "Test Databases (clones existing databases into empty ones)"
+  (2)
+    exitScript='false'
+    installDatabaseCopies='true'
+    ;;
+
   # "All"
-  (2) 
+  (3) 
     if [[ ${CONTAINER_ROLE} == "drupal" ]]; then
       installDrupal='true'
       installCKAN='false'
@@ -137,7 +159,7 @@ case $opt in
     ;;
 
   # "Exit"
-  (3)
+  (4)
     exitScript='true'
     ;;
 
@@ -151,6 +173,12 @@ if [[ $exitScript != "true" ]]; then
   if [[ $installDatabases == "true" ]]; then
 
     install_databases
+
+  fi
+
+  if [[ $installDatabaseCopies == "true" ]]; then
+
+    install_database_copies
 
   fi
 
