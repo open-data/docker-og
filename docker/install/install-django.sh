@@ -55,10 +55,10 @@ esac
 #
 if [[ $exitScript != "true" ]]; then
 
-  . django/install-confirmation.sh
-  . django/install-source.sh
-  . django/install-static.sh
-  . django/install-perms.sh
+  . ${PWD}/docker/install/django/install-confirmation.sh
+  . ${PWD}/docker/install/django/install-source.sh
+  . ${PWD}/docker/install/django/install-static.sh
+  . ${PWD}/docker/install/django/install-perms.sh
 
 else
 

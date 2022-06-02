@@ -1,7 +1,10 @@
 #!/bin/bash
 
-. docker/install/_variables.sh
-. docker/install/_functions.sh
+#TODO: make sure the entirity of the script is executed inside of the docker container via the docker-compose exec command...
+PWD=$(pwd)
+
+. ${PWD}/docker/install/_variables.sh
+. ${PWD}/docker/install/_functions.sh
 
 if [[ -z ${CONTAINER_ROLE+x} ]]; then
 
@@ -15,7 +18,7 @@ fi
 #
 function install_drupal {
 
-  . docker/install/install-drupal.sh
+  . ${PWD}/docker/install/install-drupal.sh
 
 }
 # END
@@ -27,7 +30,7 @@ function install_drupal {
 #
 function install_ckan {
 
-  . docker/install/install-ckan.sh
+  . ${PWD}/docker/install/install-ckan.sh
 
 }
 # END
@@ -39,7 +42,7 @@ function install_ckan {
 #
 function install_django {
 
-  . docker/install/install-django.sh
+  . ${PWD}/docker/install/install-django.sh
 
 }
 # END
@@ -51,7 +54,7 @@ function install_django {
 #
 function install_databases {
 
-  . docker/install/install-databases.sh
+  . ${PWD}/docker/install/install-databases.sh
 
 }
 # END
@@ -63,7 +66,7 @@ function install_databases {
 #
 function install_database_copies {
 
-  . docker/install/install-test-databases.sh
+  . ${PWD}/docker/install/install-test-databases.sh
 
 }
 # END

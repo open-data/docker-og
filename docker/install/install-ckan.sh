@@ -136,14 +136,14 @@ esac
 #
 if [[ $exitScript != "true" ]]; then
 
-  . ckan/install-confirmation.sh
-  . ckan/install-databases.sh
-  . ckan/install-source.sh
-  . ckan/install-static.sh
-  . ckan/install-perms.sh
-  . ckan/install-user.sh
-  . ckan/install-orgs.sh
-  . ckan/install-datasets.sh
+  . ${PWD}/docker/install/ckan/install-confirmation.sh
+  . ${PWD}/docker/install/ckan/install-databases.sh
+  . ${PWD}/docker/install/ckan/install-source.sh
+  . ${PWD}/docker/install/ckan/install-static.sh
+  . ${PWD}/docker/install/ckan/install-perms.sh
+  . ${PWD}/docker/install/ckan/install-user.sh
+  . ${PWD}/docker/install/ckan/install-orgs.sh
+  . ${PWD}/docker/install/ckan/install-datasets.sh
 
 else
 
