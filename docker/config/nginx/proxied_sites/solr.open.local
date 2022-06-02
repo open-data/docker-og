@@ -28,6 +28,12 @@ server {
 
     }
 
+    location /solr/img/favicon.ico {
+
+        alias /var/ogproxy/docker/assets/favicon.png;
+
+    }
+
 }
 # END
 # Solr

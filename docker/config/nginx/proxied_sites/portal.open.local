@@ -28,6 +28,12 @@ server {
 
     }
 
+    location /GCWeb/assets/favicon.ico{
+
+        alias /var/ogproxy/docker/assets/favicon.png;
+
+    }
+
 }
 # END
 # CKAN Portal Back
