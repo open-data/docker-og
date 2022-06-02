@@ -74,8 +74,12 @@ elif [[ "$role" = "drupal" ]]; then
     # copy the drupal configs
     if [[ -d "${APP_ROOT}/drupal/html/sites" ]]; then
         printf "${Green}Copying the Drupal configuration file to the installation${NC}${EOL}"
-        cp ${APP_ROOT}/drupal-local-settings.php ${APP_ROOT}/drupal/html/sites/settings.php
-        cp ${APP_ROOT}/drupal-local-settings.php ${APP_ROOT}/drupal/html/sites/default/settings.php
+        cp ${APP_ROOT}/_config/drupal/settings.php ${APP_ROOT}/drupal/html/sites/settings.php
+        cp ${APP_ROOT}/_config/drupal/settings.php ${APP_ROOT}/drupal/html/sites/default/settings.php
+
+        printf "${Green}Copying the Drupal services file to the installation${NC}${EOL}"
+        cp ${APP_ROOT}/_config/drupal/services.yml ${APP_ROOT}/drupal/html/sites/development.services.yml
+        cp ${APP_ROOT}/_config/drupal/services.yml ${APP_ROOT}/drupal/html/sites/default/development.services.yml
     fi
 
     # stop nginx service
@@ -100,7 +104,7 @@ elif [[ "$role" = "search" ]]; then
     # copy the django settings file
     if [[ -d "${APP_ROOT}/django/src/ogc-search/ogc_search/ogc_search" ]]; then
         printf "${Green}Copying the Django settings file to the virtual environment${NC}${EOL}"
-        cp ${APP_ROOT}/search-settings.py ${APP_ROOT}/django/src/ogc-search/ogc_search/ogc_search/settings.py
+        cp ${APP_ROOT}/_config/django/settings.py ${APP_ROOT}/django/src/ogc-search/ogc_search/ogc_search/settings.py
     fi;
 
     # start supervisord service
@@ -142,7 +146,7 @@ elif [[ "$role" = "ckan" ]]; then
 
     # copy the ckan configs
     printf "${Green}Copying the ${ckanRole} configuration file to the virtual environment${NC}${EOL}"
-    cp ${APP_ROOT}/${ckanRole}.ini ${APP_ROOT}/ckan/${ckanRole}/${ckanRole}.ini
+    cp ${APP_ROOT}/_config/ckan/${ckanRole}.ini ${APP_ROOT}/ckan/${ckanRole}/${ckanRole}.ini
 
     # copy the wsgi.py files
     printf "${Green}Copying the ${ckanRole} wsgi configuration file to the virtual environment${NC}${EOL}"

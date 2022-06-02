@@ -21,7 +21,7 @@ services:
         ipv4_address: 172.0.0.3
     working_dir: /var/ogproxy
     env_file:
-      - .docker.env
+      - _config/docker/.docker.env
     environment:
       CONTAINER_ROLE: proxy
       NGINX_UNAME: www-data
@@ -74,7 +74,7 @@ services:
       - postgres
       - solr
     env_file:
-      - .docker.env
+      - _config/docker/.docker.env
     environment:
       CONTAINER_ROLE: drupal
       PGHOST: postgres
@@ -134,7 +134,7 @@ services:
       - postgres
       - solr
     env_file:
-      - .docker.env
+      - _config/docker/.docker.env
     environment:
       CONTAINER_ROLE: ckan
       CKAN_ROLE: registry
@@ -206,7 +206,7 @@ services:
       - postgres
       - solr
     env_file:
-      - .docker.env
+      - _config/docker/.docker.env
     environment:
       CONTAINER_ROLE: ckan
       CKAN_ROLE: portal
@@ -274,7 +274,7 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
       PROJECT_ID: ${PROJECT_ID}
     env_file:
-      - .docker.env
+      - _config/docker/.docker.env
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
     ports:
       - 15438:5432
@@ -341,7 +341,7 @@ services:
       SOLR_SSL_ENABLED: "false"
       PROJECT_ID: ${PROJECT_ID}
     env_file:
-      - .docker.env
+      - _config/docker/.docker.env
     user: "root:root"
     ports:
       - 8981:8983
@@ -376,7 +376,7 @@ services:
       NGINX_UNAME: root
       PROJECT_ID: ${PROJECT_ID}
     env_file:
-      - .docker.env
+      - _config/docker/.docker.env
     user: "root:root"
     ports:
       - 6979:6379
@@ -418,7 +418,7 @@ services:
       - postgres
       - solr
     env_file:
-      - .docker.env
+      - _config/docker/.docker.env
     environment:
       CONTAINER_ROLE: search
       PGHOST: postgres

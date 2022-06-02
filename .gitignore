@@ -11,8 +11,9 @@ node_modules/
 .DS_Store/
 
 # Project variables
-/.project.env
+/.env
 /docker/config/nginx/conf/.env.conf
+/_config/
 
 # Build
 /*.1
@@ -25,16 +26,8 @@ node_modules/
 /backup/
 /nginx/
 supervisord.log
-/.docker.env
-/.env
 /.ssh/
 /paster.log
-drupal-local-settings.php
-drupal-services.yml
-ckan.ini
-portal.ini
-registry.ini
-search-settings.py
 pgrestore.log
 /Pipfile
 /docker/config/nginx/certs/*.pem

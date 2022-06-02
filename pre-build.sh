@@ -31,7 +31,7 @@ function run_pre_build {
         printf "${SPACER}"
 
         # check to maintain local settings files
-        if [[ -f "${PWD}/.docker.env" || -f "${PWD}/drupal-local-settings.php" || -f "${PWD}/drupal-services.yml" || -f "${PWD}/portal.ini" || -f "${PWD}/registry.ini" || -f "${PWD}/.env" || -f "${PWD}/search-settings.py" || -f "${PWD}/docker/config/nginx/conf/.env.conf" ]]; then
+        if [[ -f "${PWD}/_config/docker/.docker.env" || -f "${PWD}/_config/drupal/settings.php" || -f "${PWD}/_config/drupal/services.yml" || -f "${PWD}/_config/ckan/portal.ini" || -f "${PWD}/_config/ckan/registry.ini" || -f "${PWD}/.env" || -f "${PWD}/_config/django/settings.py" || -f "${PWD}/docker/config/nginx/conf/.env.conf" ]]; then
 
             read -r -p $'\n\n\033[0;31m    Do you wish to maintain your local configuration files? (if No, backups will still be kept once in the backup/local_configs directory) [y/N]:\033[0;0m    ' response
 
@@ -141,94 +141,94 @@ function run_pre_build {
         printf "${Yellow}${INDENT}${PWD}/nginx directory already exists: SKIPPING${NC}${EOL}"
     fi
 
-    # copy .docker.env.example to .docker.env
-    if [[ -f "${PWD}/.docker.env" ]]; then
-        cp ${PWD}/.docker.env ${PWD}/backup/local_configs/.docker.env
+    # copy .docker.env example to .docker.env
+    if [[ -f "${PWD}/_config/docker/.docker.env" ]]; then
+        cp ${PWD}/_config/docker/.docker.env ${PWD}/backup/local_configs/.docker.env
     fi
     if [[ $maintainLocalConfigs == "false" ]]; then
-        cp ${PWD}/.docker.env.example ${PWD}/.docker.env
+        cp ${PWD}/_config_examples/docker/.docker.env ${PWD}/_config/docker/.docker.env
         if [[ $? -eq 0 ]]; then
-            printf "${Green}${INDENT}Copy ${BOLDGREEN}${PWD}/.docker.env.example${HAIR}${Green} to ${BOLDGREEN}${PWD}/.docker.env${HAIR}${Green}: OK${NC}${EOL}"
+            printf "${Green}${INDENT}Copy ${BOLDGREEN}${PWD}/_config_examples/docker/.docker.env${HAIR}${Green} to ${BOLDGREEN}${PWD}/_config/docker/.docker.env${HAIR}${Green}: OK${NC}${EOL}"
         else
-            printf "${Red}${INDENT}Copy ${BOLDRED}${PWD}/.docker.env.example${HAIR}${Red} to ${BOLDRED}${PWD}/.docker.env${HAIR}${Red}: FAIL${NC}${EOL}"
+            printf "${Red}${INDENT}Copy ${BOLDRED}${PWD}/_config_examples/docker/.docker.env${HAIR}${Red} to ${BOLDRED}${PWD}/_config/docker/.docker.env${HAIR}${Red}: FAIL${NC}${EOL}"
         fi
     else
-        printf "${Yellow}${INDENT}Copy ${PWD}/.docker.env.example to ${PWD}/.docker.env (maintain local settings set to true): SKIPPING${NC}${EOL}"
+        printf "${Yellow}${INDENT}Copy ${PWD}/_config_examples/docker/.docker.env to ${PWD}/_config/docker/.docker.env (maintain local settings set to true): SKIPPING${NC}${EOL}"
     fi
 
-    # copy example-drupal-local-settings.php to drupal-local-settings.php
-    if [[ -f "${PWD}/drupal-local-settings.php" ]]; then
-        cp ${PWD}/drupal-local-settings.php ${PWD}/backup/local_configs/drupal-local-settings.php
+    # copy settings.php example to settings.php
+    if [[ -f "${PWD}/_config/drupal/settings.php" ]]; then
+        cp ${PWD}/_config/drupal/settings.php ${PWD}/backup/local_configs/settings.php
     fi
     if [[ $maintainLocalConfigs == "false" ]]; then
-        cp ${PWD}/example-drupal-local-settings.php ${PWD}/drupal-local-settings.php
+        cp ${PWD}/_config_examples/drupal/settings.php ${PWD}/_config/drupal/settings.php
         if [[ $? -eq 0 ]]; then
-            printf "${Green}${INDENT}Copy ${BOLDGREEN}${PWD}/example-drupal-local-settings.php${HAIR}${Green} to ${BOLDGREEN}${PWD}/drupal-local-settings.php${HAIR}${Green}: OK${NC}${EOL}"
+            printf "${Green}${INDENT}Copy ${BOLDGREEN}${PWD}/_config_examples/drupal/settings.php${HAIR}${Green} to ${BOLDGREEN}${PWD}/_config/drupal/settings.php${HAIR}${Green}: OK${NC}${EOL}"
         else
-            printf "${Red}${INDENT}Copy ${BOLDRED}${PWD}/example-drupal-local-settings.php${HAIR}${Red} to ${BOLDRED}${PWD}/drupal-local-settings.php${HAIR}${Red}: FAIL${NC}${EOL}"
+            printf "${Red}${INDENT}Copy ${BOLDRED}${PWD}/_config_examples/drupal/settings.php${HAIR}${Red} to ${BOLDRED}${PWD}/_config/drupal/settings.php${HAIR}${Red}: FAIL${NC}${EOL}"
         fi
     else
-        printf "${Yellow}${INDENT}Copy ${PWD}/example-drupal-local-settings.php to ${PWD}/drupal-local-settings.php (maintain local settings set to true): SKIPPING${NC}${EOL}"
+        printf "${Yellow}${INDENT}Copy ${PWD}/_config_examples/drupal/settings.php to ${PWD}/_config/drupal/settings.php (maintain local settings set to true): SKIPPING${NC}${EOL}"
     fi
 
-    # copy example-drupal-services.yml to drupal-services.yml
-    if [[ -f "${PWD}/drupal-services.yml" ]]; then
-        cp ${PWD}/drupal-services.yml ${PWD}/backup/local_configs/drupal-services.yml
+    # copy services.yml example to services.yml
+    if [[ -f "${PWD}/_config/drupal/services.yml" ]]; then
+        cp ${PWD}/_config/drupal/services.yml ${PWD}/backup/local_configs/services.yml
     fi
     if [[ $maintainLocalConfigs == "false" ]]; then
-        cp ${PWD}/example-drupal-services.yml ${PWD}/drupal-services.yml
+        cp ${PWD}/_config_examples/drupal/services.yml ${PWD}/_config/drupal/services.yml
         if [[ $? -eq 0 ]]; then
-            printf "${Green}${INDENT}Copy ${BOLDGREEN}${PWD}/example-drupal-services.yml${HAIR}${Green} to ${BOLDGREEN}${PWD}/drupal-services.yml${HAIR}${Green}: OK${NC}${EOL}"
+            printf "${Green}${INDENT}Copy ${BOLDGREEN}${PWD}/_config_examples/drupal/services.yml${HAIR}${Green} to ${BOLDGREEN}${PWD}/_config/drupal/services.yml${HAIR}${Green}: OK${NC}${EOL}"
         else
-            printf "${Red}${INDENT}Copy ${BOLDRED}${PWD}/example-drupal-services.yml${HAIR}${Red} to ${BOLDRED}${PWD}/drupal-services.yml${HAIR}${Red}: FAIL${NC}${EOL}"
+            printf "${Red}${INDENT}Copy ${BOLDRED}${PWD}/_config_examples/drupal/services.yml${HAIR}${Red} to ${BOLDRED}${PWD}/_config/drupal/services.yml${HAIR}${Red}: FAIL${NC}${EOL}"
         fi
     else
-        printf "${Yellow}${INDENT}Copy ${PWD}/example-drupal-services.yml to ${PWD}/drupal-services.yml (maintain local settings set to true): SKIPPING${NC}${EOL}"
+        printf "${Yellow}${INDENT}Copy ${PWD}/_config_examples/drupal/services.yml to ${PWD}/_config/drupal/services.yml (maintain local settings set to true): SKIPPING${NC}${EOL}"
     fi
 
-    # copy example-portal.ini to portal.ini
-    if [[ -f "${PWD}/portal.ini" ]]; then
-        cp ${PWD}/portal.ini ${PWD}/backup/local_configs/portal.ini
+    # copy protal.ini example to portal.ini
+    if [[ -f "${PWD}/_config/ckan/portal.ini" ]]; then
+        cp ${PWD}/_config/ckan/portal.ini ${PWD}/backup/local_configs/portal.ini
     fi
     if [[ $maintainLocalConfigs == "false" ]]; then
-        cp ${PWD}/example-portal.ini ${PWD}/portal.ini
+        cp ${PWD}/_config_examples/ckan/protal.ini ${PWD}/_config/ckan/portal.ini
         if [[ $? -eq 0 ]]; then
-            printf "${Green}${INDENT}Copy ${BOLDGREEN}${PWD}/example-portal.ini${HAIR}${Green} to ${BOLDGREEN}${PWD}/portal.ini${HAIR}${Green}: OK${NC}${EOL}"
+            printf "${Green}${INDENT}Copy ${BOLDGREEN}${PWD}/_config_examples/ckan/protal.ini${HAIR}${Green} to ${BOLDGREEN}${PWD}/_config/ckan/portal.ini${HAIR}${Green}: OK${NC}${EOL}"
         else
-            printf "${Red}${INDENT}Copy ${BOLDRED}${PWD}/example-portal.ini${HAIR}${Red} to ${BOLDRED}${PWD}/portal.ini${HAIR}${Red}: FAIL${NC}${EOL}"
+            printf "${Red}${INDENT}Copy ${BOLDRED}${PWD}/_config_examples/ckan/protal.ini${HAIR}${Red} to ${BOLDRED}${PWD}/_config/ckan/portal.ini${HAIR}${Red}: FAIL${NC}${EOL}"
         fi
     else
-        printf "${Yellow}${INDENT}Copy ${PWD}/example-portal.ini to ${PWD}/portal.ini (maintain local settings set to true): SKIPPING${NC}${EOL}"
+        printf "${Yellow}${INDENT}Copy ${PWD}/_config_examples/ckan/protal.ini to ${PWD}/_config/ckan/portal.ini (maintain local settings set to true): SKIPPING${NC}${EOL}"
     fi
 
-    # copy example-registry.ini to registry.ini
-    if [[ -f "${PWD}/registry.ini" ]]; then
-        cp ${PWD}/registry.ini ${PWD}/backup/local_configs/registry.ini
+    # copy registry.ini example to registry.ini
+    if [[ -f "${PWD}/_config/ckan/registry.ini" ]]; then
+        cp ${PWD}/_config/ckan/registry.ini ${PWD}/backup/local_configs/registry.ini
     fi
     if [[ $maintainLocalConfigs == "false" ]]; then
-        cp ${PWD}/example-registry.ini ${PWD}/registry.ini
+        cp ${PWD}/_config_examples/ckan/registry.ini ${PWD}/_config/ckan/registry.ini
         if [[ $? -eq 0 ]]; then
-            printf "${Green}${INDENT}Copy ${BOLDGREEN}${PWD}/example-registry.ini${HAIR}${Green} to ${BOLDGREEN}${PWD}/registry.ini${HAIR}${Green}: OK${NC}${EOL}"
+            printf "${Green}${INDENT}Copy ${BOLDGREEN}${PWD}/_config_examples/ckan/registry.ini${HAIR}${Green} to ${BOLDGREEN}${PWD}/_config/ckan/registry.ini${HAIR}${Green}: OK${NC}${EOL}"
         else
-            printf "${Red}${INDENT}Copy ${BOLDRED}${PWD}/example-registry.ini${HAIR}${Red} to ${BOLDRED}${PWD}/registry.ini${HAIR}${Red}: FAIL${NC}${EOL}"
+            printf "${Red}${INDENT}Copy ${BOLDRED}${PWD}/_config_examples/ckan/registry.ini${HAIR}${Red} to ${BOLDRED}${PWD}/_config/ckan/registry.ini${HAIR}${Red}: FAIL${NC}${EOL}"
         fi
     else
-        printf "${Yellow}${INDENT}Copy ${PWD}/example-registry.ini to ${PWD}/registry.ini (maintain local settings set to true): SKIPPING${NC}${EOL}"
+        printf "${Yellow}${INDENT}Copy ${PWD}/_config_examples/ckan/registry.ini to ${PWD}/_config/ckan/registry.ini (maintain local settings set to true): SKIPPING${NC}${EOL}"
     fi
 
-    # copy example-search-settings.py to search-settings.py
-    if [[ -f "${PWD}/search-settings.py" ]]; then
-        cp ${PWD}/search-settings.py ${PWD}/backup/local_configs/search-settings.py
+    # copy settings.py example to settings.py
+    if [[ -f "${PWD}/_config/django/settings.py" ]]; then
+        cp ${PWD}/_config/django/settings.py ${PWD}/backup/local_configs/settings.py
     fi
     if [[ $maintainLocalConfigs == "false" ]]; then
-        cp ${PWD}/example-search-settings.py ${PWD}/search-settings.py
+        cp ${PWD}/_config_examples/django/settings.py ${PWD}/_config/django/settings.py
         if [[ $? -eq 0 ]]; then
-            printf "${Green}${INDENT}Copy ${BOLDGREEN}${PWD}/example-search-settings.py${HAIR}${Green} to ${BOLDGREEN}${PWD}/search-settings.py${HAIR}${Green}: OK${NC}${EOL}"
+            printf "${Green}${INDENT}Copy ${BOLDGREEN}${PWD}/_config_examples/django/settings.py${HAIR}${Green} to ${BOLDGREEN}${PWD}/_config/django/settings.py${HAIR}${Green}: OK${NC}${EOL}"
         else
-            printf "${Red}${INDENT}Copy ${BOLDRED}${PWD}/example-search-settings.py${HAIR}${Red} to ${BOLDRED}${PWD}/search-settings.py${HAIR}${Red}: FAIL${NC}${EOL}"
+            printf "${Red}${INDENT}Copy ${BOLDRED}${PWD}/_config_examples/django/settings.py${HAIR}${Red} to ${BOLDRED}${PWD}/_config/django/settings.py${HAIR}${Red}: FAIL${NC}${EOL}"
         fi
     else
-        printf "${Yellow}${INDENT}Copy ${PWD}/example-search-settings.py to ${PWD}/search-settings.py (maintain local settings set to true): SKIPPING${NC}${EOL}"
+        printf "${Yellow}${INDENT}Copy ${PWD}/_config_examples/django/settings.py to ${PWD}/_config/django/settings.py (maintain local settings set to true): SKIPPING${NC}${EOL}"
     fi
 
     # create project environment file
