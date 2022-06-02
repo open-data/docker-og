@@ -263,6 +263,9 @@ function run_pre_build {
 
     chmod +x ${PWD}/install.sh
     chmod +x ${PWD}/docker/install/*.sh
+    chmod +x ${PWD}/docker/install/ckan/*.sh
+    chmod +x ${PWD}/docker/install/django/*.sh
+    chmod +x ${PWD}/docker/install/drupal/*.sh
 
     printf "${Green}${INDENT}${BOLDGREEN}DONE PRE-BUILD!${HAIR}${NC}${SPACER}"
 
