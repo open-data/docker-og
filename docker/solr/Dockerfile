@@ -25,14 +25,14 @@ RUN mkdir -p /var/solr/data \
 ARG USER_ID
 ARG GROUP_ID
 
-RUN if [[ ! $(id -un ${USER_ID}) == "solr" ]]; then \
+RUN if [ "$(id -un $USER_ID)" -ne "solr" ]; then \
         userdel -f $(id -un ${USER_ID}); \
         usermod -u ${USER_ID} solr; \
     else \
         usermod -u ${USER_ID} solr; \
     fi \
     && \
-    if [[ ! $(id -gn ${GROUP_ID}) == "root" ]]; then \
+    if [ "$(id -gn $GROUP_ID)" -ne "root" ]; then \
         groudel -f $(id -gn ${GROUP_ID}); \
         groupmod -g ${GROUP_ID} -n root root; \
     else \
