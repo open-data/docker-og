@@ -27,4 +27,28 @@ RUN chmod +x /usr/local/bin/start \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 
+ARG USER_ID
+ARG GROUP_ID
+
+RUN if [ ${USER_ID:-0} -ne 0 ] && [ ${GROUP_ID:-0} -ne 0 ]; then \
+        if [ $(getent passwd | grep www-data) ]; then \
+            userdel -f www-data; fi &&\
+        if [ $(getent group | grep ${GROUP_ID}) ]; then \
+            groupmod -g ${GROUP_ID} -n www-data $(getent group ${GROUP_ID} | cut -d: -f1); else \
+            groupadd -g ${GROUP_ID} www-data; fi &&\
+        if [ $(getent passwd | grep ${USER_ID}) ]; then \
+            usermod -l www-data -g www-data $(getent passwd ${USER_ID} | cut -d: -f1); else \
+            useradd -l -u ${USER_ID} -g www-data www-data; fi && \
+        install -d -m 0755 -o www-data -g www-data /etc/nginx && \
+        chown --changes --silent --no-dereference --recursive --from=33:33 ${USER_ID}:${GROUP_ID} /etc/nginx && \
+        echo 'alias ls="ls $LS_OPTIONS"\n\
+        alias ll="ls $LS_OPTIONS -l"\n\
+        alias l="ls $LS_OPTIONS -lA"\n\
+        alias home="cd /etc/nginx"' >> /etc/nginx/.bashrc &&\
+        chown www-data:www-data /etc/nginx/.bashrc \
+;fi
+
+
+RUN chown www-data:www-data -R /etc/nginx
+
 CMD ["/usr/local/bin/start"]

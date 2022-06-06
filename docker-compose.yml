@@ -9,6 +9,9 @@ services:
     build:
       context: .
       dockerfile: docker/nginx/Dockerfile
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
       labels:
         projectID: ${PROJECT_ID}
     healthcheck:
@@ -300,6 +303,9 @@ services:
     build:
       context: .
       dockerfile: docker/solr/Dockerfile
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
       labels:
         projectID: ${PROJECT_ID}
     healthcheck:
@@ -366,6 +372,9 @@ services:
     build:
       context: .
       dockerfile: docker/redis/Dockerfile
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
       labels:
         projectID: ${PROJECT_ID}
     restart: always
