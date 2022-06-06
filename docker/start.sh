@@ -75,11 +75,15 @@ elif [[ "$role" = "drupal" ]]; then
     if [[ -d "${APP_ROOT}/drupal/html/sites" ]]; then
         printf "${Green}Copying the Drupal configuration file to the installation${NC}${EOL}"
         cp ${APP_ROOT}/_config/drupal/settings.php ${APP_ROOT}/drupal/html/sites/settings.php
-        cp ${APP_ROOT}/_config/drupal/settings.php ${APP_ROOT}/drupal/html/sites/default/settings.php
+        if [[ -d "${APP_ROOT}/drupal/html/sites/default" ]]; then
+            cp ${APP_ROOT}/_config/drupal/settings.php ${APP_ROOT}/drupal/html/sites/default/settings.php
+        fi
 
         printf "${Green}Copying the Drupal services file to the installation${NC}${EOL}"
         cp ${APP_ROOT}/_config/drupal/services.yml ${APP_ROOT}/drupal/html/sites/development.services.yml
-        cp ${APP_ROOT}/_config/drupal/services.yml ${APP_ROOT}/drupal/html/sites/default/development.services.yml
+        if [[ -d "${APP_ROOT}/drupal/html/sites/default" ]]; then
+            cp ${APP_ROOT}/_config/drupal/services.yml ${APP_ROOT}/drupal/html/sites/default/development.services.yml
+        fi
     fi
 
     # stop nginx service
