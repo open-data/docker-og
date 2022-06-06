@@ -1,6 +1,5 @@
 #!/bin/bash
 
-#TODO: make sure the entirity of the script is executed inside of the docker container via the docker-compose exec command...
 PWD=$(pwd)
 
 . ${PWD}/docker/install/_variables.sh
