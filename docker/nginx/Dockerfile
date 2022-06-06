@@ -32,8 +32,20 @@ RUN chmod +x /usr/local/bin/start \
 ARG USER_ID
 ARG GROUP_ID
 
-RUN if [ $(id -un ${USER_ID}) ]; then userdel -f $(id -un ${USER_ID}) && usermod -u ${USER_ID} www-data; else usermod -u ${USER_ID} www-data; fi; \
-    && if [ $(id -gn ${GROUP_ID}) ]; then groudel -f $(id -gn ${GROUP_ID}) && groupmod -g ${GROUP_ID} -n www-data www-data; else groupmod -g ${GROUP_ID} -n www-data www-data; fi; \
-    && chown www-data:www-data -R /etc/nginx
+RUN if [ $(id -un ${USER_ID}) ]; then \
+        userdel -f $(id -un ${USER_ID}); \
+        usermod -u ${USER_ID} www-data; \
+    else \
+        usermod -u ${USER_ID} www-data; \
+    fi \
+    && \
+    if [ $(id -gn ${GROUP_ID}) ]; then \
+        groudel -f $(id -gn ${GROUP_ID}); \
+        groupmod -g ${GROUP_ID} -n www-data www-data; \
+    else \
+        groupmod -g ${GROUP_ID} -n www-data www-data; \
+    fi \
+    && \
+    chown www-data:www-data -R /etc/nginx
 
 CMD ["/usr/local/bin/start"]

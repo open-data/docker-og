@@ -46,8 +46,20 @@ RUN chown -R django:django /var/ocs \
 ARG USER_ID
 ARG GROUP_ID
 
-RUN if [ $(id -un ${USER_ID}) ]; then userdel -f $(id -un ${USER_ID}) && usermod -u ${USER_ID} django; else usermod -u ${USER_ID} django; fi; \
-    && if [ $(id -gn ${GROUP_ID}) ]; then groudel -f $(id -gn ${GROUP_ID}) && groupmod -g ${GROUP_ID} -n django django; else groupmod -g ${GROUP_ID} -n django django; fi; \
-    && chown django:django -R /var/ocs
+RUN if [ $(id -un ${USER_ID}) ]; then \
+        userdel -f $(id -un ${USER_ID}); \
+        usermod -u ${USER_ID} django; \
+    else \
+        usermod -u ${USER_ID} django; \
+    fi \
+    && \
+    if [ $(id -gn ${GROUP_ID}) ]; then \
+        groudel -f $(id -gn ${GROUP_ID}); \
+        groupmod -g ${GROUP_ID} -n django django; \
+    else \
+        groupmod -g ${GROUP_ID} -n django django; \
+    fi \
+    && \
+    chown django:django -R /var/ocs
 
 CMD ["/usr/local/bin/start"]
