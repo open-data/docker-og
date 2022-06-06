@@ -162,6 +162,15 @@ if [[ $installRepos_CKAN == "true" ]]; then
         printf "${Red}${INDENT}${INDENT}Copy ${CKAN_ROLE}.ini to ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini: FAIL${NC}${EOL}"
     fi
 
+    # copy local ckan test config file
+    cp ${APP_ROOT}/_config/ckan/${CKAN_ROLE}-test.ini ${APP_ROOT}/ckan/${CKAN_ROLE}/test.ini
+    printf "${SPACER}${Cyan}${INDENT}Copying local ${CKAN_ROLE} test config file to into Python environment${NC}${SPACER}"
+    if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Copy ${CKAN_ROLE}-test.ini to ckan/${CKAN_ROLE}/test.ini: OK${NC}${EOL}"
+    else
+        printf "${Red}${INDENT}${INDENT}Copy ${CKAN_ROLE}-test.ini to ckan/${CKAN_ROLE}/test.ini: FAIL${NC}${EOL}"
+    fi
+
     # copy core who config file
     cp ${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckan/ckan/config/who.ini ${APP_ROOT}/ckan/${CKAN_ROLE}/who.ini
     printf "${SPACER}${Cyan}${INDENT}Copying Core CKAN who config file to into root Python environment${NC}${SPACER}"

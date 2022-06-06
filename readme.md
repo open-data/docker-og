@@ -15,7 +15,15 @@
 1. __portal.ini__ and __resgirsty.ini__ files:
    1. __Change__ `ckanext.cloudstorage.container_name` value to `<your user name>-dev`
    1. __Change__ `ckanext.cloudstorage.driver_options` secret value to the secret key for `opencanadastaging`
-1. __backup__ directory. In it, place the following files:
+
+### Backups
+
+#### Global
+
+If you do not have any backups in the root `backup` directory, the installation scripts will look for the backup files in `/opt/tbs/docker/backup`
+
+1. __Create the directory__ `/opt/tbs/docker/backup`
+1. __/opt/tbs/docker/backup__ directory. In it, place the following files:
    * __For Drupal:__
       1. `drupal_db.pgdump` _(Required)_ <- the database backup for the Drupal site.
       1. `drupal_files.tgz` _(Required)_ <- the compressed folder of the public files from the Drupal site.
@@ -26,6 +34,10 @@
       1. `ckan_registry_ds_db.pgdump` _(Optional)_ <- the database backup for the CKAN Registry Datastore.
    * __For Solr:__
       1. `inventory.csv` _(Optional)_ <- Open Data Inventory data set csv file.
+
+#### Per Project
+
+To override the use of the global backups during the installation scripts, place any of the above files into the root `backup` directory.
 
 ## Build
 

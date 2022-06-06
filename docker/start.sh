@@ -148,6 +148,10 @@ elif [[ "$role" = "ckan" ]]; then
     printf "${Green}Copying the ${ckanRole} configuration file to the virtual environment${NC}${EOL}"
     cp ${APP_ROOT}/_config/ckan/${ckanRole}.ini ${APP_ROOT}/ckan/${ckanRole}/${ckanRole}.ini
 
+    # copy the ckan configs
+    printf "${Green}Copying the ${ckanRole} test configuration file to the virtual environment${NC}${EOL}"
+    cp ${APP_ROOT}/_config/ckan/${ckanRole}-test.ini ${APP_ROOT}/ckan/${ckanRole}/test.ini
+
     # copy the wsgi.py files
     printf "${Green}Copying the ${ckanRole} wsgi configuration file to the virtual environment${NC}${EOL}"
     cp ${APP_ROOT}/docker/config/ckan/wsgi/${ckanRole}.py ${APP_ROOT}/ckan/${ckanRole}/wsgi.py
