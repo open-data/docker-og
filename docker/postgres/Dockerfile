@@ -5,14 +5,14 @@ USER root
 ARG USER_ID
 ARG GROUP_ID
 
-RUN if [ $(id -un ${USER_ID}) ]; then \
+RUN if [ ! $(id -un ${USER_ID}) == "postgres" ]; then \
         userdel -f $(id -un ${USER_ID}); \
         usermod -u ${USER_ID} postgres; \
     else \
         usermod -u ${USER_ID} postgres; \
     fi \
     && \
-    if [ $(id -gn ${GROUP_ID}) ]; then \
+    if [ ! $(id -gn ${GROUP_ID}) == "postgres" ]; then \
         groudel -f $(id -gn ${GROUP_ID}); \
         groupmod -g ${GROUP_ID} -n postgres postgres; \
     else \

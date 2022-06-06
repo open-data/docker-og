@@ -32,14 +32,14 @@ RUN chmod +x /usr/local/bin/start \
 ARG USER_ID
 ARG GROUP_ID
 
-RUN if [ $(id -un ${USER_ID}) ]; then \
+RUN if [ ! $(id -un ${USER_ID}) == "www-data" ]; then \
         userdel -f $(id -un ${USER_ID}); \
         usermod -u ${USER_ID} www-data; \
     else \
         usermod -u ${USER_ID} www-data; \
     fi \
     && \
-    if [ $(id -gn ${GROUP_ID}) ]; then \
+    if [ ! $(id -gn ${GROUP_ID}) == "www-data" ]; then \
         groudel -f $(id -gn ${GROUP_ID}); \
         groupmod -g ${GROUP_ID} -n www-data www-data; \
     else \
