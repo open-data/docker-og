@@ -1,5 +1,7 @@
 FROM postgres:13.5
 
+USER root
+
 ARG USER_ID
 ARG GROUP_ID
 

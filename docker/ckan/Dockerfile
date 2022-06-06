@@ -1,6 +1,8 @@
 FROM openknowledge/ckan-base:2.8
 FROM php:7.4-fpm
 
+USER root
+
 RUN apt-get update -yqq \
     && curl -sL https://deb.nodesource.com/setup_12.x | bash - \
     && apt-get install -y --no-install-recommends \

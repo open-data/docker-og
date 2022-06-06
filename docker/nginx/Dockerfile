@@ -1,5 +1,7 @@
 FROM nginx
 
+USER root
+
 RUN apt-get update -yqq \
     && apt-get install -y --no-install-recommends \
         nginx \
