@@ -1,8 +1,5 @@
 FROM postgres:13.5
 
-# Create postgres user
-RUN useradd postgres
-
 ARG USER_ID
 ARG GROUP_ID
 

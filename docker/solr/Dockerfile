@@ -14,9 +14,6 @@ ADD docker/config/supervisor/conf.d/*.conf /etc/supervisor/conf.d-available/
 
 ADD docker/start.sh /usr/local/bin/start
 
-# Create solr user
-RUN useradd solr
-
 # Copy local_data volumes into data directory
 # Set new files with correct user:group
 ADD docker/config/solr/cores /var/solr/local_data
