@@ -235,34 +235,34 @@ function run_pre_build {
         printf "${Yellow}${INDENT}Copy ${PWD}/_config_examples/drupal/services.yml to ${PWD}/_config/drupal/services.yml (maintain local settings set to true): SKIPPING${NC}${EOL}"
     fi
 
-    # copy protal.ini example to portal.ini
+    # copy portal.ini example to portal.ini
     if [[ -f "${PWD}/_config/ckan/portal.ini" ]]; then
         cp ${PWD}/_config/ckan/portal.ini ${PWD}/backup/local_configs/portal.ini
     fi
     if [[ $maintainLocalConfigs == "false" ]]; then
-        cp ${PWD}/_config_examples/ckan/protal.ini ${PWD}/_config/ckan/portal.ini
+        cp ${PWD}/_config_examples/ckan/portal.ini ${PWD}/_config/ckan/portal.ini
         if [[ $? -eq 0 ]]; then
-            printf "${Green}${INDENT}Copy ${BOLDGREEN}${PWD}/_config_examples/ckan/protal.ini${HAIR}${Green} to ${BOLDGREEN}${PWD}/_config/ckan/portal.ini${HAIR}${Green}: OK${NC}${EOL}"
+            printf "${Green}${INDENT}Copy ${BOLDGREEN}${PWD}/_config_examples/ckan/portal.ini${HAIR}${Green} to ${BOLDGREEN}${PWD}/_config/ckan/portal.ini${HAIR}${Green}: OK${NC}${EOL}"
         else
-            printf "${Red}${INDENT}Copy ${BOLDRED}${PWD}/_config_examples/ckan/protal.ini${HAIR}${Red} to ${BOLDRED}${PWD}/_config/ckan/portal.ini${HAIR}${Red}: FAIL${NC}${EOL}"
+            printf "${Red}${INDENT}Copy ${BOLDRED}${PWD}/_config_examples/ckan/portal.ini${HAIR}${Red} to ${BOLDRED}${PWD}/_config/ckan/portal.ini${HAIR}${Red}: FAIL${NC}${EOL}"
         fi
     else
-        printf "${Yellow}${INDENT}Copy ${PWD}/_config_examples/ckan/protal.ini to ${PWD}/_config/ckan/portal.ini (maintain local settings set to true): SKIPPING${NC}${EOL}"
+        printf "${Yellow}${INDENT}Copy ${PWD}/_config_examples/ckan/portal.ini to ${PWD}/_config/ckan/portal.ini (maintain local settings set to true): SKIPPING${NC}${EOL}"
     fi
 
-    # copy protal.ini example to portal.ini
+    # copy portal.ini example to portal.ini
     if [[ -f "${PWD}/_config/ckan/portal-test.ini" ]]; then
         cp ${PWD}/_config/ckan/portal-test.ini ${PWD}/backup/local_configs/portal-test.ini
     fi
     if [[ $maintainLocalConfigs == "false" ]]; then
-        cp ${PWD}/_config_examples/ckan/protal-test.ini ${PWD}/_config/ckan/portal-test.ini
+        cp ${PWD}/_config_examples/ckan/portal-test.ini ${PWD}/_config/ckan/portal-test.ini
         if [[ $? -eq 0 ]]; then
-            printf "${Green}${INDENT}Copy ${BOLDGREEN}${PWD}/_config_examples/ckan/protal-test.ini${HAIR}${Green} to ${BOLDGREEN}${PWD}/_config/ckan/portal-test.ini${HAIR}${Green}: OK${NC}${EOL}"
+            printf "${Green}${INDENT}Copy ${BOLDGREEN}${PWD}/_config_examples/ckan/portal-test.ini${HAIR}${Green} to ${BOLDGREEN}${PWD}/_config/ckan/portal-test.ini${HAIR}${Green}: OK${NC}${EOL}"
         else
-            printf "${Red}${INDENT}Copy ${BOLDRED}${PWD}/_config_examples/ckan/protal-test.ini${HAIR}${Red} to ${BOLDRED}${PWD}/_config/ckan/portal-test.ini${HAIR}${Red}: FAIL${NC}${EOL}"
+            printf "${Red}${INDENT}Copy ${BOLDRED}${PWD}/_config_examples/ckan/portal-test.ini${HAIR}${Red} to ${BOLDRED}${PWD}/_config/ckan/portal-test.ini${HAIR}${Red}: FAIL${NC}${EOL}"
         fi
     else
-        printf "${Yellow}${INDENT}Copy ${PWD}/_config_examples/ckan/protal-test.ini to ${PWD}/_config/ckan/portal-test.ini (maintain local settings set to true): SKIPPING${NC}${EOL}"
+        printf "${Yellow}${INDENT}Copy ${PWD}/_config_examples/ckan/portal-test.ini to ${PWD}/_config/ckan/portal-test.ini (maintain local settings set to true): SKIPPING${NC}${EOL}"
     fi
 
     # copy registry.ini example to registry.ini
