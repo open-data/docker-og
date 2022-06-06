@@ -52,24 +52,8 @@ RUN chown -R ckan:ckan /srv/app \
 ARG USER_ID
 ARG GROUP_ID
 
-RUN if [ ${USER_ID:-0} -ne 0 ] && [ ${GROUP_ID:-0} -ne 0 ]; then \
-        if [ $(getent passwd | grep ckan) ]; then \
-            userdel -f ckan; fi &&\
-        if [ $(getent group | grep ${GROUP_ID}) ]; then \
-            groupmod -g ${GROUP_ID} -n ckan $(getent group ${GROUP_ID} | cut -d: -f1); else \
-            groupadd -g ${GROUP_ID} ckan; fi &&\
-        if [ $(getent passwd | grep ${USER_ID}) ]; then \
-            usermod -l ckan -g ckan $(getent passwd ${USER_ID} | cut -d: -f1); else \
-            useradd -l -u ${USER_ID} -g ckan ckan; fi && \
-        install -d -m 0755 -o ckan -g ckan /srv/app && \
-        chown --changes --silent --no-dereference --recursive --from=33:33 ${USER_ID}:${GROUP_ID} /srv/app && \
-        echo 'alias ls="ls $LS_OPTIONS"\n\
-        alias ll="ls $LS_OPTIONS -l"\n\
-        alias l="ls $LS_OPTIONS -lA"\n\
-        alias home="cd /srv/app"' >> /srv/app/.bashrc &&\
-        chown ckan:ckan /srv/app/.bashrc \
-;fi
-
-RUN chown ckan:ckan -R /srv/app
+RUN usermod -u ${USER_ID} ckan \
+    && groupmod -g ${GROUP_ID} -n ckan ckan \
+    && chown ckan:ckan -R /srv/app
 
 CMD ["/usr/local/bin/start"]
