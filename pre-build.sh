@@ -84,13 +84,31 @@ function run_pre_build {
     # create global backup directory
     if [[ ! -d "/opt/tbs/docker/backup" ]]; then
         printf "${Cyan}${INDENT}Creating global backup directy. Maybe prompt for admin password...${NC}${EOL}"
-        mkdir -p /opt/tbs/docker/backup
+        sudo mkdir -p /opt/tbs/docker/backup
         if [[ $? -eq 0 ]]; then
             printf "${Green}${INDENT}Create ${BOLDGREEN}/opt/tbs/docker/backup${HAIR}${Green} directory: OK${NC}${EOL}"
         else
             printf "${Red}${INDENT}Create ${BOLDRED}/opt/tbs/docker/backup${HAIR}${Red} directory: FAIL${NC}${EOL}"
         fi
+        if [[ ! -r "/opt/tbs/docker/backup" ]]; then
+            printf "${Cyan}${INDENT}Modify global backup directy permissions. Maybe prompt for admin password...${NC}${EOL}"
+            sudo chmod 777 -R /opt/tbs/docker/backup
+            if [[ $? -eq 0 ]]; then
+                printf "${Green}${INDENT}Set ${BOLDGREEN}/opt/tbs/docker/backup${HAIR}${Green} permissions to 777: OK${NC}${EOL}"
+            else
+                printf "${Red}${INDENT}Set ${BOLDRED}/opt/tbs/docker/backup${HAIR}${Red} permissions to 777: FAIL${NC}${EOL}"
+            fi
+        fi
     else
+        if [[ ! -r "/opt/tbs/docker/backup" ]]; then
+            printf "${Cyan}${INDENT}Modify global backup directy permissions. Maybe prompt for admin password...${NC}${EOL}"
+            sudo chmod 777 -R /opt/tbs/docker/backup
+            if [[ $? -eq 0 ]]; then
+                printf "${Green}${INDENT}Set ${BOLDGREEN}/opt/tbs/docker/backup${HAIR}${Green} permissions to 777: OK${NC}${EOL}"
+            else
+                printf "${Red}${INDENT}Set ${BOLDRED}/opt/tbs/docker/backup${HAIR}${Red} permissions to 777: FAIL${NC}${EOL}"
+            fi
+        fi
         printf "${Yellow}${INDENT}/opt/tbs/docker/backup directory already exists: SKIPPING${NC}${EOL}"
     fi
 
