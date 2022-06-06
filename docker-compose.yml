@@ -49,8 +49,8 @@ services:
       context: .
       dockerfile: docker/drupal/Dockerfile
       args:
-        USER_ID: $(id -u)
-        GROUP_ID: $(id -g)
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
       labels:
         projectID: ${PROJECT_ID}
     healthcheck:
@@ -108,8 +108,8 @@ services:
       context: .
       dockerfile: docker/ckan/Dockerfile
       args:
-        USER_ID: $(id -u)
-        GROUP_ID: $(id -g)
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
       labels:
         projectID: ${PROJECT_ID}
     healthcheck:
@@ -182,8 +182,8 @@ services:
       context: .
       dockerfile: docker/ckan/Dockerfile
       args:
-        USER_ID: $(id -u)
-        GROUP_ID: $(id -g)
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
       labels:
         projectID: ${PROJECT_ID}
     healthcheck:
@@ -256,8 +256,8 @@ services:
       context: .
       dockerfile: docker/postgres/Dockerfile
       args:
-        USER_ID: $(id -u)
-        GROUP_ID: $(id -g)
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
       labels:
         projectID: ${PROJECT_ID}
     restart: always
@@ -280,7 +280,7 @@ services:
       PROJECT_ID: ${PROJECT_ID}
     env_file:
       - _config/docker/.docker.env
-    user: "$(id -u):$(id -g)"
+    user: "${USER_ID:-0}:${GROUP_ID:-0}"
     ports:
       - 15438:5432
 # END
@@ -398,8 +398,8 @@ services:
       context: .
       dockerfile: docker/django/Dockerfile
       args:
-        USER_ID: $(id -u)
-        GROUP_ID: $(id -g)
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
       labels:
         projectID: ${PROJECT_ID}
     healthcheck:

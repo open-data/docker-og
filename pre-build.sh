@@ -315,7 +315,7 @@ function run_pre_build {
         cp ${PWD}/.env ${PWD}/backup/local_configs/.env
     fi
     if [[ $maintainLocalConfigs == "false" ]]; then
-        touch ${PWD}/.env && echo "PROJECT_ID=$projectID"$'\r' > ${PWD}/.env
+        touch ${PWD}/.env && echo "PROJECT_ID=$projectID"$'\r'"USER_ID=$(id -u)"$'\r'"GROUP_ID=$(id -g)" > ${PWD}/.env
         if [[ $? -eq 0 ]]; then
             printf "${Green}${INDENT}Create ${BOLDGREEN}${PWD}/.env${HAIR}${Green} file with Project ID of ${BOLDGREEN}$projectID${HAIR}${Green}: OK${NC}${EOL}"
         else
