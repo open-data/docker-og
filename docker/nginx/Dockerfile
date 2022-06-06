@@ -62,6 +62,8 @@ RUN if [ $(id -un ${USER_ID}) ]; then \
         fi \
     fi \
     && \
-    chown www-data:www-data -R /etc/nginx
+    chown www-data:www-data -R /etc/nginx \
+    && \
+    chown www-data:www-data -R /var/ogproxy
 
 CMD ["/usr/local/bin/start"]
