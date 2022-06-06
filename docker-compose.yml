@@ -90,6 +90,7 @@ services:
       - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./docker/config/nginx/conf:/etc/nginx/conf
       - ~/.gitconfig:/etc/gitconfig:ro
+      - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
       # - ./nginx:/var/log/nginx
     ports:
       - 4430:4430
@@ -156,6 +157,7 @@ services:
       PORTAL_CONFIG: /srv/app/ckan/portal/portal.ini
       REGISTRY_CONFIG: /srv/app/ckan/registry/registry.ini
       CKAN_INI: /srv/app/ckan/registry/registry.ini
+      TEST_INI: /srv/app/ckan/registry/test.ini
       DATA_URI: https://open.canada.ca/data
       PROJECT_ID: ${PROJECT_ID}
     volumes:
@@ -164,6 +166,7 @@ services:
       - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./docker/config/ckan/wsgi:/etc/ckan/registry
       - ~/.gitconfig:/etc/gitconfig:ro
+      - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
     ports:
       - 5001:5001
 # END
@@ -228,6 +231,7 @@ services:
       PORTAL_CONFIG: /srv/app/ckan/portal/portal.ini
       REGISTRY_CONFIG: /srv/app/ckan/registry/registry.ini
       CKAN_INI: /srv/app/ckan/portal/portal.ini
+      TEST_INI: /srv/app/ckan/portal/test.ini
       DATA_URI: https://open.canada.ca/data
       PROJECT_ID: ${PROJECT_ID}
     volumes:
@@ -236,6 +240,7 @@ services:
       - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./docker/config/ckan/wsgi:/etc/ckan/portal
       - ~/.gitconfig:/etc/gitconfig:ro
+      - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
     ports:
       - 5002:5002
 # END
@@ -440,6 +445,7 @@ services:
     volumes:
       - ${PWD}/:/var/ocs
       - ~/.gitconfig:/etc/gitconfig:ro
+      - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
     ports:
       - 8081:8080
 # END

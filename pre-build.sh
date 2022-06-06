@@ -81,6 +81,20 @@ function run_pre_build {
         printf "${Yellow}${INDENT}backup directory already exists: SKIPPING${NC}${EOL}"
     fi
 
+    # create global backup directory
+    if [[ ! -d "/opt/tbs/docker/backup" ]]; then
+        printf "${Cyan}${INDENT}Creating global backup directy. Maybe prompt for admin password...${NC}${EOL}"
+        mkdir -p /opt/tbs/docker/backup
+        if [[ $? -eq 0 ]]; then
+            printf "${Green}${INDENT}Create ${BOLDGREEN}/opt/tbs/docker/backup${HAIR}${Green} directory: OK${NC}${EOL}"
+        else
+            printf "${Red}${INDENT}Create ${BOLDRED}/opt/tbs/docker/backup${HAIR}${Red} directory: FAIL${NC}${EOL}"
+        fi
+    else
+        printf "${Yellow}${INDENT}/opt/tbs/docker/backup directory already exists: SKIPPING${NC}${EOL}"
+    fi
+
+
     # creat local config backup sub-directory
     if [[ ! -d "${PWD}/backup/local_configs" ]]; then
         mkdir ${PWD}/backup/local_configs
@@ -201,6 +215,21 @@ function run_pre_build {
         printf "${Yellow}${INDENT}Copy ${PWD}/_config_examples/ckan/protal.ini to ${PWD}/_config/ckan/portal.ini (maintain local settings set to true): SKIPPING${NC}${EOL}"
     fi
 
+    # copy protal.ini example to portal.ini
+    if [[ -f "${PWD}/_config/ckan/portal-test.ini" ]]; then
+        cp ${PWD}/_config/ckan/portal-test.ini ${PWD}/backup/local_configs/portal-test.ini
+    fi
+    if [[ $maintainLocalConfigs == "false" ]]; then
+        cp ${PWD}/_config_examples/ckan/protal-test.ini ${PWD}/_config/ckan/portal-test.ini
+        if [[ $? -eq 0 ]]; then
+            printf "${Green}${INDENT}Copy ${BOLDGREEN}${PWD}/_config_examples/ckan/protal-test.ini${HAIR}${Green} to ${BOLDGREEN}${PWD}/_config/ckan/portal-test.ini${HAIR}${Green}: OK${NC}${EOL}"
+        else
+            printf "${Red}${INDENT}Copy ${BOLDRED}${PWD}/_config_examples/ckan/protal-test.ini${HAIR}${Red} to ${BOLDRED}${PWD}/_config/ckan/portal-test.ini${HAIR}${Red}: FAIL${NC}${EOL}"
+        fi
+    else
+        printf "${Yellow}${INDENT}Copy ${PWD}/_config_examples/ckan/protal-test.ini to ${PWD}/_config/ckan/portal-test.ini (maintain local settings set to true): SKIPPING${NC}${EOL}"
+    fi
+
     # copy registry.ini example to registry.ini
     if [[ -f "${PWD}/_config/ckan/registry.ini" ]]; then
         cp ${PWD}/_config/ckan/registry.ini ${PWD}/backup/local_configs/registry.ini
@@ -214,6 +243,21 @@ function run_pre_build {
         fi
     else
         printf "${Yellow}${INDENT}Copy ${PWD}/_config_examples/ckan/registry.ini to ${PWD}/_config/ckan/registry.ini (maintain local settings set to true): SKIPPING${NC}${EOL}"
+    fi
+
+    # copy registry.ini example to registry.ini
+    if [[ -f "${PWD}/_config/ckan/registry-test.ini" ]]; then
+        cp ${PWD}/_config/ckan/registry-test.ini ${PWD}/backup/local_configs/registry-test.ini
+    fi
+    if [[ $maintainLocalConfigs == "false" ]]; then
+        cp ${PWD}/_config_examples/ckan/registry-test.ini ${PWD}/_config/ckan/registry-test.ini
+        if [[ $? -eq 0 ]]; then
+            printf "${Green}${INDENT}Copy ${BOLDGREEN}${PWD}/_config_examples/ckan/registry-test.ini${HAIR}${Green} to ${BOLDGREEN}${PWD}/_config/ckan/registry-test.ini${HAIR}${Green}: OK${NC}${EOL}"
+        else
+            printf "${Red}${INDENT}Copy ${BOLDRED}${PWD}/_config_examples/ckan/registry-test.ini${HAIR}${Red} to ${BOLDRED}${PWD}/_config/ckan/registry-test.ini${HAIR}${Red}: FAIL${NC}${EOL}"
+        fi
+    else
+        printf "${Yellow}${INDENT}Copy ${PWD}/_config_examples/ckan/registry-test.ini to ${PWD}/_config/ckan/registry-test.ini (maintain local settings set to true): SKIPPING${NC}${EOL}"
     fi
 
     # copy settings.py example to settings.py
@@ -263,6 +307,9 @@ function run_pre_build {
 
     chmod +x ${PWD}/install.sh
     chmod +x ${PWD}/docker/install/*.sh
+    chmod +x ${PWD}/docker/install/ckan/*.sh
+    chmod +x ${PWD}/docker/install/django/*.sh
+    chmod +x ${PWD}/docker/install/drupal/*.sh
 
     printf "${Green}${INDENT}${BOLDGREEN}DONE PRE-BUILD!${HAIR}${NC}${SPACER}"
 
