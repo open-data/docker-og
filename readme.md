@@ -22,7 +22,8 @@
 
 If you do not have any backups in the root `backup` directory, the installation scripts will look for the backup files in `/opt/tbs/docker/backup`
 
-1. __Create the directory__ `/opt/tbs/docker/backup`
+1. __Create the directory__ `sudo mkdir -p /opt/tbs/docker/backup`
+1. __Set permissions__ `sudo chmod 777 -R /opt/tbs/docker/backup`
 1. __/opt/tbs/docker/backup__ directory. In it, place the following files:
    * __For Drupal:__
       1. `drupal_db.pgdump` _(Required)_ <- the database backup for the Drupal site.
