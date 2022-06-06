@@ -173,6 +173,23 @@ function run_pre_build {
         printf "${Yellow}${INDENT}${PWD}/nginx directory already exists: SKIPPING${NC}${EOL}"
     fi
 
+    # create _config directories
+    if [[ ! -d "${PWD}/_config" ]]; then
+        mkdir ${PWD}/_config
+    fi
+    if [[ ! -d "${PWD}/_config/ckan" ]]; then
+        mkdir ${PWD}/_config/ckan
+    fi
+    if [[ ! -d "${PWD}/_config/django" ]]; then
+        mkdir ${PWD}/_config/django
+    fi
+    if [[ ! -d "${PWD}/_config/docker" ]]; then
+        mkdir ${PWD}/_config/docker
+    fi
+    if [[ ! -d "${PWD}/_config/drupal" ]]; then
+        mkdir ${PWD}/_config/drupal
+    fi
+
     # copy .docker.env example to .docker.env
     if [[ -f "${PWD}/_config/docker/.docker.env" ]]; then
         cp ${PWD}/_config/docker/.docker.env ${PWD}/backup/local_configs/.docker.env
