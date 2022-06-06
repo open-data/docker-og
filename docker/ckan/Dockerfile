@@ -82,6 +82,8 @@ RUN if [ $(id -un ${USER_ID}) ]; then \
         fi \
     fi \
     && \
-    chown ckan:ckan -R /srv/app
+    chown ckan:ckan -R /srv/app \
+    && \
+    chown ckan:ckan -R /etc/supervisor
 
 CMD ["/usr/local/bin/start"]

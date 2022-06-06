@@ -76,6 +76,8 @@ RUN if [ $(id -un ${USER_ID}) ]; then \
         fi \
     fi \
     && \
-    chown django:django -R /var/ocs
+    chown django:django -R /var/ocs \
+    && \
+    chown django:django -R /etc/supervisor
 
 CMD ["/usr/local/bin/start"]

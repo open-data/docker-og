@@ -55,6 +55,8 @@ RUN if [ $(id -un ${USER_ID}) ]; then \
         fi \
     fi \
     && \
-    chown solr:root -R /var/solr
+    chown solr:root -R /var/solr \
+    && \
+    chown solr:root -R /etc/supervisor
 
 CMD ["/usr/local/bin/start"]

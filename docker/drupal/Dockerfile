@@ -111,6 +111,8 @@ RUN if [ $(id -un ${USER_ID}) ]; then \
         fi \
     fi \
     && \
-    chown www-data:www-data -R /var/www/html
+    chown www-data:www-data -R /var/www/html \
+    && \
+    chown www-data:www-data -R /etc/supervisor
 
 CMD ["/usr/local/bin/start"]

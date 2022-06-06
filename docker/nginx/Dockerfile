@@ -66,6 +66,8 @@ RUN if [ $(id -un ${USER_ID}) ]; then \
     && \
     mkdir -p /var/ogproxy \
     && \
-    chown www-data:www-data -R /var/ogproxy
+    chown www-data:www-data -R /var/ogproxy \
+    && \
+    chown www-data:www-data -R /etc/supervisor
 
 CMD ["/usr/local/bin/start"]
