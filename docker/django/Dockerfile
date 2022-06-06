@@ -46,14 +46,14 @@ RUN chown -R django:django /var/ocs \
 ARG USER_ID
 ARG GROUP_ID
 
-RUN if [ "$(id -un $USER_ID)" != "django" ]; then \
+RUN if [ "$(id -un $USER_ID)" ]; then \
         userdel -f $(id -un ${USER_ID}); \
         usermod -u ${USER_ID} django; \
     else \
         usermod -u ${USER_ID} django; \
     fi \
     && \
-    if [ "$(id -gn $GROUP_ID)" != "django" ]; then \
+    if [ "$(id -gn $GROUP_ID)" ]; then \
         groudel -f $(id -gn ${GROUP_ID}); \
         groupmod -g ${GROUP_ID} -n django django; \
     else \
