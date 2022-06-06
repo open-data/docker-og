@@ -5,18 +5,34 @@ USER root
 ARG USER_ID
 ARG GROUP_ID
 
-RUN if [ "$(id -un $USER_ID)" ]; then \
+RUN if [ $(id -un ${USER_ID}) ]; then \
         userdel -f $(id -un ${USER_ID}); \
-        usermod -u ${USER_ID} postgres; \
+        if [ $(id -un postgres) ]; then \
+            usermod -u ${USER_ID} postgres; \
+        else \
+            useradd -u ${USER_ID} postgres; \
+        fi \
     else \
-        usermod -u ${USER_ID} postgres; \
+        if [ $(id -un postgres) ]; then \
+            usermod -u ${USER_ID} postgres; \
+        else \
+            useradd -u ${USER_ID} postgres; \
+        fi \
     fi \
     && \
-    if [ "$(id -gn $GROUP_ID)" ]; then \
-        groudel -f $(id -gn ${GROUP_ID}); \
-        groupmod -g ${GROUP_ID} -n postgres postgres; \
+    if [ $(id -gn ${GROUP_ID}) ]; then \
+        groupdel -f $(id -gn ${GROUP_ID}); \
+        if [ $(getent group postgres) ]; then \
+            groupmod -g ${GROUP_ID} -n postgres postgres; \
+        else \
+            groupadd -g ${GROUP_ID} postgres; \
+        fi \
     else \
-        groupmod -g ${GROUP_ID} -n postgres postgres; \
+        if [ $(getent group postgres) ]; then \
+            groupmod -g ${GROUP_ID} -n postgres postgres; \
+        else \
+            groupadd -g ${GROUP_ID} postgres; \
+        fi \
     fi \
     && \
     chown postgres:postgres -R /var/lib/postgresql

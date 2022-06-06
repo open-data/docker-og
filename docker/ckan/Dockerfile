@@ -52,18 +52,34 @@ RUN chown -R ckan:ckan /srv/app \
 ARG USER_ID
 ARG GROUP_ID
 
-RUN if [ "$(id -un $USER_ID)" ]; then \
+RUN if [ $(id -un ${USER_ID}) ]; then \
         userdel -f $(id -un ${USER_ID}); \
-        usermod -u ${USER_ID} ckan; \
+        if [ $(id -un ckan) ]; then \
+            usermod -u ${USER_ID} ckan; \
+        else \
+            useradd -u ${USER_ID} ckan; \
+        fi \
     else \
-        usermod -u ${USER_ID} ckan; \
+        if [ $(id -un ckan) ]; then \
+            usermod -u ${USER_ID} ckan; \
+        else \
+            useradd -u ${USER_ID} ckan; \
+        fi \
     fi \
     && \
-    if [ "$(id -gn $GROUP_ID)" ]; then \
-        groudel -f $(id -gn ${GROUP_ID}); \
-        groupmod -g ${GROUP_ID} -n ckan ckan; \
+    if [ $(id -gn ${GROUP_ID}) ]; then \
+        groupdel -f $(id -gn ${GROUP_ID}); \
+        if [ $(getent group ckan) ]; then \
+            groupmod -g ${GROUP_ID} -n ckan ckan; \
+        else \
+            groupadd -g ${GROUP_ID} ckan; \
+        fi \
     else \
-        groupmod -g ${GROUP_ID} -n ckan ckan; \
+        if [ $(getent group ckan) ]; then \
+            groupmod -g ${GROUP_ID} -n ckan ckan; \
+        else \
+            groupadd -g ${GROUP_ID} ckan; \
+        fi \
     fi \
     && \
     chown ckan:ckan -R /srv/app

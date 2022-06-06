@@ -81,18 +81,34 @@ RUN chown -R www-data:www-data /var/www/html \
 ARG USER_ID
 ARG GROUP_ID
 
-RUN if [ "$(id -un $USER_ID)" ]; then \
+RUN if [ $(id -un ${USER_ID}) ]; then \
         userdel -f $(id -un ${USER_ID}); \
-        usermod -u ${USER_ID} www-data; \
+        if [ $(id -un www-data) ]; then \
+            usermod -u ${USER_ID} www-data; \
+        else \
+            useradd -u ${USER_ID} www-data; \
+        fi \
     else \
-        usermod -u ${USER_ID} www-data; \
+        if [ $(id -un www-data) ]; then \
+            usermod -u ${USER_ID} www-data; \
+        else \
+            useradd -u ${USER_ID} www-data; \
+        fi \
     fi \
     && \
-    if [ "$(id -gn $GROUP_ID)"]; then \
-        groudel -f $(id -gn ${GROUP_ID}); \
-        groupmod -g ${GROUP_ID} -n www-data www-data; \
+    if [ $(id -gn ${GROUP_ID}) ]; then \
+        groupdel -f $(id -gn ${GROUP_ID}); \
+        if [ $(getent group www-data) ]; then \
+            groupmod -g ${GROUP_ID} -n www-data www-data; \
+        else \
+            groupadd -g ${GROUP_ID} www-data; \
+        fi \
     else \
-        groupmod -g ${GROUP_ID} -n www-data www-data; \
+        if [ $(getent group www-data) ]; then \
+            groupmod -g ${GROUP_ID} -n www-data www-data; \
+        else \
+            groupadd -g ${GROUP_ID} www-data; \
+        fi \
     fi \
     && \
     chown www-data:www-data -R /var/www/html

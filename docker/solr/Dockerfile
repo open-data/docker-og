@@ -25,18 +25,34 @@ RUN mkdir -p /var/solr/data \
 ARG USER_ID
 ARG GROUP_ID
 
-RUN if [ "$(id -un $USER_ID)" ]; then \
+RUN if [ $(id -un ${USER_ID}) ]; then \
         userdel -f $(id -un ${USER_ID}); \
-        usermod -u ${USER_ID} solr; \
+        if [ $(id -un solr) ]; then \
+            usermod -u ${USER_ID} solr; \
+        else \
+            useradd -u ${USER_ID} solr; \
+        fi \
     else \
-        usermod -u ${USER_ID} solr; \
+        if [ $(id -un solr) ]; then \
+            usermod -u ${USER_ID} solr; \
+        else \
+            useradd -u ${USER_ID} solr; \
+        fi \
     fi \
     && \
-    if [ "$(id -gn $GROUP_ID)" ]; then \
-        groudel -f $(id -gn ${GROUP_ID}); \
-        groupmod -g ${GROUP_ID} -n root root; \
+    if [ $(id -gn ${GROUP_ID}) ]; then \
+        groupdel -f $(id -gn ${GROUP_ID}); \
+        if [ $(getent group root) ]; then \
+            groupmod -g ${GROUP_ID} -n root root; \
+        else \
+            groupadd -g ${GROUP_ID} root; \
+        fi \
     else \
-        groupmod -g ${GROUP_ID} -n root root; \
+        if [ $(getent group root) ]; then \
+            groupmod -g ${GROUP_ID} -n root root; \
+        else \
+            groupadd -g ${GROUP_ID} root; \
+        fi \
     fi \
     && \
     chown solr:root -R /var/solr
