@@ -52,7 +52,8 @@ RUN chown -R ckan:ckan /srv/app \
     && chown -R ckan:ckan /etc/ckan \
     && chmod +x /usr/local/bin/start
 
-RUN echo 'ckan:Docker!' | chpasswd
+RUN echo 'ckan:Docker!' | chpasswd \
+    && usermod -a -G sudo ckan
 
 ARG USER_ID
 ARG GROUP_ID

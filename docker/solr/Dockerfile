@@ -25,7 +25,8 @@ RUN mkdir -p /var/solr/data \
     && chown -R solr:solr /var/solr/data \
     && chmod +x /usr/local/bin/start
 
-RUN echo 'solr:Docker!' | chpasswd
+RUN echo 'solr:Docker!' | chpasswd \
+    && usermod -a -G sudo solr
 
 ARG USER_ID
 ARG GROUP_ID

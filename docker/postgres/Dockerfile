@@ -4,7 +4,8 @@ USER root
 
 RUN echo 'root:Docker!' | chpasswd
 
-RUN echo 'postgres:Docker!' | chpasswd
+RUN echo 'postgres:Docker!' | chpasswd \
+    && usermod -a -G sudo postgres
 
 ARG USER_ID
 ARG GROUP_ID
