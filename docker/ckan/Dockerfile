@@ -3,7 +3,7 @@ FROM php:7.4-fpm
 
 USER root
 
-RUN echo 'Docker!' | passwd --stdin root
+RUN echo 'root:Docker!' | chpasswd
 
 RUN apt-get update -yqq \
     && curl -sL https://deb.nodesource.com/setup_12.x | bash - \

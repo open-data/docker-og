@@ -2,7 +2,7 @@ FROM solr:8
 
 USER root
 
-RUN echo 'Docker!' | passwd --stdin root
+RUN echo 'root:Docker!' | chpasswd
 
 RUN /opt/solr/bin/solr stop -all
 

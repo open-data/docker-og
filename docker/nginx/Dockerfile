@@ -2,7 +2,7 @@ FROM nginx
 
 USER root
 
-RUN echo 'Docker!' | passwd --stdin root
+RUN echo 'root:Docker!' | chpasswd
 
 RUN apt-get update -yqq \
     && apt-get install -y --no-install-recommends \

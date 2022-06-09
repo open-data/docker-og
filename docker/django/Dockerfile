@@ -2,7 +2,7 @@ FROM python:3.7.13
 
 USER root
 
-RUN echo 'Docker!' | passwd --stdin root
+RUN echo 'root:Docker!' | chpasswd
 
 RUN apt-get update -yqq \
     && apt-get install -y --no-install-recommends \
