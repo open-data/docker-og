@@ -27,7 +27,6 @@ services:
       - _config/docker/.docker.env
     environment:
       CONTAINER_ROLE: proxy
-      NGINX_UNAME: www-data
       APP_ROOT: /var/ogproxy
       PROJECT_ID: ${PROJECT_ID}
       ROOT_PASS: Docker!
@@ -87,7 +86,6 @@ services:
       PGUSER: homestead
       PGPASSWORD: secret
       PATH: '$PATH:/var/www/html/drupal/vendor/bin'
-      NGINX_UNAME: www-data
       APP_ROOT: /var/www/html
       PROJECT_ID: ${PROJECT_ID}
       ROOT_PASS: Docker!
@@ -151,7 +149,6 @@ services:
       PGUSER: homestead
       PGPASSWORD: secret
       SSH_AUTH_SOCK: /ssh-agent
-      NGINX_UNAME: ckan
       APP_ROOT: /srv/app
       PATH: '$PATH:/srv/app/ckan/registry/bin'
       PY_VERSION: 2.7
@@ -227,7 +224,6 @@ services:
       PGUSER: homestead
       PGPASSWORD: secret
       SSH_AUTH_SOCK: /ssh-agent
-      NGINX_UNAME: ckan
       APP_ROOT: /srv/app
       PATH: '$PATH:/srv/app/ckan/portal/bin'
       PY_VERSION: 2.7
@@ -357,7 +353,6 @@ services:
       - ./docker/config/solr/cores:/var/solr/local_data
     environment:
       CONTAINER_ROLE: solr
-      NGINX_UNAME: root
       SOLR_SSL_ENABLED: "false"
       PROJECT_ID: ${PROJECT_ID}
       ROOT_PASS: Docker!
@@ -397,7 +392,6 @@ services:
     #   - ./redis:/data
     environment:
       CONTAINER_ROLE: redis
-      NGINX_UNAME: root
       PROJECT_ID: ${PROJECT_ID}
       ROOT_PASS: Docker!
     env_file:
@@ -452,7 +446,6 @@ services:
       PGPASSWORD: secret
       SSH_AUTH_SOCK: /ssh-agent
       PATH: '$PATH:/usr/local/lib'
-      NGINX_UNAME: www-data
       APP_ROOT: /var/ocs
       PY_VERSION: 3.7
       WET_VERSION: v4.0.31
