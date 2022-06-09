@@ -42,21 +42,21 @@ RUN if [ $(id -un ${USER_ID}) ]; then \
     && \
     if [ $(id -gn ${GROUP_ID}) ]; then \
         groupdel -f $(id -gn ${GROUP_ID}); \
-        if [ $(getent group root) ]; then \
-            groupmod -g ${GROUP_ID} -n root root; \
+        if [ $(getent group solr) ]; then \
+            groupmod -g ${GROUP_ID} -n solr solr; \
         else \
-            groupadd -g ${GROUP_ID} root; \
+            groupadd -g ${GROUP_ID} solr; \
         fi \
     else \
-        if [ $(getent group root) ]; then \
-            groupmod -g ${GROUP_ID} -n root root; \
+        if [ $(getent group solr) ]; then \
+            groupmod -g ${GROUP_ID} -n solr solr; \
         else \
-            groupadd -g ${GROUP_ID} root; \
+            groupadd -g ${GROUP_ID} solr; \
         fi \
     fi \
     && \
-    chown solr:root -R /var/solr \
+    chown solr:solr -R /var/solr \
     && \
-    chown solr:root -R /etc/supervisor
+    chown solr:solr -R /etc/supervisor
 
 CMD ["/usr/local/bin/start"]

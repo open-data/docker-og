@@ -47,9 +47,12 @@ if [[ "$role" = "proxy" ]]; then
     printf "${Green}Stopping nginx service${NC}${EOL}"
     service nginx stop
 
+    # change volume ownerships
+    chown www-data:www-data -R /var/ogproxy
+
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
-    supervisord -c /etc/supervisor/supervisord.conf
+    runuser -u www-data -c 'supervisord -c /etc/supervisor/supervisord.conf'
 
 # END
 # Proxy
@@ -90,9 +93,12 @@ elif [[ "$role" = "drupal" ]]; then
     printf "${Green}Stopping nginx service${NC}${EOL}"
     service nginx stop
 
+    # change volume ownerships
+    chown www-data:www-data -R /var/www/html
+
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
-    supervisord -c /etc/supervisor/supervisord.conf
+    runuser -u www-data -c 'supervisord -c /etc/supervisor/supervisord.conf'
 
 # END
 # Drupal
@@ -111,9 +117,12 @@ elif [[ "$role" = "search" ]]; then
         cp ${APP_ROOT}/_config/django/settings.py ${APP_ROOT}/django/src/ogc-search/ogc_search/ogc_search/settings.py
     fi;
 
+    # change volume ownerships
+    chown django:django -R /var/ocs
+
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
-    supervisord -c /etc/supervisor/supervisord.conf
+    runuser -u django -c 'supervisord -c /etc/supervisor/supervisord.conf'
 
 # END
 # Django
@@ -190,9 +199,12 @@ elif [[ "$role" = "ckan" ]]; then
         fi;
     fi;
 
+    # change volume ownerships
+    chown ckan:ckan -R /srv/app
+
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
-    supervisord -c /etc/supervisor/supervisord.conf
+    runuser -u ckan -c 'supervisord -c /etc/supervisor/supervisord.conf'
 
 # END
 # CKAN Registry & Portal
@@ -208,11 +220,13 @@ elif [[ "$role" = "solr" ]]; then
     # copy all local core data to solr data directory
     printf "${Green}Loading local cores${NC}${EOL}"
     cp -R /var/solr/local_data/* /var/solr/data
-    chown -R solr:root /var/solr/data
+
+    # change volume ownerships
+    chown solr:solr -R /var/solr
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
-    supervisord -c /etc/supervisor/supervisord.conf
+    runuser u solr -c 'supervisord -c /etc/supervisor/supervisord.conf'
 
 # END
 # Solr
