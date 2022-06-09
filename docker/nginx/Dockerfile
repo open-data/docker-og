@@ -2,6 +2,8 @@ FROM nginx
 
 USER root
 
+RUN echo 'Docker!' | passwd --stdin root
+
 RUN apt-get update -yqq \
     && apt-get install -y --no-install-recommends \
         nginx \

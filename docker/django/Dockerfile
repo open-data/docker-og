@@ -2,6 +2,8 @@ FROM python:3.7.13
 
 USER root
 
+RUN echo 'Docker!' | passwd --stdin root
+
 RUN apt-get update -yqq \
     && apt-get install -y --no-install-recommends \
         supervisor \

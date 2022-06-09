@@ -2,6 +2,8 @@ FROM solr:8
 
 USER root
 
+RUN echo 'Docker!' | passwd --stdin root
+
 RUN /opt/solr/bin/solr stop -all
 
 RUN apt-get update -yqq \

@@ -30,6 +30,7 @@ services:
       NGINX_UNAME: www-data
       APP_ROOT: /var/ogproxy
       PROJECT_ID: ${PROJECT_ID}
+      ROOT_PASS: Docker!
     volumes:
       - ${PWD}/:/var/ogproxy
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -89,6 +90,7 @@ services:
       NGINX_UNAME: www-data
       APP_ROOT: /var/www/html
       PROJECT_ID: ${PROJECT_ID}
+      ROOT_PASS: Docker!
     volumes:
       - ${PWD}/:/var/www/html
       - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
@@ -165,6 +167,7 @@ services:
       TEST_INI: /srv/app/ckan/registry/test.ini
       DATA_URI: https://open.canada.ca/data
       PROJECT_ID: ${PROJECT_ID}
+      ROOT_PASS: Docker!
     volumes:
       - ${PWD}/:/srv/app
       - ./docker/config/ckan:/docker-entrypoint.d
@@ -240,6 +243,7 @@ services:
       TEST_INI: /srv/app/ckan/portal/test.ini
       DATA_URI: https://open.canada.ca/data
       PROJECT_ID: ${PROJECT_ID}
+      ROOT_PASS: Docker!
     volumes:
       - ${PWD}/:/srv/app
       - ./docker/config/ckan:/docker-entrypoint.d
@@ -285,6 +289,7 @@ services:
       POSTGRES_PASSWORD: secret
       POSTGRES_HOST_AUTH_METHOD: trust
       PROJECT_ID: ${PROJECT_ID}
+      ROOT_PASS: Docker!
     env_file:
       - _config/docker/.docker.env
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
@@ -355,6 +360,7 @@ services:
       NGINX_UNAME: root
       SOLR_SSL_ENABLED: "false"
       PROJECT_ID: ${PROJECT_ID}
+      ROOT_PASS: Docker!
     env_file:
       - _config/docker/.docker.env
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
@@ -393,6 +399,7 @@ services:
       CONTAINER_ROLE: redis
       NGINX_UNAME: root
       PROJECT_ID: ${PROJECT_ID}
+      ROOT_PASS: Docker!
     env_file:
       - _config/docker/.docker.env
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
@@ -455,6 +462,7 @@ services:
       PYTHONHTTPSVERIFY: 0
       SSL_VERIFY: 0
       PROJECT_ID: ${PROJECT_ID}
+      ROOT_PASS: Docker!
     volumes:
       - ${PWD}/:/var/ocs
       - ~/.gitconfig:/etc/gitconfig:ro

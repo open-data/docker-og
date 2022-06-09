@@ -2,6 +2,8 @@ FROM postgres:13.5
 
 USER root
 
+RUN echo 'Docker!' | passwd --stdin root
+
 ARG USER_ID
 ARG GROUP_ID
 
