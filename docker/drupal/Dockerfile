@@ -80,6 +80,7 @@ RUN chown -R www-data:www-data /var/www/html \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 
+RUN echo 'www-data:Docker!' | chpasswd
 
 ARG USER_ID
 ARG GROUP_ID

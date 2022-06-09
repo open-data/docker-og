@@ -46,6 +46,8 @@ RUN mkdir -p /var/ocs
 RUN chown -R django:django /var/ocs \
     && chmod +x /usr/local/bin/start
 
+RUN echo 'django:Docker!' | chpasswd
+
 ARG USER_ID
 ARG GROUP_ID
 

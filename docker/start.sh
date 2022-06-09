@@ -48,6 +48,7 @@ if [[ "$role" = "proxy" ]]; then
     service nginx stop
 
     # change volume ownerships
+    printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/ogproxy"
 
     # start supervisord service
@@ -94,6 +95,7 @@ elif [[ "$role" = "drupal" ]]; then
     service nginx stop
 
     # change volume ownerships
+    printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/www/html"
 
     # start supervisord service
@@ -118,6 +120,7 @@ elif [[ "$role" = "search" ]]; then
     fi;
 
     # change volume ownerships
+    printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown django:django -R /var/ocs"
 
     # start supervisord service
@@ -200,6 +203,7 @@ elif [[ "$role" = "ckan" ]]; then
     fi;
 
     # change volume ownerships
+    printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown ckan:ckan -R /srv/app"
 
     # start supervisord service
@@ -222,6 +226,7 @@ elif [[ "$role" = "solr" ]]; then
     cp -R /var/solr/local_data/* /var/solr/data
 
     # change volume ownerships
+    printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /var/solr"
 
     # start supervisord service

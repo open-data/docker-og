@@ -4,6 +4,8 @@ USER root
 
 RUN echo 'root:Docker!' | chpasswd
 
+RUN echo 'postgres:Docker!' | chpasswd
+
 ARG USER_ID
 ARG GROUP_ID
 
