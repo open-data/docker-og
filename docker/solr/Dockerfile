@@ -6,6 +6,7 @@ RUN /opt/solr/bin/solr stop -all
 
 RUN apt-get update -yqq \
     && apt-get install -y --no-install-recommends \
+        sudo \
         supervisor
 
 # Supervisor

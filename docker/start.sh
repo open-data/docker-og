@@ -48,7 +48,7 @@ if [[ "$role" = "proxy" ]]; then
     service nginx stop
 
     # change volume ownerships
-    chown www-data:www-data -R /var/ogproxy
+    sudo chown www-data:www-data -R /var/ogproxy
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
@@ -94,7 +94,7 @@ elif [[ "$role" = "drupal" ]]; then
     service nginx stop
 
     # change volume ownerships
-    chown www-data:www-data -R /var/www/html
+    sudo chown www-data:www-data -R /var/www/html
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
@@ -118,7 +118,7 @@ elif [[ "$role" = "search" ]]; then
     fi;
 
     # change volume ownerships
-    chown django:django -R /var/ocs
+    sudo chown django:django -R /var/ocs
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
@@ -200,7 +200,7 @@ elif [[ "$role" = "ckan" ]]; then
     fi;
 
     # change volume ownerships
-    chown ckan:ckan -R /srv/app
+    sudo chown ckan:ckan -R /srv/app
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
@@ -222,7 +222,7 @@ elif [[ "$role" = "solr" ]]; then
     cp -R /var/solr/local_data/* /var/solr/data
 
     # change volume ownerships
-    chown solr:solr -R /var/solr
+    sudo chown solr:solr -R /var/solr
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
