@@ -277,7 +277,7 @@ services:
       og-local-network:
         ipv4_address: 172.0.0.9
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - ./postgres:/var/lib/postgresql/data
       - ./docker/config/postgres:/docker-entrypoint-initdb.d
     environment:
       POSTGRES_DB: postgres
@@ -465,10 +465,6 @@ services:
 # END
 # Django
 # END
-
-volumes:
-  postgres:
-    driver: "local"
 
 networks:
   og-local-network:
