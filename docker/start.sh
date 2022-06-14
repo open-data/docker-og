@@ -99,6 +99,18 @@ if [[ "$role" = "proxy" ]]; then
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/cache/nginx"
     fi
 
+    #change log ownerships
+    printf "${Green}Setting log ownership${NC}${EOL}"
+    if [[ -L "/dev/stderr" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /dev/stderr"
+    fi
+    if [[ -L "/dev/stdin" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /dev/stdin"
+    fi
+    if [[ -L "/dev/stdout" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /dev/stdout"
+    fi
+
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "supervisord -c /etc/supervisor/supervisord.conf"
@@ -203,6 +215,18 @@ elif [[ "$role" = "drupal" ]]; then
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /usr/local/var"
     fi
 
+    #change log ownerships
+    printf "${Green}Setting log ownership${NC}${EOL}"
+    if [[ -L "/dev/stderr" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /dev/stderr"
+    fi
+    if [[ -L "/dev/stdin" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /dev/stdin"
+    fi
+    if [[ -L "/dev/stdout" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /dev/stdout"
+    fi
+
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "supervisord -c /etc/supervisor/supervisord.conf"
@@ -230,6 +254,18 @@ elif [[ "$role" = "search" ]]; then
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown django:django -R /var/ocs"
+
+    #change log ownerships
+    printf "${Green}Setting log ownership${NC}${EOL}"
+    if [[ -L "/dev/stderr" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown django:django -R /dev/stderr"
+    fi
+    if [[ -L "/dev/stdin" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown django:django -R /dev/stdin"
+    fi
+    if [[ -L "/dev/stdout" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown django:django -R /dev/stdout"
+    fi
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
@@ -317,6 +353,18 @@ elif [[ "$role" = "ckan" ]]; then
     printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown ckan:ckan -R /srv/app"
 
+    #change log ownerships
+    printf "${Green}Setting log ownership${NC}${EOL}"
+    if [[ -L "/dev/stderr" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown ckan:ckan -R /dev/stderr"
+    fi
+    if [[ -L "/dev/stdin" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown ckan:ckan -R /dev/stdin"
+    fi
+    if [[ -L "/dev/stdout" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown ckan:ckan -R /dev/stdout"
+    fi
+
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "supervisord -c /etc/supervisor/supervisord.conf"
@@ -350,6 +398,18 @@ elif [[ "$role" = "solr" ]]; then
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /var/solr"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /opt/solr"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /opt/docker-solr"
+
+    #change log ownerships
+    printf "${Green}Setting log ownership${NC}${EOL}"
+    if [[ -L "/dev/stderr" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /dev/stderr"
+    fi
+    if [[ -L "/dev/stdin" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /dev/stdin"
+    fi
+    if [[ -L "/dev/stdout" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /dev/stdout"
+    fi
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
