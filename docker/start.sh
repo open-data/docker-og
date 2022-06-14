@@ -240,6 +240,10 @@ elif [[ "$role" = "solr" ]]; then
     printf "${Green}Loading local cores${NC}${EOL}"
     cp -R /var/solr/local_data/* /var/solr/data
 
+    # link the cores
+    printf "${Green}Linking cores${NC}${EOL}"
+    ln -s /var/solr/data /opt/solr/server/cores
+
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /var/solr"
