@@ -30,6 +30,9 @@ if [[ "$role" = "proxy" ]]; then
     # link proxy supervisord config
     ln -sf /etc/supervisor/conf.d-available/proxy.conf /etc/supervisor/conf.d/proxy.conf
 
+    # change volume ownerships
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/ogproxy"
+
     mkdir -p /etc/nginx/sites-available
     mkdir -p /etc/nginx/sites-enabled
 
@@ -65,6 +68,9 @@ elif [[ "$role" = "drupal" ]]; then
 
     # link drupal supervisord config
     ln -sf /etc/supervisor/conf.d-available/drupal.conf /etc/supervisor/conf.d/drupal.conf
+
+    # change volume ownerships
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/www/html"
 
     mkdir -p /etc/nginx/sites-available
     mkdir -p /etc/nginx/sites-enabled
@@ -113,6 +119,9 @@ elif [[ "$role" = "search" ]]; then
     # link django supervisord config
     ln -sf /etc/supervisor/conf.d-available/django.conf /etc/supervisor/conf.d/django.conf
 
+    # change volume ownerships
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown django:django -R /var/ocs"
+
     # copy the django settings file
     if [[ -d "${APP_ROOT}/django/src/ogc-search/ogc_search/ogc_search" ]]; then
         printf "${Green}Copying the Django settings file to the virtual environment${NC}${EOL}"
@@ -139,6 +148,9 @@ elif [[ "$role" = "ckan" ]]; then
 
     # link ckan supervisord config
     ln -sf /etc/supervisor/conf.d-available/ckan-${ckanRole}.conf /etc/supervisor/conf.d/ckan-${ckanRole}.conf
+
+    # change volume ownerships
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown ckan:ckan -R /srv/app"
 
     # create directory for python venv
     mkdir -p ${APP_ROOT}/ckan/${ckanRole}
@@ -220,6 +232,9 @@ elif [[ "$role" = "solr" ]]; then
 
     # link solr supervisord config
     ln -sf /etc/supervisor/conf.d-available/solr.conf /etc/supervisor/conf.d/solr.conf
+
+    # change volume ownerships
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /var/solr"
 
     # copy all local core data to solr data directory
     printf "${Green}Loading local cores${NC}${EOL}"
