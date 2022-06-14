@@ -146,6 +146,12 @@ elif [[ "$role" = "drupal" ]]; then
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /var/cache/nginx"
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/cache/nginx"
     fi
+    if [[ -d "/usr/local/var" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /usr/local/var"
+    else
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /usr/local/var"
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /usr/local/var"
+    fi
 
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /etc/nginx/sites-available"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /etc/nginx/sites-enabled"
@@ -192,6 +198,9 @@ elif [[ "$role" = "drupal" ]]; then
     fi
     if [[ -d "/var/cache/nginx" ]]; then
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/cache/nginx"
+    fi
+    if [[ -d "/usr/local/var" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /usr/local/var"
     fi
 
     # start supervisord service
