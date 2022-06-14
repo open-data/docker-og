@@ -235,6 +235,7 @@ elif [[ "$role" = "solr" ]]; then
 
     # change volume ownerships
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /var/solr"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /opt/solr"
 
     # copy all local core data to solr data directory
     printf "${Green}Loading local cores${NC}${EOL}"
@@ -247,6 +248,7 @@ elif [[ "$role" = "solr" ]]; then
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /var/solr"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /opt/solr"
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
