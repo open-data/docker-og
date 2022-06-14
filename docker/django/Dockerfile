@@ -52,15 +52,15 @@ RUN echo 'django:Docker!' | chpasswd \
 ARG USER_ID
 ARG GROUP_ID
 
-RUN if id -un ${USER_ID} &>/dev/null; then \
+RUN if $(id -un ${USER_ID} >/dev/null 2>&1); then \
         userdel -f $(id -un ${USER_ID}); \
-        if id -un django &>/dev/null; then \
+        if $(id -un django >/dev/null 2>&1); then \
             usermod -u ${USER_ID} django; \
         else \
             useradd -u ${USER_ID} django; \
         fi \
     else \
-        if id -un django &>/dev/null; then \
+        if $(id -un django >/dev/null 2>&1); then \
             usermod -u ${USER_ID} django; \
         else \
             useradd -u ${USER_ID} django; \

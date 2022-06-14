@@ -31,15 +31,15 @@ RUN echo 'solr:Docker!' | chpasswd \
 ARG USER_ID
 ARG GROUP_ID
 
-RUN if id -un ${USER_ID} &>/dev/null; then \
+RUN if $(id -un ${USER_ID} >/dev/null 2>&1); then \
         userdel -f $(id -un ${USER_ID}); \
-        if id -un solr &>/dev/null; then \
+        if $(id -un solr >/dev/null 2>&1); then \
             usermod -u ${USER_ID} solr; \
         else \
             useradd -u ${USER_ID} solr; \
         fi \
     else \
-        if id -un solr &>/dev/null; then \
+        if $(id -un solr >/dev/null 2>&1); then \
             usermod -u ${USER_ID} solr; \
         else \
             useradd -u ${USER_ID} solr; \
