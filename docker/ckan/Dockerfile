@@ -58,23 +58,23 @@ RUN echo 'ckan:Docker!' | chpasswd \
 ARG USER_ID
 ARG GROUP_ID
 
-RUN if [ $(id -un ${USER_ID}) ]; then \
+RUN if id -un ${USER_ID} &>/dev/null; then \
         userdel -f $(id -un ${USER_ID}); \
-        if [ $(id -un ckan) ]; then \
+        if id -un ckan &>/dev/null; then \
             usermod -u ${USER_ID} ckan; \
         else \
             useradd -u ${USER_ID} ckan; \
         fi \
     else \
-        if [ $(id -un ckan) ]; then \
+        if id -un ckan &>/dev/null; then \
             usermod -u ${USER_ID} ckan; \
         else \
             useradd -u ${USER_ID} ckan; \
         fi \
     fi \
     && \
-    if [ $(id -gn ${GROUP_ID}) ]; then \
-        groupdel -f $(id -gn ${GROUP_ID}); \
+    if [ $(getent group ${GROUP_ID}) ]; then \
+        groupdel -f $(getent group ${GROUP_ID} | cut -d: -f1); \
         if [ $(getent group ckan) ]; then \
             groupmod -g ${GROUP_ID} -n ckan ckan; \
         else \

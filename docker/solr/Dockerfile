@@ -31,23 +31,23 @@ RUN echo 'solr:Docker!' | chpasswd \
 ARG USER_ID
 ARG GROUP_ID
 
-RUN if [ $(id -un ${USER_ID}) ]; then \
+RUN if id -un ${USER_ID} &>/dev/null; then \
         userdel -f $(id -un ${USER_ID}); \
-        if [ $(id -un solr) ]; then \
+        if id -un solr &>/dev/null; then \
             usermod -u ${USER_ID} solr; \
         else \
             useradd -u ${USER_ID} solr; \
         fi \
     else \
-        if [ $(id -un solr) ]; then \
+        if id -un solr &>/dev/null; then \
             usermod -u ${USER_ID} solr; \
         else \
             useradd -u ${USER_ID} solr; \
         fi \
     fi \
     && \
-    if [ $(id -gn ${GROUP_ID}) ]; then \
-        groupdel -f $(id -gn ${GROUP_ID}); \
+    if [ $(getent group ${GROUP_ID}) ]; then \
+        groupdel -f $(getent group ${GROUP_ID} | cut -d: -f1); \
         if [ $(getent group solr) ]; then \
             groupmod -g ${GROUP_ID} -n solr solr; \
         else \

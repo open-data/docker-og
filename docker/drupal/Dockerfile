@@ -86,23 +86,23 @@ RUN echo 'www-data:Docker!' | chpasswd \
 ARG USER_ID
 ARG GROUP_ID
 
-RUN if [ $(id -un ${USER_ID}) ]; then \
+RUN if id -un ${USER_ID} &>/dev/null; then \
         userdel -f $(id -un ${USER_ID}); \
-        if [ $(id -un www-data) ]; then \
+        if id -un www-data &>/dev/null; then \
             usermod -u ${USER_ID} www-data; \
         else \
             useradd -u ${USER_ID} www-data; \
         fi \
     else \
-        if [ $(id -un www-data) ]; then \
+        if id -un www-data &>/dev/null; then \
             usermod -u ${USER_ID} www-data; \
         else \
             useradd -u ${USER_ID} www-data; \
         fi \
     fi \
     && \
-    if [ $(id -gn ${GROUP_ID}) ]; then \
-        groupdel -f $(id -gn ${GROUP_ID}); \
+    if [ $(getent group ${GROUP_ID}) ]; then \
+        groupdel -f $(getent group ${GROUP_ID} | cut -d: -f1); \
         if [ $(getent group www-data) ]; then \
             groupmod -g ${GROUP_ID} -n www-data www-data; \
         else \
