@@ -205,7 +205,7 @@ elif [[ "$role" = "drupal" ]]; then
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
-    supervisord -c /etc/supervisor/supervisord.conf
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "supervisord -c /etc/supervisor/supervisord.conf"
 
 # END
 # Drupal
