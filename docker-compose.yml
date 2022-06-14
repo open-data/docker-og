@@ -57,6 +57,7 @@ services:
         GROUP_ID: ${GROUP_ID:-0}
       labels:
         projectID: ${PROJECT_ID}
+    shm_size: 1GB
     healthcheck:
       test: echo Docker! | sudo -S /bin/bash -c "service nginx status || exit 1"
       interval: 10s
@@ -117,6 +118,7 @@ services:
         GROUP_ID: ${GROUP_ID:-0}
       labels:
         projectID: ${PROJECT_ID}
+    shm_size: 1GB
     healthcheck:
       test: /srv/app/ckan/registry/bin/uwsgi --connect-and-read 127.0.0.1:1717 || exit 1
       interval: 10s
@@ -192,6 +194,7 @@ services:
         GROUP_ID: ${GROUP_ID:-0}
       labels:
         projectID: ${PROJECT_ID}
+    shm_size: 1GB
     healthcheck:
       test: /srv/app/ckan/portal/bin/uwsgi --connect-and-read 127.0.0.1:1717 || exit 1
       interval: 10s

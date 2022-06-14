@@ -55,10 +55,15 @@ esac
 #
 if [[ $exitScript != "true" ]]; then
 
+  cd ${APP_ROOT}
   . ${PWD}/docker/install/django/install-confirmation.sh
+  cd ${APP_ROOT}
   . ${PWD}/docker/install/django/install-source.sh
+  cd ${APP_ROOT}
   . ${PWD}/docker/install/django/install-static.sh
+  cd ${APP_ROOT}
   . ${PWD}/docker/install/django/install-perms.sh
+  cd ${APP_ROOT}
 
 else
 

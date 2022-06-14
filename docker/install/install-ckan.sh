@@ -136,14 +136,23 @@ esac
 #
 if [[ $exitScript != "true" ]]; then
 
+  cd ${APP_ROOT}
   . ${PWD}/docker/install/ckan/install-confirmation.sh
+  cd ${APP_ROOT}
   . ${PWD}/docker/install/ckan/install-databases.sh
+  cd ${APP_ROOT}
   . ${PWD}/docker/install/ckan/install-source.sh
+  cd ${APP_ROOT}
   . ${PWD}/docker/install/ckan/install-static.sh
+  cd ${APP_ROOT}
   . ${PWD}/docker/install/ckan/install-perms.sh
+  cd ${APP_ROOT}
   . ${PWD}/docker/install/ckan/install-user.sh
+  cd ${APP_ROOT}
   . ${PWD}/docker/install/ckan/install-orgs.sh
+  cd ${APP_ROOT}
   . ${PWD}/docker/install/ckan/install-datasets.sh
+  cd ${APP_ROOT}
 
 else
 
