@@ -244,9 +244,6 @@ elif [[ "$role" = "solr" ]]; then
     printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /var/solr"
 
-    # set environment variables for root
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "echo -e \"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/docker-solr/scripts:/usr/local/openjdk-11/bin\nJAVA_HOME=/usr/local/openjdk-11\" > /etc/environment"
-
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "supervisord -c /etc/supervisor/supervisord.conf"
