@@ -31,7 +31,7 @@ if [[ "$role" = "proxy" ]]; then
     ln -sf /etc/supervisor/conf.d-available/proxy.conf /etc/supervisor/conf.d/proxy.conf
 
     # change volume ownerships
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/www/html"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/ogproxy"
     if [[ -d "/etc/nginx/sites-available" ]]; then
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
     else
@@ -76,7 +76,7 @@ if [[ "$role" = "proxy" ]]; then
 
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/www/html"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/ogproxy"
     if [[ -d "/etc/nginx/sites-available" ]]; then
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
     fi
