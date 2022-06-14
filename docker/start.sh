@@ -32,8 +32,12 @@ if [[ "$role" = "proxy" ]]; then
 
     # change volume ownerships
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/ogproxy"
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-enabled"
+    if [[ -d "/etc/nginx/sites-available" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
+    fi
+    if [[ -d "/etc/nginx/sites-enabled" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-enabled"
+    fi
 
     mkdir -p /etc/nginx/sites-available
     mkdir -p /etc/nginx/sites-enabled
@@ -55,8 +59,12 @@ if [[ "$role" = "proxy" ]]; then
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/ogproxy"
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-enabled"
+    if [[ -d "/etc/nginx/sites-available" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
+    fi
+    if [[ -d "/etc/nginx/sites-enabled" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-enabled"
+    fi
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
@@ -75,8 +83,12 @@ elif [[ "$role" = "drupal" ]]; then
 
     # change volume ownerships
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/www/html"
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-enabled"
+    if [[ -d "/etc/nginx/sites-available" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
+    fi
+    if [[ -d "/etc/nginx/sites-enabled" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-enabled"
+    fi
 
     mkdir -p /etc/nginx/sites-available
     mkdir -p /etc/nginx/sites-enabled
@@ -109,8 +121,12 @@ elif [[ "$role" = "drupal" ]]; then
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/www/html"
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-enabled"
+    if [[ -d "/etc/nginx/sites-available" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
+    fi
+    if [[ -d "/etc/nginx/sites-enabled" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-enabled"
+    fi
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
