@@ -31,12 +31,30 @@ if [[ "$role" = "proxy" ]]; then
     ln -sf /etc/supervisor/conf.d-available/proxy.conf /etc/supervisor/conf.d/proxy.conf
 
     # change volume ownerships
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/ogproxy"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/www/html"
     if [[ -d "/etc/nginx/sites-available" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
+    else
+        mkdir -p /etc/nginx/sites-available
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
     fi
     if [[ -d "/etc/nginx/sites-enabled" ]]; then
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-enabled"
+    else
+        mkdir -p /etc/nginx/sites-enabled
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-enabled"
+    fi
+    if [[ -d "/var/log/nginx" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/log/nginx"
+    else
+        mkdir -p /var/log/nginx
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/log/nginx"
+    fi
+    if [[ -d "/var/lib/nginx" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/lib/nginx"
+    else
+        mkdir -p /var/lib/nginx
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/lib/nginx"
     fi
 
     mkdir -p /etc/nginx/sites-available
@@ -58,12 +76,18 @@ if [[ "$role" = "proxy" ]]; then
 
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/ogproxy"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/www/html"
     if [[ -d "/etc/nginx/sites-available" ]]; then
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
     fi
     if [[ -d "/etc/nginx/sites-enabled" ]]; then
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-enabled"
+    fi
+    if [[ -d "/var/log/nginx" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/log/nginx"
+    fi
+    if [[ -d "/var/lib/nginx" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/lib/nginx"
     fi
 
     # start supervisord service
@@ -85,9 +109,27 @@ elif [[ "$role" = "drupal" ]]; then
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/www/html"
     if [[ -d "/etc/nginx/sites-available" ]]; then
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
+    else
+        mkdir -p /etc/nginx/sites-available
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
     fi
     if [[ -d "/etc/nginx/sites-enabled" ]]; then
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-enabled"
+    else
+        mkdir -p /etc/nginx/sites-enabled
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-enabled"
+    fi
+    if [[ -d "/var/log/nginx" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/log/nginx"
+    else
+        mkdir -p /var/log/nginx
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/log/nginx"
+    fi
+    if [[ -d "/var/lib/nginx" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/lib/nginx"
+    else
+        mkdir -p /var/lib/nginx
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/lib/nginx"
     fi
 
     mkdir -p /etc/nginx/sites-available
@@ -126,6 +168,12 @@ elif [[ "$role" = "drupal" ]]; then
     fi
     if [[ -d "/etc/nginx/sites-enabled" ]]; then
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-enabled"
+    fi
+    if [[ -d "/var/log/nginx" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/log/nginx"
+    fi
+    if [[ -d "/var/lib/nginx" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/lib/nginx"
     fi
 
     # start supervisord service
