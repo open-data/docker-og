@@ -18,7 +18,7 @@ HAIR='\033[0m'
 printf "${Cyan}The Environment is ${BOLD}$env${HAIR}${NC}${EOL}"
 
 printf "${Yellow}Removing XDebug${NC}${EOL}"
-rm -rf /usr/local/etc/php/conf.d/{docker-php-ext-xdebug.ini,xdebug.ini}
+echo ${ROOT_PASS} | sudo -S /bin/bash -c "rm -rf /usr/local/etc/php/conf.d/{docker-php-ext-xdebug.ini,xdebug.ini}"
 
 printf "${Cyan}The role is ${BOLD}$role${HAIR}${NC}${EOL}"
 
