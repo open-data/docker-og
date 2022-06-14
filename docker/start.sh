@@ -246,10 +246,6 @@ elif [[ "$role" = "solr" ]]; then
     printf "${Green}Linking cores${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c  "ln -s /var/solr/data /opt/solr/server/cores"
 
-    # create solr logs directory
-    printf "${Green}Creating solr logs directory${NC}${EOL}"
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c  "mkdir -p /opt/solr/server/logs && chmod 777 /opt/solr/server/logs"
-
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /var/solr"
