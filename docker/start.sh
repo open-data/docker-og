@@ -248,7 +248,7 @@ elif [[ "$role" = "solr" ]]; then
 
     # create solr logs directory
     printf "${Green}Creating solr logs directory${NC}${EOL}"
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c  "mkdir -p /opt/solr/server/logs"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c  "mkdir -p /opt/solr/server/logs && chmod 777 /opt/solr/server/logs"
 
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
