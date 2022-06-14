@@ -354,8 +354,6 @@ services:
     environment:
       CONTAINER_ROLE: solr
       SOLR_SSL_ENABLED: "false"
-      JAVA_HOME: /usr/local/openjdk-11
-      PATH: '$PATH:/opt/docker-solr/scripts:/usr/local/openjdk-11/bin'
       PROJECT_ID: ${PROJECT_ID}
       ROOT_PASS: Docker!
     env_file:
