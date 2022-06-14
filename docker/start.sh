@@ -56,6 +56,12 @@ if [[ "$role" = "proxy" ]]; then
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /var/lib/nginx"
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/lib/nginx"
     fi
+    if [[ -d "/var/cache/nginx" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/cache/nginx"
+    else
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /var/cache/nginx"
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/cache/nginx"
+    fi
 
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /etc/nginx/sites-available"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /etc/nginx/sites-enabled"
@@ -88,6 +94,9 @@ if [[ "$role" = "proxy" ]]; then
     fi
     if [[ -d "/var/lib/nginx" ]]; then
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/lib/nginx"
+    fi
+    if [[ -d "/var/cache/nginx" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/cache/nginx"
     fi
 
     # start supervisord service
@@ -130,6 +139,12 @@ elif [[ "$role" = "drupal" ]]; then
     else
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /var/lib/nginx"
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/lib/nginx"
+    fi
+    if [[ -d "/var/cache/nginx" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/cache/nginx"
+    else
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /var/cache/nginx"
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/cache/nginx"
     fi
 
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /etc/nginx/sites-available"
@@ -174,6 +189,9 @@ elif [[ "$role" = "drupal" ]]; then
     fi
     if [[ -d "/var/lib/nginx" ]]; then
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/lib/nginx"
+    fi
+    if [[ -d "/var/cache/nginx" ]]; then
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/cache/nginx"
     fi
 
     # start supervisord service
