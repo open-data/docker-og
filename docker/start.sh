@@ -35,33 +35,33 @@ if [[ "$role" = "proxy" ]]; then
     if [[ -d "/etc/nginx/sites-available" ]]; then
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
     else
-        mkdir -p /etc/nginx/sites-available
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /etc/nginx/sites-available"
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
     fi
     if [[ -d "/etc/nginx/sites-enabled" ]]; then
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-enabled"
     else
-        mkdir -p /etc/nginx/sites-enabled
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /etc/nginx/sites-enabled"
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-enabled"
     fi
     if [[ -d "/var/log/nginx" ]]; then
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/log/nginx"
     else
-        mkdir -p /var/log/nginx
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /var/log/nginx"
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/log/nginx"
     fi
     if [[ -d "/var/lib/nginx" ]]; then
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/lib/nginx"
     else
-        mkdir -p /var/lib/nginx
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /var/lib/nginx"
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/lib/nginx"
     fi
 
-    mkdir -p /etc/nginx/sites-available
-    mkdir -p /etc/nginx/sites-enabled
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /etc/nginx/sites-available"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /etc/nginx/sites-enabled"
 
     # remove default server block
-    rm -vf /etc/nginx/sites-enabled/default
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "rm -vf /etc/nginx/sites-enabled/default"
 
     # link proxy nginx server block
     ln -sf /etc/nginx/sites-available/open.local /etc/nginx/sites-enabled/open.local
@@ -110,33 +110,33 @@ elif [[ "$role" = "drupal" ]]; then
     if [[ -d "/etc/nginx/sites-available" ]]; then
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
     else
-        mkdir -p /etc/nginx/sites-available
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /etc/nginx/sites-available"
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
     fi
     if [[ -d "/etc/nginx/sites-enabled" ]]; then
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-enabled"
     else
-        mkdir -p /etc/nginx/sites-enabled
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /etc/nginx/sites-enabled"
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-enabled"
     fi
     if [[ -d "/var/log/nginx" ]]; then
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/log/nginx"
     else
-        mkdir -p /var/log/nginx
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /var/log/nginx"
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/log/nginx"
     fi
     if [[ -d "/var/lib/nginx" ]]; then
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/lib/nginx"
     else
-        mkdir -p /var/lib/nginx
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /var/lib/nginx"
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/lib/nginx"
     fi
 
-    mkdir -p /etc/nginx/sites-available
-    mkdir -p /etc/nginx/sites-enabled
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /etc/nginx/sites-available"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /etc/nginx/sites-enabled"
 
     # remove default server block
-    rm -vf /etc/nginx/sites-enabled/default
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "rm -vf /etc/nginx/sites-enabled/default"
 
     # link drupal nginx server block
     ln -sf /etc/nginx/sites-available/open.local /etc/nginx/sites-enabled/open.local
