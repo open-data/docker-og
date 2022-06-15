@@ -60,6 +60,7 @@ if [[ "$role" = "proxy" ]]; then
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/supervisor"
     supervisord -c /etc/supervisor/supervisord.conf
 
 # END
@@ -119,6 +120,7 @@ elif [[ "$role" = "drupal" ]]; then
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/supervisor"
     supervisord -c /etc/supervisor/supervisord.conf
 
 # END
@@ -148,6 +150,7 @@ elif [[ "$role" = "search" ]]; then
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown django:django -R /etc/supervisor"
     supervisord -c /etc/supervisor/supervisord.conf
 
 # END
@@ -235,6 +238,7 @@ elif [[ "$role" = "ckan" ]]; then
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown ckan:ckan -R /etc/supervisor"
     supervisord -c /etc/supervisor/supervisord.conf
 
 # END
@@ -262,6 +266,7 @@ elif [[ "$role" = "solr" ]]; then
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /etc/supervisor"
     supervisord -c /etc/supervisor/supervisord.conf
 
 # END
