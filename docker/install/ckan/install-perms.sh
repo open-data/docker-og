@@ -24,6 +24,9 @@ if [[ $installFilePermissions_CKAN == "true" ]]; then
     # initialize databases
     paster --plugin=ckan db init -c ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini
 
+    # initialize validation tables
+    paster --plugin=ckanext-validation validation init-db -c ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini
+
     # set database permissions
     paster --plugin=ckan datastore set-permissions -c ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini | psql -U homestead --set ON_ERROR_STOP=1
 
