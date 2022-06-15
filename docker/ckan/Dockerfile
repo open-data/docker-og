@@ -52,9 +52,6 @@ RUN chown -R ckan:ckan /srv/app \
     && chown -R ckan:ckan /etc/ckan \
     && chmod +x /usr/local/bin/start
 
-RUN echo 'ckan:Docker!' | chpasswd \
-    && usermod -a -G sudo ckan
-
 ARG USER_ID
 ARG GROUP_ID
 
@@ -91,6 +88,9 @@ RUN if $(id -un ${USER_ID} >/dev/null 2>&1); then \
     chown ckan:ckan -R /srv/app \
     && \
     chown ckan:ckan -R /etc/supervisor
+
+RUN echo 'ckan:Docker!' | chpasswd \
+    && usermod -a -G sudo ckan
 
 USER ckan
 

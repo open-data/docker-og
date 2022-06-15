@@ -32,9 +32,6 @@ RUN chmod +x /usr/local/bin/start \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 
-RUN echo 'www-data:Docker!' | chpasswd \
-    && usermod -a -G sudo www-data
-
 ARG USER_ID
 ARG GROUP_ID
 
@@ -75,6 +72,9 @@ RUN if $(id -un ${USER_ID} >/dev/null 2>&1); then \
     chown www-data:www-data -R /var/ogproxy \
     && \
     chown www-data:www-data -R /etc/supervisor
+
+RUN echo 'www-data:Docker!' | chpasswd \
+    && usermod -a -G sudo www-data
 
 USER www-data
 

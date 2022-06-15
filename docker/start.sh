@@ -170,8 +170,8 @@ elif [[ "$role" = "ckan" ]]; then
     mkdir -p ${APP_ROOT}/ckan/static_files
 
     # create directories for uwsgi outputs
-    mkdir -p /dev
-    chown -R ckan:ckan /dev
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /dev"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown -R ckan:ckan /dev"
 
     # create i18n paths
     if [[ -d "/srv/app/ckan/${ckanRole}/src/ckanext-canada" ]]; then

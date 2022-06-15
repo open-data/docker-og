@@ -46,9 +46,6 @@ RUN mkdir -p /var/ocs
 RUN chown -R django:django /var/ocs \
     && chmod +x /usr/local/bin/start
 
-RUN echo 'django:Docker!' | chpasswd \
-    && usermod -a -G sudo django
-
 ARG USER_ID
 ARG GROUP_ID
 
@@ -85,6 +82,9 @@ RUN if $(id -un ${USER_ID} >/dev/null 2>&1); then \
     chown django:django -R /var/ocs \
     && \
     chown django:django -R /etc/supervisor
+
+RUN echo 'django:Docker!' | chpasswd \
+    && usermod -a -G sudo django
 
 USER django
 

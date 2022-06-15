@@ -4,9 +4,6 @@ USER root
 
 RUN echo 'root:Docker!' | chpasswd
 
-RUN echo 'postgres:Docker!' | chpasswd \
-    && usermod -a -G sudo postgres
-
 ARG USER_ID
 ARG GROUP_ID
 
@@ -41,5 +38,8 @@ RUN if $(id -un ${USER_ID} >/dev/null 2>&1); then \
     fi \
     && \
     chown postgres:postgres -R /var/lib/postgresql
+
+RUN echo 'postgres:Docker!' | chpasswd \
+    && usermod -a -G sudo postgres
 
 USER postgres

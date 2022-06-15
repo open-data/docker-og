@@ -25,9 +25,6 @@ RUN mkdir -p /var/solr/data \
     && chown -R solr:solr /var/solr/data \
     && chmod +x /usr/local/bin/start
 
-RUN echo 'solr:Docker!' | chpasswd \
-    && usermod -a -G sudo solr
-
 ARG USER_ID
 ARG GROUP_ID
 
@@ -64,6 +61,9 @@ RUN if $(id -un ${USER_ID} >/dev/null 2>&1); then \
     chown solr:solr -R /var/solr \
     && \
     chown solr:solr -R /etc/supervisor
+
+RUN echo 'solr:Docker!' | chpasswd \
+    && usermod -a -G sudo solr
 
 USER solr
 
