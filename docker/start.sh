@@ -87,6 +87,11 @@ elif [[ "$role" = "drupal" ]]; then
     # link drupal nginx server block
     ln -sf /etc/nginx/sites-available/open.local /etc/nginx/sites-enabled/open.local
 
+    # create socket file
+    printf "${Green}Create php-fpm socket file${NC}${EOL}"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /usr/local/var/run && touch /usr/local/var/run/php-fpm.sock"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /usr/local/var/run/php-fpm.sock"
+
     # copy the drupal configs
     if [[ -d "${APP_ROOT}/drupal/html/sites" ]]; then
         printf "${Green}Copying the Drupal configuration file to the installation${NC}${EOL}"
