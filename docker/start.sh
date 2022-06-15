@@ -39,6 +39,9 @@ if [[ "$role" = "proxy" ]]; then
     # remove default server block
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "rm -vf /etc/nginx/sites-enabled/default"
 
+    # change nginx ownerships
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx"
+
     # link proxy nginx server block
     ln -sf /etc/nginx/sites-available/open.local /etc/nginx/sites-enabled/open.local
     ln -sf /etc/nginx/sites-available/portal.open.local /etc/nginx/sites-enabled/portal.open.local
@@ -77,6 +80,9 @@ elif [[ "$role" = "drupal" ]]; then
 
     # remove default server block
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "rm -vf /etc/nginx/sites-enabled/default"
+
+    # change nginx ownerships
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx"
 
     # link drupal nginx server block
     ln -sf /etc/nginx/sites-available/open.local /etc/nginx/sites-enabled/open.local
