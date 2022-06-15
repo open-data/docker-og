@@ -340,6 +340,42 @@ function run_pre_build {
         printf "${Yellow}${INDENT}Create ${PWD}/docker/config/nginx/conf/.env.conf file with Project ID of $projectID (maintain local settings set to true): SKIPPING${NC}${EOL}"
     fi
 
+    # create hosts file
+    if [[ $noInteraction == "false" ]]; then
+        printf "${Cyan}${INDENT}Generating new project host file ${ITALIC}${BOLD}/etc/hosts.d/$projectID.conf${HAIR}${Cyan}. Maybe prompt for admin password...${NC}${EOL}"
+        if [[ -d "/etc/hosts.d" ]]; then
+            if [[ -f "/etc/hosts.d/default.conf" ]]; then
+                cat /etc/hosts.d/*.conf | sudo tee /etc/hosts >/dev/null
+            else
+                sudo cp /etc/hosts /etc/hosts.d/default.conf
+                cat /etc/hosts.d/*.conf | sudo tee /etc/hosts >/dev/null
+            fi
+        else
+            sudo mkdir /etc/hosts.d
+            sudo cp /etc/hosts /etc/hosts.d/default.conf
+            cat /etc/hosts.d/*.conf | sudo tee /etc/hosts >/dev/null
+        fi
+        if [[ -d "/etc/hosts.d" ]]; then
+            if [[ -f "/etc/hosts.d/$projectID.conf" ]]; then
+                sudo rm -rf /etc/hosts.d/$projectID.conf
+            fi
+            sudo touch /etc/hosts.d/$projectID.conf
+            if [[ $? -eq 0 ]]; then
+                printf "${Green}${INDENT}Generate project host file /etc/hosts.d/$projectID.conf: OK${NC}${EOL}"
+            else
+                printf "${Red}${INDENT}Generate project host file /etc/hosts.d/$projectID.conf: FAIL${NC}${EOL}"
+            fi
+            echo "" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
+            echo "127.0.0.1	open-$projectID.local" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
+            echo "127.0.0.1	registry.open-$projectID.local" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
+            echo "127.0.0.1	portal.open-$projectID.local" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
+            echo "127.0.0.1	solr.open-$projectID.local" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
+            echo "127.0.0.1	search.open-$projectID.local" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
+            echo "" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
+            cat /etc/hosts.d/*.conf | sudo tee /etc/hosts >/dev/null
+        fi
+    fi
+
     chmod +x ${PWD}/install.sh
     chmod +x ${PWD}/docker/install/*.sh
     chmod +x ${PWD}/docker/install/ckan/*.sh

@@ -1,5 +1,9 @@
 FROM php:7.4-fpm
 
+USER root
+
+RUN echo 'root:Docker!' | chpasswd
+
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS=0 \
     PHP_OPCACHE_MAX_ACCELERATED_FILES=9000 \
     PHP_OPCACHE_MEMORY_CONSUMPTION=128
@@ -34,6 +38,7 @@ RUN docker-php-source extract \
         vim \
         memcached \
         libmemcached-tools \
+        sudo \
     && docker-php-ext-configure intl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
@@ -75,31 +80,46 @@ RUN chown -R www-data:www-data /var/www/html \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 
-
 ARG USER_ID
 ARG GROUP_ID
 
-RUN if [ ${USER_ID:-0} -ne 0 ] && [ ${GROUP_ID:-0} -ne 0 ]; then \
-        if [ $(getent passwd | grep www-data) ]; then \
-            userdel -f www-data; fi && \
-        if [ $(getent group | grep ${GROUP_ID}) ]; then \
-            groupmod -g ${GROUP_ID} -n www-data $(getent group ${GROUP_ID} | cut -d: -f1); else \
-            groupadd -g ${GROUP_ID} www-data; fi && \
-        if [ $(getent passwd | grep ${USER_ID}) ]; then \
-            usermod -l www-data -g www-data $(getent passwd ${USER_ID} | cut -d: -f1); else \
-            useradd -l -u ${USER_ID} -g www-data www-data; fi && \
-        install -d -m 0755 -o www-data -g www-data /home/www-data && \
-        chown --changes --silent --no-dereference --recursive --from=33:33 ${USER_ID}:${GROUP_ID} /home/www-data && \
-        echo 'alias ls="ls $LS_OPTIONS"\n\
-        alias ll="ls $LS_OPTIONS -l"\n\
-        alias l="ls $LS_OPTIONS -lA"\n\
-        alias phpunit="vendor/bin/phpunit"\n\
-        alias home="cd /var/www/html"\n\
-        alias mrs="artisan migrate:refresh --seed"\n\
-        function artisan() {\n\
-        php artisan "$@"\n\
-        }' >> /home/www-data/.bashrc &&\
-        chown www-data:www-data /home/www-data/.bashrc \
-;fi
+RUN if $(id -un ${USER_ID} >/dev/null 2>&1); then \
+        userdel -f $(id -un ${USER_ID}); \
+        if $(id -un www-data >/dev/null 2>&1); then \
+            usermod -u ${USER_ID} www-data; \
+        else \
+            useradd -u ${USER_ID} www-data; \
+        fi \
+    else \
+        if $(id -un www-data >/dev/null 2>&1); then \
+            usermod -u ${USER_ID} www-data; \
+        else \
+            useradd -u ${USER_ID} www-data; \
+        fi \
+    fi \
+    && \
+    if [ $(getent group ${GROUP_ID}) ]; then \
+        groupdel -f $(getent group ${GROUP_ID} | cut -d: -f1); \
+        if [ $(getent group www-data) ]; then \
+            groupmod -g ${GROUP_ID} -n www-data www-data; \
+        else \
+            groupadd -g ${GROUP_ID} www-data; \
+        fi \
+    else \
+        if [ $(getent group www-data) ]; then \
+            groupmod -g ${GROUP_ID} -n www-data www-data; \
+        else \
+            groupadd -g ${GROUP_ID} www-data; \
+        fi \
+    fi \
+    && \
+    chown www-data:www-data -R /var/www/html \
+    && \
+    chown www-data:www-data -R /etc/supervisor
+
+RUN echo 'www-data:Docker!' | chpasswd \
+    && usermod -a -G sudo www-data
+
+USER www-data
 
 CMD ["/usr/local/bin/start"]

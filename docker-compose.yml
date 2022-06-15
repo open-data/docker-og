@@ -9,10 +9,13 @@ services:
     build:
       context: .
       dockerfile: docker/nginx/Dockerfile
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
       labels:
         projectID: ${PROJECT_ID}
     healthcheck:
-      test: service nginx status || exit 1
+      test: echo Docker! | sudo -S /bin/bash -c "service nginx status || exit 1"
       interval: 10s
       timeout: 5s
       retries: 3
@@ -24,15 +27,16 @@ services:
       - _config/docker/.docker.env
     environment:
       CONTAINER_ROLE: proxy
-      NGINX_UNAME: www-data
       APP_ROOT: /var/ogproxy
       PROJECT_ID: ${PROJECT_ID}
+      ROOT_PASS: Docker!
     volumes:
       - ${PWD}/:/var/ogproxy
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./docker/config/nginx/conf:/etc/nginx/conf
       # - ./nginx:/var/log/nginx
+    user: "${USER_ID:-0}:${GROUP_ID:-0}"
     ports:
       - 443:443
       - 80:80
@@ -54,7 +58,7 @@ services:
       labels:
         projectID: ${PROJECT_ID}
     healthcheck:
-      test: service nginx status || exit 1
+      test: echo Docker! | sudo -S /bin/bash -c "service nginx status || exit 1"
       interval: 10s
       timeout: 5s
       retries: 3
@@ -82,9 +86,9 @@ services:
       PGUSER: homestead
       PGPASSWORD: secret
       PATH: '$PATH:/var/www/html/drupal/vendor/bin'
-      NGINX_UNAME: www-data
       APP_ROOT: /var/www/html
       PROJECT_ID: ${PROJECT_ID}
+      ROOT_PASS: Docker!
     volumes:
       - ${PWD}/:/var/www/html
       - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
@@ -92,6 +96,7 @@ services:
       - ~/.gitconfig:/etc/gitconfig:ro
       - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
       # - ./nginx:/var/log/nginx
+    user: "${USER_ID:-0}:${GROUP_ID:-0}"
     ports:
       - 4430:4430
       - 8080:8080
@@ -144,7 +149,6 @@ services:
       PGUSER: homestead
       PGPASSWORD: secret
       SSH_AUTH_SOCK: /ssh-agent
-      NGINX_UNAME: ckan
       APP_ROOT: /srv/app
       PATH: '$PATH:/srv/app/ckan/registry/bin'
       PY_VERSION: 2.7
@@ -160,6 +164,7 @@ services:
       TEST_INI: /srv/app/ckan/registry/test.ini
       DATA_URI: https://open.canada.ca/data
       PROJECT_ID: ${PROJECT_ID}
+      ROOT_PASS: Docker!
     volumes:
       - ${PWD}/:/srv/app
       - ./docker/config/ckan:/docker-entrypoint.d
@@ -167,6 +172,7 @@ services:
       - ./docker/config/ckan/wsgi:/etc/ckan/registry
       - ~/.gitconfig:/etc/gitconfig:ro
       - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
+    user: "${USER_ID:-0}:${GROUP_ID:-0}"
     ports:
       - 5001:5001
 # END
@@ -218,7 +224,6 @@ services:
       PGUSER: homestead
       PGPASSWORD: secret
       SSH_AUTH_SOCK: /ssh-agent
-      NGINX_UNAME: ckan
       APP_ROOT: /srv/app
       PATH: '$PATH:/srv/app/ckan/portal/bin'
       PY_VERSION: 2.7
@@ -234,6 +239,7 @@ services:
       TEST_INI: /srv/app/ckan/portal/test.ini
       DATA_URI: https://open.canada.ca/data
       PROJECT_ID: ${PROJECT_ID}
+      ROOT_PASS: Docker!
     volumes:
       - ${PWD}/:/srv/app
       - ./docker/config/ckan:/docker-entrypoint.d
@@ -241,6 +247,7 @@ services:
       - ./docker/config/ckan/wsgi:/etc/ckan/portal
       - ~/.gitconfig:/etc/gitconfig:ro
       - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
+    user: "${USER_ID:-0}:${GROUP_ID:-0}"
     ports:
       - 5002:5002
 # END
@@ -270,7 +277,7 @@ services:
       og-local-network:
         ipv4_address: 172.0.0.9
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - ./postgres:/var/lib/postgresql/data
       - ./docker/config/postgres:/docker-entrypoint-initdb.d
     environment:
       POSTGRES_DB: postgres
@@ -278,6 +285,7 @@ services:
       POSTGRES_PASSWORD: secret
       POSTGRES_HOST_AUTH_METHOD: trust
       PROJECT_ID: ${PROJECT_ID}
+      ROOT_PASS: Docker!
     env_file:
       - _config/docker/.docker.env
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
@@ -296,6 +304,9 @@ services:
     build:
       context: .
       dockerfile: docker/solr/Dockerfile
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
       labels:
         projectID: ${PROJECT_ID}
     healthcheck:
@@ -342,12 +353,20 @@ services:
       - ./docker/config/solr/cores:/var/solr/local_data
     environment:
       CONTAINER_ROLE: solr
-      NGINX_UNAME: root
       SOLR_SSL_ENABLED: "false"
+      SOLR_USER: solr
+      SOLR_GROUP: solr
+      PATH: /opt/solr/bin:/opt/docker-solr/scripts:/usr/local/openjdk-11/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      JAVA_HOME: /usr/local/openjdk-11
+      SOLR_DATA_HOME: /var/solr/data
+      SOLR_HOME: /var/solr/data
+      SOLR_LOGS_DIR: /var/solr/logs
+      SOLR_PID_DIR: /var/solr
       PROJECT_ID: ${PROJECT_ID}
+      ROOT_PASS: Docker!
     env_file:
       - _config/docker/.docker.env
-    user: "root:root"
+    user: "${USER_ID:-0}:${GROUP_ID:-0}"
     ports:
       - 8981:8983
 # END
@@ -362,6 +381,9 @@ services:
     build:
       context: .
       dockerfile: docker/redis/Dockerfile
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
       labels:
         projectID: ${PROJECT_ID}
     restart: always
@@ -378,11 +400,11 @@ services:
     #   - ./redis:/data
     environment:
       CONTAINER_ROLE: redis
-      NGINX_UNAME: root
       PROJECT_ID: ${PROJECT_ID}
+      ROOT_PASS: Docker!
     env_file:
       - _config/docker/.docker.env
-    user: "root:root"
+    user: "${USER_ID:-0}:${GROUP_ID:-0}"
     ports:
       - 6979:6379
 # END
@@ -432,7 +454,6 @@ services:
       PGPASSWORD: secret
       SSH_AUTH_SOCK: /ssh-agent
       PATH: '$PATH:/usr/local/lib'
-      NGINX_UNAME: www-data
       APP_ROOT: /var/ocs
       PY_VERSION: 3.7
       WET_VERSION: v4.0.31
@@ -442,19 +463,17 @@ services:
       PYTHONHTTPSVERIFY: 0
       SSL_VERIFY: 0
       PROJECT_ID: ${PROJECT_ID}
+      ROOT_PASS: Docker!
     volumes:
       - ${PWD}/:/var/ocs
       - ~/.gitconfig:/etc/gitconfig:ro
       - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
+    user: "${USER_ID:-0}:${GROUP_ID:-0}"
     ports:
       - 8081:8080
 # END
 # Django
 # END
-
-volumes:
-  postgres:
-    driver: "local"
 
 networks:
   og-local-network:

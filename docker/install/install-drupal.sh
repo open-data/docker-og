@@ -71,12 +71,19 @@ esac
 #
 if [[ $exitScript != "true" ]]; then
 
+  cd ${APP_ROOT}
   . ${PWD}/docker/install/drupal/install-confirmation.sh
+  cd ${APP_ROOT}
   . ${PWD}/docker/install/drupal/install-databases.sh
+  cd ${APP_ROOT} 
   . ${PWD}/docker/install/drupal/install-source.sh
+  cd ${APP_ROOT}
   . ${PWD}/docker/install/drupal/install-files.sh
+  cd ${APP_ROOT}
   . ${PWD}/docker/install/drupal/install-perms.sh
+  cd ${APP_ROOT}
   . ${PWD}/docker/install/drupal/install-user.sh
+  cd ${APP_ROOT}
 
   #
   # Update Drupal DB and clear Drupal cache

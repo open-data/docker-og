@@ -42,6 +42,7 @@ installFilePermissions_CKAN='false'
 installLocalUser_CKAN='false'
 installOrgs_CKAN='false'
 installDatasets_CKAN='false'
+installInventory_CKAN='false'
 
 # django flags
 installApp_Django='false'

@@ -1,8 +1,13 @@
 FROM nginx
 
+USER root
+
+RUN echo 'root:Docker!' | chpasswd
+
 RUN apt-get update -yqq \
     && apt-get install -y --no-install-recommends \
         nginx \
+        sudo \
         supervisor
 
 # Supervisor
@@ -26,5 +31,51 @@ ADD docker/start.sh /usr/local/bin/start
 RUN chmod +x /usr/local/bin/start \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log
+
+ARG USER_ID
+ARG GROUP_ID
+
+RUN if $(id -un ${USER_ID} >/dev/null 2>&1); then \
+        userdel -f $(id -un ${USER_ID}); \
+        if $(id -un www-data >/dev/null 2>&1); then \
+            usermod -u ${USER_ID} www-data; \
+        else \
+            useradd -u ${USER_ID} www-data; \
+        fi \
+    else \
+        if $(id -un www-data >/dev/null 2>&1); then \
+            usermod -u ${USER_ID} www-data; \
+        else \
+            useradd -u ${USER_ID} www-data; \
+        fi \
+    fi \
+    && \
+    if [ $(getent group ${GROUP_ID}) ]; then \
+        groupdel -f $(getent group ${GROUP_ID} | cut -d: -f1); \
+        if [ $(getent group www-data) ]; then \
+            groupmod -g ${GROUP_ID} -n www-data www-data; \
+        else \
+            groupadd -g ${GROUP_ID} www-data; \
+        fi \
+    else \
+        if [ $(getent group www-data) ]; then \
+            groupmod -g ${GROUP_ID} -n www-data www-data; \
+        else \
+            groupadd -g ${GROUP_ID} www-data; \
+        fi \
+    fi \
+    && \
+    chown www-data:www-data -R /etc/nginx \
+    && \
+    mkdir -p /var/ogproxy \
+    && \
+    chown www-data:www-data -R /var/ogproxy \
+    && \
+    chown www-data:www-data -R /etc/supervisor
+
+RUN echo 'www-data:Docker!' | chpasswd \
+    && usermod -a -G sudo www-data
+
+USER www-data
 
 CMD ["/usr/local/bin/start"]

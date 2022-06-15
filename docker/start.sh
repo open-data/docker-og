@@ -18,7 +18,7 @@ HAIR='\033[0m'
 printf "${Cyan}The Environment is ${BOLD}$env${HAIR}${NC}${EOL}"
 
 printf "${Yellow}Removing XDebug${NC}${EOL}"
-rm -rf /usr/local/etc/php/conf.d/{docker-php-ext-xdebug.ini,xdebug.ini}
+echo ${ROOT_PASS} | sudo -S /bin/bash -c "rm -rf /usr/local/etc/php/conf.d/{docker-php-ext-xdebug.ini,xdebug.ini}"
 
 printf "${Cyan}The role is ${BOLD}$role${HAIR}${NC}${EOL}"
 
@@ -30,11 +30,17 @@ if [[ "$role" = "proxy" ]]; then
     # link proxy supervisord config
     ln -sf /etc/supervisor/conf.d-available/proxy.conf /etc/supervisor/conf.d/proxy.conf
 
+    # change volume ownerships
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/ogproxy"
+
     mkdir -p /etc/nginx/sites-available
     mkdir -p /etc/nginx/sites-enabled
 
     # remove default server block
-    rm -vf /etc/nginx/sites-enabled/default
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "rm -vf /etc/nginx/sites-enabled/default"
+
+    # change nginx ownerships
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx"
 
     # link proxy nginx server block
     ln -sf /etc/nginx/sites-available/open.local /etc/nginx/sites-enabled/open.local
@@ -47,9 +53,15 @@ if [[ "$role" = "proxy" ]]; then
     printf "${Green}Stopping nginx service${NC}${EOL}"
     service nginx stop
 
+    # change volume ownerships
+    printf "${Green}Setting volume ownership${NC}${EOL}"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/ogproxy"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /home/www-data && chown www-data:www-data -R /home/www-data"
+
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
-    supervisord -c /etc/supervisor/supervisord.conf
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/supervisor"
+    echo ${ROOT_PASS} | sudo -S -E /bin/bash -c "supervisord -c /etc/supervisor/supervisord.conf"
 
 # END
 # Proxy
@@ -62,14 +74,25 @@ elif [[ "$role" = "drupal" ]]; then
     # link drupal supervisord config
     ln -sf /etc/supervisor/conf.d-available/drupal.conf /etc/supervisor/conf.d/drupal.conf
 
+    # change volume ownerships
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/www/html"
+
     mkdir -p /etc/nginx/sites-available
     mkdir -p /etc/nginx/sites-enabled
 
     # remove default server block
-    rm -vf /etc/nginx/sites-enabled/default
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "rm -vf /etc/nginx/sites-enabled/default"
+
+    # change nginx ownerships
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx"
 
     # link drupal nginx server block
     ln -sf /etc/nginx/sites-available/open.local /etc/nginx/sites-enabled/open.local
+
+    # create socket file
+    printf "${Green}Create php-fpm socket file${NC}${EOL}"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /usr/local/var/run && touch /usr/local/var/run/php-fpm.sock"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /usr/local/var/run/php-fpm.sock"
 
     # copy the drupal configs
     if [[ -d "${APP_ROOT}/drupal/html/sites" ]]; then
@@ -90,9 +113,15 @@ elif [[ "$role" = "drupal" ]]; then
     printf "${Green}Stopping nginx service${NC}${EOL}"
     service nginx stop
 
+    # change volume ownerships
+    printf "${Green}Setting volume ownership${NC}${EOL}"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/www/html"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /home/www-data && chown www-data:www-data -R /home/www-data"
+
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
-    supervisord -c /etc/supervisor/supervisord.conf
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/supervisor"
+    echo ${ROOT_PASS} | sudo -S -E /bin/bash -c "supervisord -c /etc/supervisor/supervisord.conf"
 
 # END
 # Drupal
@@ -105,15 +134,24 @@ elif [[ "$role" = "search" ]]; then
     # link django supervisord config
     ln -sf /etc/supervisor/conf.d-available/django.conf /etc/supervisor/conf.d/django.conf
 
+    # change volume ownerships
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown django:django -R /var/ocs"
+
     # copy the django settings file
     if [[ -d "${APP_ROOT}/django/src/ogc-search/ogc_search/ogc_search" ]]; then
         printf "${Green}Copying the Django settings file to the virtual environment${NC}${EOL}"
         cp ${APP_ROOT}/_config/django/settings.py ${APP_ROOT}/django/src/ogc-search/ogc_search/ogc_search/settings.py
     fi;
 
+    # change volume ownerships
+    printf "${Green}Setting volume ownership${NC}${EOL}"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown django:django -R /var/ocs"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /home/django && chown django:django -R /home/django"
+
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
-    supervisord -c /etc/supervisor/supervisord.conf
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown django:django -R /etc/supervisor"
+    echo ${ROOT_PASS} | sudo -S -E /bin/bash -c "supervisord -c /etc/supervisor/supervisord.conf"
 
 # END
 # Django
@@ -128,6 +166,9 @@ elif [[ "$role" = "ckan" ]]; then
     # link ckan supervisord config
     ln -sf /etc/supervisor/conf.d-available/ckan-${ckanRole}.conf /etc/supervisor/conf.d/ckan-${ckanRole}.conf
 
+    # change volume ownerships
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown ckan:ckan -R /srv/app"
+
     # create directory for python venv
     mkdir -p ${APP_ROOT}/ckan/${ckanRole}
 
@@ -135,8 +176,8 @@ elif [[ "$role" = "ckan" ]]; then
     mkdir -p ${APP_ROOT}/ckan/static_files
 
     # create directories for uwsgi outputs
-    mkdir -p /dev
-    chown -R ckan:ckan /dev
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /dev"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown -R ckan:ckan /dev"
 
     # create i18n paths
     if [[ -d "/srv/app/ckan/${ckanRole}/src/ckanext-canada" ]]; then
@@ -190,9 +231,15 @@ elif [[ "$role" = "ckan" ]]; then
         fi;
     fi;
 
+    # change volume ownerships
+    printf "${Green}Setting volume ownership${NC}${EOL}"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown ckan:ckan -R /srv/app"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /home/ckan && chown ckan:ckan -R /home/ckan"
+
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
-    supervisord -c /etc/supervisor/supervisord.conf
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown ckan:ckan -R /etc/supervisor"
+    echo ${ROOT_PASS} | sudo -S -E /bin/bash -c "supervisord -c /etc/supervisor/supervisord.conf"
 
 # END
 # CKAN Registry & Portal
@@ -205,36 +252,26 @@ elif [[ "$role" = "solr" ]]; then
     # link solr supervisord config
     ln -sf /etc/supervisor/conf.d-available/solr.conf /etc/supervisor/conf.d/solr.conf
 
+    # change volume ownerships
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /var/solr"
+
     # copy all local core data to solr data directory
     printf "${Green}Loading local cores${NC}${EOL}"
     cp -R /var/solr/local_data/* /var/solr/data
-    chown -R solr:root /var/solr/data
+
+    # change volume ownerships
+    printf "${Green}Setting volume ownership${NC}${EOL}"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /var/solr"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /home/solr && chown solr:solr -R /home/solr"
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
-    supervisord -c /etc/supervisor/supervisord.conf
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /etc/supervisor"
+    echo ${ROOT_PASS} | sudo -S -E /bin/bash -c "supervisord -c /etc/supervisor/supervisord.conf"
 
 # END
 # Solr
 # END
-elif [[ "$role" = "scheduler" ]]; then
-
-    # link scheduler supervisord config
-    ln -sf /etc/supervisor/conf.d-available/scheduler.conf /etc/supervisor/conf.d/scheduler.conf
-
-    # start supervisord service
-    printf "${Green}Executing supervisord${NC}${EOL}"
-    supervisord -c /etc/supervisor/supervisord.conf
-
-elif [[ "$role" = "queue" ]]; then
-
-    # link queue supervisord config
-    ln -sf /etc/supervisor/conf.d-available/queue.conf /etc/supervisor/conf.d/queue.conf
-
-    # start supervisord service
-    printf "${Green}Executing supervisord${NC}${EOL}"
-    supervisord -c /etc/supervisor/supervisord.con
-
 else
 
     printf "${Red}Could not match the container role \"${BOLD}$role${HAIR}\"${NC}${EOL}"
