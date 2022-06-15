@@ -153,6 +153,11 @@ if [[ $installRepos_CKAN == "true" ]]; then
         printf "${SPACER}${Cyan}${INDENT}Skipping nltk.punkt installation for ${CKAN_ROLE} environment${NC}${SPACER}"
     fi
 
+    #
+    # copy local ckan config files
+    #
+    cd ${APP_ROOT}
+
     # copy local ckan config file
     cp ${APP_ROOT}/_config/ckan/${CKAN_ROLE}.ini ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini
     printf "${SPACER}${Cyan}${INDENT}Copying local ${CKAN_ROLE} config file to into Python environment${NC}${SPACER}"
@@ -161,6 +166,7 @@ if [[ $installRepos_CKAN == "true" ]]; then
     else
         printf "${Red}${INDENT}${INDENT}Copy ${CKAN_ROLE}.ini to ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini: FAIL${NC}${EOL}"
     fi
+    
 
     # copy local ckan test config file
     cp ${APP_ROOT}/_config/ckan/${CKAN_ROLE}-test.ini ${APP_ROOT}/ckan/${CKAN_ROLE}/test.ini
@@ -170,6 +176,20 @@ if [[ $installRepos_CKAN == "true" ]]; then
     else
         printf "${Red}${INDENT}${INDENT}Copy ${CKAN_ROLE}-test.ini to ckan/${CKAN_ROLE}/test.ini: FAIL${NC}${EOL}"
     fi
+
+    # compile ckan config files
+    printf "${SPACER}${Cyan}${INDENT}Compiling local ${CKAN_ROLE} config files${NC}${SPACER}"
+    python ${PWD}/docker/install/ckan/compile-${CKAN_ROLE}-config.py
+    if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Compile ${CKAN_ROLE} ini files: OK${NC}${EOL}"
+    else
+        printf "${Red}${INDENT}${INDENT}Compile ${CKAN_ROLE} ini files: FAIL${NC}${EOL}"
+    fi
+
+    cd ${APP_ROOT}/ckan/${CKAN_ROLE}
+    # END
+    # copy local ckan config files
+    # END
 
     # copy core who config file
     cp ${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckan/ckan/config/who.ini ${APP_ROOT}/ckan/${CKAN_ROLE}/who.ini

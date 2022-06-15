@@ -16,17 +16,29 @@
 # -- CKAN 2.8 --
 
 import os
-activate_this = os.path.join('/srv/app/ckan/portal/bin/activate_this.py')
+activate_this = os.path.join('/srv/app/ckan/registry/bin/activate_this.py')
 execfile(activate_this, dict(__file__=activate_this))
 
 from paste.deploy import loadapp
+
 config_filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'portal.ini')
+test_config_filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test.ini')
+
 from paste.script.util.logging_config import fileConfig
 fileConfig(config_filepath)
+
 import configparser
+
 config = configparser.ConfigParser()
 config.read(config_filepath)
 config['DEFAULT']['project_id'] = os.getenv('PROJECT_ID')
 with open(config_filepath,'w') as file:
     config.write(file)
+
+testConfig = configparser.ConfigParser()
+testConfig.read(test_config_filepath)
+testConfig['DEFAULT']['project_id'] = os.getenv('PROJECT_ID')
+with open(test_config_filepath,'w') as file:
+    testConfig.write(file)
+    
 application = loadapp('config:%s' % config_filepath)
