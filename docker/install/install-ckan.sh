@@ -30,6 +30,7 @@ elif [[ $CKAN_ROLE == 'portal' ]]; then
     "Create Local User" 
     "Import Organizations" 
     "Import Datasets" 
+    "Build Inventory Index"
     "All" 
     "Exit"
   )
@@ -103,8 +104,14 @@ case $opt in
     installDatasets_CKAN='true'
     ;;
 
+  # "Build Inventory Index"
+  (8)
+    exitScript='false'
+    installInventory_CKAN='true'
+    ;;
+
   # "All"
-  (8) 
+  (9) 
     exitScript='false'
     if [[ $CKAN_ROLE == 'registry' ]]; then
       installDB_Registry_CKAN='true'
@@ -122,6 +129,7 @@ case $opt in
     installLocalUser_CKAN='true'
     installOrgs_CKAN='true'
     installDatasets_CKAN='true'
+    installInventory_CKAN='true'
     ;;
 
   # "Exit"
@@ -152,6 +160,8 @@ if [[ $exitScript != "true" ]]; then
   . ${PWD}/docker/install/ckan/install-orgs.sh
   cd ${APP_ROOT}
   . ${PWD}/docker/install/ckan/install-datasets.sh
+  cd ${APP_ROOT}
+  . ${PWD}/docker/install/ckan/install-inventory.sh
   cd ${APP_ROOT}
 
 else
