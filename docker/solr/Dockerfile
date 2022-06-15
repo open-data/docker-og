@@ -65,4 +65,6 @@ RUN if $(id -un ${USER_ID} >/dev/null 2>&1); then \
     && \
     chown solr:solr -R /etc/supervisor
 
+USER solr
+
 CMD ["/usr/local/bin/start"]

@@ -41,3 +41,5 @@ RUN if $(id -un ${USER_ID} >/dev/null 2>&1); then \
     fi \
     && \
     chown postgres:postgres -R /var/lib/postgresql
+
+USER postgres

@@ -86,4 +86,6 @@ RUN if $(id -un ${USER_ID} >/dev/null 2>&1); then \
     && \
     chown django:django -R /etc/supervisor
 
+USER django
+
 CMD ["/usr/local/bin/start"]

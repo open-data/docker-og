@@ -92,4 +92,6 @@ RUN if $(id -un ${USER_ID} >/dev/null 2>&1); then \
     && \
     chown ckan:ckan -R /etc/supervisor
 
+USER ckan
+
 CMD ["/usr/local/bin/start"]

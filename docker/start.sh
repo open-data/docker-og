@@ -32,39 +32,9 @@ if [[ "$role" = "proxy" ]]; then
 
     # change volume ownerships
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/ogproxy"
-    if [[ -d "/etc/nginx/sites-available" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
-    else
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /etc/nginx/sites-available"
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
-    fi
-    if [[ -d "/etc/nginx/sites-enabled" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-enabled"
-    else
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /etc/nginx/sites-enabled"
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-enabled"
-    fi
-    if [[ -d "/var/log/nginx" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/log/nginx"
-    else
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /var/log/nginx"
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/log/nginx"
-    fi
-    if [[ -d "/var/lib/nginx" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/lib/nginx"
-    else
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /var/lib/nginx"
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/lib/nginx"
-    fi
-    if [[ -d "/var/cache/nginx" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/cache/nginx"
-    else
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /var/cache/nginx"
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/cache/nginx"
-    fi
 
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /etc/nginx/sites-available"
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /etc/nginx/sites-enabled"
+    mkdir -p /etc/nginx/sites-available
+    mkdir -p /etc/nginx/sites-enabled
 
     # remove default server block
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "rm -vf /etc/nginx/sites-enabled/default"
@@ -83,33 +53,6 @@ if [[ "$role" = "proxy" ]]; then
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/ogproxy"
-    if [[ -d "/etc/nginx/sites-available" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
-    fi
-    if [[ -d "/etc/nginx/sites-enabled" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-enabled"
-    fi
-    if [[ -d "/var/log/nginx" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/log/nginx"
-    fi
-    if [[ -d "/var/lib/nginx" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/lib/nginx"
-    fi
-    if [[ -d "/var/cache/nginx" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/cache/nginx"
-    fi
-
-    #change log ownerships
-    printf "${Green}Setting log ownership${NC}${EOL}"
-    if [[ -L "/dev/stderr" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /dev/stderr"
-    fi
-    if [[ -L "/dev/stdin" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /dev/stdin"
-    fi
-    if [[ -L "/dev/stdout" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /dev/stdout"
-    fi
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
@@ -128,45 +71,9 @@ elif [[ "$role" = "drupal" ]]; then
 
     # change volume ownerships
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/www/html"
-    if [[ -d "/etc/nginx/sites-available" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
-    else
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /etc/nginx/sites-available"
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
-    fi
-    if [[ -d "/etc/nginx/sites-enabled" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-enabled"
-    else
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /etc/nginx/sites-enabled"
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-enabled"
-    fi
-    if [[ -d "/var/log/nginx" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/log/nginx"
-    else
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /var/log/nginx"
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/log/nginx"
-    fi
-    if [[ -d "/var/lib/nginx" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/lib/nginx"
-    else
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /var/lib/nginx"
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/lib/nginx"
-    fi
-    if [[ -d "/var/cache/nginx" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/cache/nginx"
-    else
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /var/cache/nginx"
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/cache/nginx"
-    fi
-    if [[ -d "/usr/local/var" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /usr/local/var"
-    else
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /usr/local/var"
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /usr/local/var"
-    fi
 
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /etc/nginx/sites-available"
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /etc/nginx/sites-enabled"
+    mkdir -p /etc/nginx/sites-available
+    mkdir -p /etc/nginx/sites-enabled
 
     # remove default server block
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "rm -vf /etc/nginx/sites-enabled/default"
@@ -196,36 +103,6 @@ elif [[ "$role" = "drupal" ]]; then
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/www/html"
-    if [[ -d "/etc/nginx/sites-available" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-available"
-    fi
-    if [[ -d "/etc/nginx/sites-enabled" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /etc/nginx/sites-enabled"
-    fi
-    if [[ -d "/var/log/nginx" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/log/nginx"
-    fi
-    if [[ -d "/var/lib/nginx" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/lib/nginx"
-    fi
-    if [[ -d "/var/cache/nginx" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/cache/nginx"
-    fi
-    if [[ -d "/usr/local/var" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /usr/local/var"
-    fi
-
-    #change log ownerships
-    printf "${Green}Setting log ownership${NC}${EOL}"
-    if [[ -L "/dev/stderr" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /dev/stderr"
-    fi
-    if [[ -L "/dev/stdin" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /dev/stdin"
-    fi
-    if [[ -L "/dev/stdout" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /dev/stdout"
-    fi
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
@@ -254,18 +131,6 @@ elif [[ "$role" = "search" ]]; then
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown django:django -R /var/ocs"
-
-    #change log ownerships
-    printf "${Green}Setting log ownership${NC}${EOL}"
-    if [[ -L "/dev/stderr" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown django:django -R /dev/stderr"
-    fi
-    if [[ -L "/dev/stdin" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown django:django -R /dev/stdin"
-    fi
-    if [[ -L "/dev/stdout" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown django:django -R /dev/stdout"
-    fi
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
@@ -353,18 +218,6 @@ elif [[ "$role" = "ckan" ]]; then
     printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown ckan:ckan -R /srv/app"
 
-    #change log ownerships
-    printf "${Green}Setting log ownership${NC}${EOL}"
-    if [[ -L "/dev/stderr" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown ckan:ckan -R /dev/stderr"
-    fi
-    if [[ -L "/dev/stdin" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown ckan:ckan -R /dev/stdin"
-    fi
-    if [[ -L "/dev/stdout" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown ckan:ckan -R /dev/stdout"
-    fi
-
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "supervisord -c /etc/supervisor/supervisord.conf"
@@ -382,34 +235,14 @@ elif [[ "$role" = "solr" ]]; then
 
     # change volume ownerships
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /var/solr"
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /opt/solr"
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /opt/docker-solr"
 
     # copy all local core data to solr data directory
     printf "${Green}Loading local cores${NC}${EOL}"
     cp -R /var/solr/local_data/* /var/solr/data
 
-    # link the cores
-    printf "${Green}Linking cores${NC}${EOL}"
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c  "ln -s /var/solr/data /opt/solr/server/cores"
-
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /var/solr"
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /opt/solr"
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /opt/docker-solr"
-
-    #change log ownerships
-    printf "${Green}Setting log ownership${NC}${EOL}"
-    if [[ -L "/dev/stderr" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /dev/stderr"
-    fi
-    if [[ -L "/dev/stdin" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /dev/stdin"
-    fi
-    if [[ -L "/dev/stdout" ]]; then
-        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /dev/stdout"
-    fi
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
@@ -418,24 +251,6 @@ elif [[ "$role" = "solr" ]]; then
 # END
 # Solr
 # END
-elif [[ "$role" = "scheduler" ]]; then
-
-    # link scheduler supervisord config
-    ln -sf /etc/supervisor/conf.d-available/scheduler.conf /etc/supervisor/conf.d/scheduler.conf
-
-    # start supervisord service
-    printf "${Green}Executing supervisord${NC}${EOL}"
-    supervisord -c /etc/supervisor/supervisord.conf
-
-elif [[ "$role" = "queue" ]]; then
-
-    # link queue supervisord config
-    ln -sf /etc/supervisor/conf.d-available/queue.conf /etc/supervisor/conf.d/queue.conf
-
-    # start supervisord service
-    printf "${Green}Executing supervisord${NC}${EOL}"
-    supervisord -c /etc/supervisor/supervisord.con
-
 else
 
     printf "${Red}Could not match the container role \"${BOLD}$role${HAIR}\"${NC}${EOL}"

@@ -76,4 +76,6 @@ RUN if $(id -un ${USER_ID} >/dev/null 2>&1); then \
     && \
     chown www-data:www-data -R /etc/supervisor
 
+USER www-data
+
 CMD ["/usr/local/bin/start"]
