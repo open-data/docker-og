@@ -14,6 +14,7 @@ if [[ $CKAN_ROLE == 'registry' ]]; then
     "Create Local User" 
     "Import Organizations" 
     "Import Datasets" 
+    "Build Inventory Index" 
     "All" 
     "Exit"
   )
@@ -30,7 +31,7 @@ elif [[ $CKAN_ROLE == 'portal' ]]; then
     "Create Local User" 
     "Import Organizations" 
     "Import Datasets" 
-    "Build Inventory Index"
+    "Build Inventory Index" 
     "All" 
     "Exit"
   )
