@@ -7,9 +7,6 @@ execfile(activate_this, dict(__file__=activate_this))
 config_filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'registry.ini')
 test_config_filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test.ini')
 
-from paste.script.util.logging_config import fileConfig
-fileConfig(config_filepath)
-
 import configparser
 
 config = configparser.ConfigParser()
