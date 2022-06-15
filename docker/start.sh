@@ -56,6 +56,7 @@ if [[ "$role" = "proxy" ]]; then
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/ogproxy"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /home/www-data"
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
@@ -114,6 +115,7 @@ elif [[ "$role" = "drupal" ]]; then
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /var/www/html"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown www-data:www-data -R /home/www-data"
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
@@ -142,6 +144,7 @@ elif [[ "$role" = "search" ]]; then
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown django:django -R /var/ocs"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown django:django -R /home/django"
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
@@ -228,6 +231,7 @@ elif [[ "$role" = "ckan" ]]; then
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown ckan:ckan -R /srv/app"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown ckan:ckan -R /home/ckan"
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
@@ -254,6 +258,7 @@ elif [[ "$role" = "solr" ]]; then
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /var/solr"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /home/solr"
 
     # start supervisord service
     printf "${Green}Executing supervisord${NC}${EOL}"
