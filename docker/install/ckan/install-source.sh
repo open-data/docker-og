@@ -139,9 +139,6 @@ if [[ $installRepos_CKAN == "true" ]]; then
     # install correct version of cryptography
     pip install cryptography==2.2.2
 
-    # install correct version of sqlalchemy
-    pip install sqlalchemy==1.3.5
-
     # update vdm
     pip install --upgrade vdm
 
