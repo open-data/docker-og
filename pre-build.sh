@@ -393,7 +393,7 @@ function run_pre_build {
 
 if [[ $1 ]]; then
 
-    if $(pgrep docker); then
+    if [ $(pgrep docker) ]; then
 
         if [[ $2 && $2 == "no-interaction" ]]; then
 
