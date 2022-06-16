@@ -388,6 +388,8 @@ function run_pre_build {
 
 if [[ $1 ]]; then
 
+    #TODO: check that docker service is running...
+
     if [[ $2 && $2 == "no-interaction" ]]; then
 
         noInteraction='true'
