@@ -344,19 +344,16 @@ function run_pre_build {
     if [[ $noInteraction == "false" ]]; then
         printf "${Cyan}${INDENT}Generating new project host file ${ITALIC}${BOLD}/etc/hosts.d/$projectID.conf${HAIR}${Cyan}. Maybe prompt for admin password...${NC}${EOL}"
         if [[ -d "/etc/hosts.d" ]]; then
-            cd /etc/hosts.d
             if [[ -f "/etc/hosts.d/default.conf" ]]; then
-                sudo ls /etc/hosts.d | sudo cat $(grep .conf) | sudo tee /etc/hosts >/dev/null
+                sudo find /etc/hosts.d -type f | sudo cat $(grep .conf) | sudo tee /etc/hosts >/dev/null
             else
                 sudo cp /etc/hosts /etc/hosts.d/default.conf
-                sudo cd /etc/hosts.d
-                sudo ls /etc/hosts.d | sudo cat $(grep .conf) | sudo tee /etc/hosts >/dev/null
+                sudo find /etc/hosts.d -type f | sudo cat $(grep .conf) | sudo tee /etc/hosts >/dev/null
             fi
         else
             sudo mkdir /etc/hosts.d
             sudo cp /etc/hosts /etc/hosts.d/default.conf
-            sudo cd /etc/hosts.d
-            sudo ls /etc/hosts.d | sudo cat $(grep .conf) | sudo tee /etc/hosts >/dev/null
+            sudo find /etc/hosts.d -type f | sudo cat $(grep .conf) | sudo tee /etc/hosts >/dev/null
         fi
         if [[ -d "/etc/hosts.d" ]]; then
             if [[ -f "/etc/hosts.d/$projectID.conf" ]]; then
@@ -375,10 +372,8 @@ function run_pre_build {
             echo "127.0.0.1	solr.open-$projectID.local" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
             echo "127.0.0.1	search.open-$projectID.local" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
             echo "" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
-            sudo cd /etc/hosts.d
-            sudo ls /etc/hosts.d | sudo cat $(grep .conf) | sudo tee /etc/hosts >/dev/null
+            sudo find /etc/hosts.d -type f | sudo cat $(grep .conf) | sudo tee /etc/hosts >/dev/null
         fi
-        cd ${PWD}
     fi
 
     chmod +x ${PWD}/install.sh
