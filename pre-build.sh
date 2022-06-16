@@ -344,22 +344,25 @@ function run_pre_build {
     if [[ $noInteraction == "false" ]]; then
         printf "${Cyan}${INDENT}Generating new project host file ${ITALIC}${BOLD}/etc/hosts.d/$projectID.conf${HAIR}${Cyan}. Maybe prompt for admin password...${NC}${EOL}"
         if [[ -d "/etc/hosts.d" ]]; then
+            cd /etc/hosts.d
             if [[ -f "/etc/hosts.d/default.conf" ]]; then
-                sudo cat /etc/hosts.d/*.conf | sudo tee /etc/hosts >/dev/null
+                sudo ls /etc/hosts.d | sudo cat $(grep .conf) | sudo tee /etc/hosts >/dev/null
             else
                 sudo cp /etc/hosts /etc/hosts.d/default.conf
-                sudo cat /etc/hosts.d/*.conf | sudo tee /etc/hosts >/dev/null
+                sudo cd /etc/hosts.d
+                sudo ls /etc/hosts.d | sudo cat $(grep .conf) | sudo tee /etc/hosts >/dev/null
             fi
         else
             sudo mkdir /etc/hosts.d
             sudo cp /etc/hosts /etc/hosts.d/default.conf
-            sudo cat /etc/hosts.d/*.conf | sudo tee /etc/hosts >/dev/null
+            sudo cd /etc/hosts.d
+            sudo ls /etc/hosts.d | sudo cat $(grep .conf) | sudo tee /etc/hosts >/dev/null
         fi
         if [[ -d "/etc/hosts.d" ]]; then
             if [[ -f "/etc/hosts.d/$projectID.conf" ]]; then
                 sudo rm -rf /etc/hosts.d/$projectID.conf
             fi
-            sudo sudo touch /etc/hosts.d/$projectID.conf
+            sudo touch /etc/hosts.d/$projectID.conf
             if [[ $? -eq 0 ]]; then
                 printf "${Green}${INDENT}Generate project host file /etc/hosts.d/$projectID.conf: OK${NC}${EOL}"
             else
@@ -372,8 +375,10 @@ function run_pre_build {
             echo "127.0.0.1	solr.open-$projectID.local" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
             echo "127.0.0.1	search.open-$projectID.local" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
             echo "" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
-            sudo cat /etc/hosts.d/*.conf | sudo tee /etc/hosts >/dev/null
+            sudo cd /etc/hosts.d
+            sudo ls /etc/hosts.d | sudo cat $(grep .conf) | sudo tee /etc/hosts >/dev/null
         fi
+        cd ${PWD}
     fi
 
     chmod +x ${PWD}/install.sh
@@ -388,44 +393,50 @@ function run_pre_build {
 
 if [[ $1 ]]; then
 
-    #TODO: check that docker service is running...
+    if $(pgrep docker); then
 
-    if [[ $2 && $2 == "no-interaction" ]]; then
+        if [[ $2 && $2 == "no-interaction" ]]; then
 
-        noInteraction='true'
+            noInteraction='true'
 
-    fi
+        fi
 
-    if [[ $noInteraction == "false" ]]; then
+        if [[ $noInteraction == "false" ]]; then
 
-        INDENT=$INDENT$INDENT
+            INDENT=$INDENT$INDENT
 
-        read -r -p $'\n\n\033[0;31m    Are you sure you want to run the\033[1m pre build script?\033[0m\033[0;31m [y/N]:\033[0;0m    ' response
+            read -r -p $'\n\n\033[0;31m    Are you sure you want to run the\033[1m pre build script?\033[0m\033[0;31m [y/N]:\033[0;0m    ' response
 
-        if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+            if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
 
-            projectID=$1
-            run_pre_build
+                projectID=$1
+                run_pre_build
+
+            else
+
+                printf "${SPACER}${Yellow}${INDENT}Exiting pre build script...${NC}${SPACER}"
+
+            fi
 
         else
 
-            printf "${SPACER}${Yellow}${INDENT}Exiting pre build script...${NC}${SPACER}"
+            if [[ $3 ]]; then
+
+                PWD=$3
+
+            fi
+
+            INDENT=$INDENT
+            BOLDGREEN=${HAIR}${Green}
+            BOLDRED=${HAIR}${Red}
+            projectID=$1
+            run_pre_build
 
         fi
 
     else
 
-        if [[ $3 ]]; then
-
-            PWD=$3
-
-        fi
-
-        INDENT=$INDENT
-        BOLDGREEN=${HAIR}${Green}
-        BOLDRED=${HAIR}${Red}
-        projectID=$1
-        run_pre_build
+        printf "${SPACER}${Yellow}${INDENT}Docker service is not running.${NC}${SPACER}"
 
     fi
 
