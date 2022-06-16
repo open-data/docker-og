@@ -348,18 +348,18 @@ function run_pre_build {
                 cat /etc/hosts.d/*.conf | sudo tee /etc/hosts >/dev/null
             else
                 sudo cp /etc/hosts /etc/hosts.d/default.conf
-                cat /etc/hosts.d/*.conf | sudo tee /etc/hosts >/dev/null
+                sudo cat /etc/hosts.d/*.conf | sudo tee /etc/hosts >/dev/null
             fi
         else
             sudo mkdir /etc/hosts.d
             sudo cp /etc/hosts /etc/hosts.d/default.conf
-            cat /etc/hosts.d/*.conf | sudo tee /etc/hosts >/dev/null
+            sudo cat /etc/hosts.d/*.conf | sudo tee /etc/hosts >/dev/null
         fi
         if [[ -d "/etc/hosts.d" ]]; then
             if [[ -f "/etc/hosts.d/$projectID.conf" ]]; then
                 sudo rm -rf /etc/hosts.d/$projectID.conf
             fi
-            sudo touch /etc/hosts.d/$projectID.conf
+            sudo sudo touch /etc/hosts.d/$projectID.conf
             if [[ $? -eq 0 ]]; then
                 printf "${Green}${INDENT}Generate project host file /etc/hosts.d/$projectID.conf: OK${NC}${EOL}"
             else
@@ -372,7 +372,7 @@ function run_pre_build {
             echo "127.0.0.1	solr.open-$projectID.local" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
             echo "127.0.0.1	search.open-$projectID.local" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
             echo "" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
-            cat /etc/hosts.d/*.conf | sudo tee /etc/hosts >/dev/null
+            sudo cat /etc/hosts.d/*.conf | sudo tee /etc/hosts >/dev/null
         fi
     fi
 
