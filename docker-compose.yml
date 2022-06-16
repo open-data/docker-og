@@ -356,12 +356,6 @@ services:
       SOLR_SSL_ENABLED: "false"
       SOLR_USER: solr
       SOLR_GROUP: solr
-      PATH: /opt/solr/bin:/opt/docker-solr/scripts:/usr/local/openjdk-11/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-      JAVA_HOME: /usr/local/openjdk-11
-      SOLR_DATA_HOME: /var/solr/data
-      SOLR_HOME: /var/solr/data
-      SOLR_LOGS_DIR: /var/solr/logs
-      SOLR_PID_DIR: /var/solr
       PROJECT_ID: ${PROJECT_ID}
       ROOT_PASS: Docker!
     env_file:
