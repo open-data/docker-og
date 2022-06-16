@@ -345,7 +345,7 @@ function run_pre_build {
         printf "${Cyan}${INDENT}Generating new project host file ${ITALIC}${BOLD}/etc/hosts.d/$projectID.conf${HAIR}${Cyan}. Maybe prompt for admin password...${NC}${EOL}"
         if [[ -d "/etc/hosts.d" ]]; then
             if [[ -f "/etc/hosts.d/default.conf" ]]; then
-                cat /etc/hosts.d/*.conf | sudo tee /etc/hosts >/dev/null
+                sudo cat /etc/hosts.d/*.conf | sudo tee /etc/hosts >/dev/null
             else
                 sudo cp /etc/hosts /etc/hosts.d/default.conf
                 sudo cat /etc/hosts.d/*.conf | sudo tee /etc/hosts >/dev/null
