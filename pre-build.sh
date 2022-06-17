@@ -51,6 +51,13 @@ function run_pre_build {
 
     fi
 
+    if [[ "$(stat -L -c '%a' /var/run/docker.sock)" != "666" ]]; then
+
+        printf "${Cyan}${INDENT}Setting correct permissions for docker socket. Maybe prompt for admin password...${NC}${EOL}"
+        sudo chmod 666 /var/run/docker.sock
+
+    fi
+
     if [[ $noInteraction == "false" ]]; then
 
         # create basic network if it does not exist
