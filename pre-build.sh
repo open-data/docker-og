@@ -349,7 +349,7 @@ function run_pre_build {
 
     # create hosts file
     if [[ $noInteraction == "false" ]]; then
-        printf "${Cyan}${INDENT}Generating new project host file ${ITALIC}${BOLD}/etc/hosts.d/$projectID.conf${HAIR}${Cyan}. Maybe prompt for admin password...${NC}${EOL}"
+        printf "${Cyan}${INDENT}Generating host file ${ITALIC}${BOLD}/etc/hosts.d/og.conf${HAIR}${Cyan}. Maybe prompt for admin password...${NC}${EOL}"
         if [[ -d "/etc/hosts.d" ]]; then
             if [[ -f "/etc/hosts.d/default.conf" ]]; then
                 sudo find /etc/hosts.d -type f | sudo cat $(grep .conf) | sudo tee /etc/hosts >/dev/null
@@ -363,22 +363,22 @@ function run_pre_build {
             sudo find /etc/hosts.d -type f | sudo cat $(grep .conf) | sudo tee /etc/hosts >/dev/null
         fi
         if [[ -d "/etc/hosts.d" ]]; then
-            if [[ -f "/etc/hosts.d/$projectID.conf" ]]; then
-                sudo rm -rf /etc/hosts.d/$projectID.conf
+            if [[ -f "/etc/hosts.d/og.conf" ]]; then
+                sudo rm -rf /etc/hosts.d/og.conf
             fi
-            sudo touch /etc/hosts.d/$projectID.conf
+            sudo touch /etc/hosts.d/og.conf
             if [[ $? -eq 0 ]]; then
-                printf "${Green}${INDENT}Generate project host file /etc/hosts.d/$projectID.conf: OK${NC}${EOL}"
+                printf "${Green}${INDENT}Generate host file /etc/hosts.dog.conf: OK${NC}${EOL}"
             else
-                printf "${Red}${INDENT}Generate project host file /etc/hosts.d/$projectID.conf: FAIL${NC}${EOL}"
+                printf "${Red}${INDENT}Generate host file /etc/hosts.d/og.conf: FAIL${NC}${EOL}"
             fi
-            echo "" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
-            echo "127.0.0.1	open-$projectID.local" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
-            echo "127.0.0.1	registry.open-$projectID.local" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
-            echo "127.0.0.1	portal.open-$projectID.local" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
-            echo "127.0.0.1	solr.open-$projectID.local" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
-            echo "127.0.0.1	search.open-$projectID.local" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
-            echo "" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
+            echo "" | sudo tee -a /etc/hosts.d/og.conf >/dev/null
+            echo "127.0.0.1	open.local" | sudo tee -a /etc/hosts.d/og.conf >/dev/null
+            echo "127.0.0.1	registry.open.local" | sudo tee -a /etc/hosts.d/og.conf >/dev/null
+            echo "127.0.0.1	portal.open.local" | sudo tee -a /etc/hosts.d/og.conf >/dev/null
+            echo "127.0.0.1	solr.open.local" | sudo tee -a /etc/hosts.d/og.conf >/dev/null
+            echo "127.0.0.1	search.open.local" | sudo tee -a /etc/hosts.d/og.conf >/dev/null
+            echo "" | sudo tee -a /etc/hosts.d/og.conf >/dev/null
             sudo find /etc/hosts.d -type f | sudo cat $(grep .conf) | sudo tee /etc/hosts >/dev/null
         fi
     fi

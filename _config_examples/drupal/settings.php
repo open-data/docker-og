@@ -273,27 +273,25 @@ $settings['trusted_host_patterns'] = [
     '^.+\.open\.local$',
     '^.+\.open-*\.local$',
     '^open\.local$',
-    '^open-*\.local$',
-    '^open-' . $_ENV["PROJECT_ID"] . '.local$',
     '^localhost$',
     '^127.0.0.1$',
 ];
 
 # search domains
 $settings['search_domain'] = [
-    'en' => 'search.open-' . $_ENV["PROJECT_ID"] . '.local',
-    'fr' => 'search.open-' . $_ENV["PROJECT_ID"] . '.local',
+    'en' => 'search.open.local:'. $_ENV["PROJECT_ID"],
+    'fr' => 'search.open.local:'. $_ENV["PROJECT_ID"],
 ];
 
 $settings['sd_search'] = [
-    'en' => 'http://search.open-' . $_ENV["PROJECT_ID"] . '.local/en/sd/id/',
-    'fr' => 'http://search.open-' . $_ENV["PROJECT_ID"] . '.local/fr/sd/id/',
+    'en' => 'http://search.open.local:' . $_ENV["PROJECT_ID"] . '/en/sd/id/',
+    'fr' => 'http://search.open.local:' . $_ENV["PROJECT_ID"] . '/fr/sd/id/',
 ];
 
 # default domains
 $settings['default_domain'] = [
-    'en' => 'search.open-' . $_ENV["PROJECT_ID"] . '.local',
-    'fr' => 'search.open-' . $_ENV["PROJECT_ID"] . '.local',
+    'en' => 'search.open.local:' . $_ENV["PROJECT_ID"],
+    'fr' => 'search.open.local:' . $_ENV["PROJECT_ID"],
 ];
 
 # default ati email address

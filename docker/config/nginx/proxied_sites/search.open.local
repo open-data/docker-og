@@ -6,13 +6,7 @@ server {
 
     include conf/.env.conf;
 
-    server_name "~^search\.open-(?<requestedProjectID>.+)\.local";
-
-    if ( $projectID != $requestedProjectID ){
-
-        break;
-
-    }
+    server_name search.open.local;
 
     listen 80;
 
@@ -39,25 +33,3 @@ server {
 # END
 # Django
 # END
-
-server {
-
-    include conf/.env.conf;
-
-    server_name "~^search\.open-(?<requestedProjectID>.+)\.local";
-
-    if ( $projectID != $requestedProjectID ){
-
-        break;
-
-    }
-
-    listen 443;
-
-    location / {
-
-        return 301 http://$http_host$request_uri;
-
-    }
-
-}

@@ -6,13 +6,7 @@ server {
 
     include conf/.env.conf;
 
-    server_name "~^open-(?<requestedProjectID>.+)\.local";
-
-    if ( $projectID != $requestedProjectID ){
-
-        break;
-
-    }
+    server_name open.local;
 
     listen 80 default_server;
 
@@ -80,25 +74,3 @@ server {
 # END
 # Drupal/CKAN Portal Front
 # END
-
-server {
-
-    include conf/.env.conf;
-
-    server_name "~^open-(?<requestedProjectID>.+)\.local";
-
-    if ( $projectID != $requestedProjectID ){
-
-        break;
-
-    }
-
-    listen 443;
-
-    location / {
-
-        return 301 http://$http_host$request_uri;
-
-    }
-
-}

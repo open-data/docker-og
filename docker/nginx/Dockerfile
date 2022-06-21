@@ -7,6 +7,7 @@ RUN echo 'root:Docker!' | chpasswd
 RUN apt-get update -yqq \
     && apt-get install -y --no-install-recommends \
         nginx \
+        iputils-ping \
         sudo \
         supervisor
 

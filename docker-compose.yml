@@ -19,9 +19,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-    networks:
-      og-local-network:
-        ipv4_address: 172.0.0.3
     working_dir: /var/ogproxy
     env_file:
       - _config/docker/.docker.env
@@ -38,8 +35,7 @@ services:
       # - ./nginx:/var/log/nginx
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
     ports:
-      - 443:443
-      - 80:80
+      - ${PROJECT_ID}:80
 # END
 # Proxy
 # END
@@ -63,12 +59,9 @@ services:
       timeout: 5s
       retries: 3
     working_dir: /var/www/html
-    networks:
-      og-local-network:
-        ipv4_address: 172.0.0.6
     depends_on:
       proxy:
-        condition: service_healthy
+        condition: service_started
       postgres:
         condition: service_started
       solr:
@@ -99,9 +92,6 @@ services:
       - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
       # - ./nginx:/var/log/nginx
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
-    ports:
-      - 4430:4430
-      - 8080:8080
 # END
 # Drupal
 # END
@@ -125,12 +115,9 @@ services:
       timeout: 5s
       retries: 3
     working_dir: /srv/app
-    networks:
-      og-local-network:
-        ipv4_address: 172.0.0.7
     depends_on:
       proxy:
-        condition: service_healthy
+        condition: service_started
       postgres:
         condition: service_started
       solr:
@@ -175,8 +162,6 @@ services:
       - ~/.gitconfig:/etc/gitconfig:ro
       - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
-    ports:
-      - 5001:5001
 # END
 # CKAN Registry
 # END
@@ -200,12 +185,9 @@ services:
       timeout: 5s
       retries: 3
     working_dir: /srv/app
-    networks:
-      og-local-network:
-        ipv4_address: 172.0.0.8
     depends_on:
       proxy:
-        condition: service_healthy
+        condition: service_started
       postgres:
         condition: service_started
       solr:
@@ -250,8 +232,6 @@ services:
       - ~/.gitconfig:/etc/gitconfig:ro
       - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
-    ports:
-      - 5002:5002
 # END
 # CKAN Portal
 # END
@@ -275,9 +255,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-    networks:
-      og-local-network:
-        ipv4_address: 172.0.0.9
     volumes:
       - ./postgres:/var/lib/postgresql/data
       - ./docker/config/postgres:/docker-entrypoint-initdb.d
@@ -292,7 +269,7 @@ services:
       - _config/docker/.docker.env
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
     ports:
-      - 15438:5432
+      - ${PROJECT_ID}-db:5432
 # END
 # Postgres
 # END
@@ -317,12 +294,9 @@ services:
       timeout: 5s
       retries: 3
     working_dir: /opt/solr
-    networks:
-      og-local-network:
-        ipv4_address: 172.0.0.10
     depends_on:
       proxy:
-        condition: service_healthy
+        condition: service_started
     links:
       - proxy
     volumes:
@@ -363,8 +337,6 @@ services:
     env_file:
       - _config/docker/.docker.env
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
-    ports:
-      - 8981:8983
 # END
 # Solr
 # END
@@ -389,9 +361,6 @@ services:
       timeout: 5s
       retries: 3
     working_dir: /data
-    networks:
-      og-local-network:
-        ipv4_address: 172.0.0.11
     # volumes:
     #   - ./redis:/data
     environment:
@@ -401,8 +370,6 @@ services:
     env_file:
       - _config/docker/.docker.env
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
-    ports:
-      - 6979:6379
 # END
 # Redis
 # END
@@ -426,12 +393,9 @@ services:
       timeout: 5s
       retries: 3
     working_dir: /var/ocs
-    networks:
-      og-local-network:
-        ipv4_address: 172.0.0.12
     depends_on:
       proxy:
-        condition: service_healthy
+        condition: service_started
       postgres:
         condition: service_started
       solr:
@@ -465,17 +429,6 @@ services:
       - ~/.gitconfig:/etc/gitconfig:ro
       - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
-    ports:
-      - 8081:8080
 # END
 # Django
 # END
-
-networks:
-  og-local-network:
-    external : false
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.0.0.0/16
-          gateway: 172.0.0.1
