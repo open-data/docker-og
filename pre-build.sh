@@ -328,8 +328,10 @@ function run_pre_build {
         else
             printf "${Red}${INDENT}Create ${BOLDRED}${PWD}/.env${HAIR}${Red} file with Project ID of ${BOLDRED}$projectID${HAIR}${Red}: FAIL${NC}${EOL}"
         fi
+        didPortGeneration="false"
+        portNumber=""
         if [[ -f "${PWD}/.env" ]]; then
-            count=0
+            count=1
             for file in ~/.docker-og.d/*; do
                 if [[ "$file" == *"$1.conf"* ]]; then
                     portNumber="${count}"
@@ -338,11 +340,17 @@ function run_pre_build {
                     elif [[ $portNumber < 100 ]]; then
                         portNumber="0${portNumber}"
                     fi
+                    didPortGeneration="true"
                     echo -e "PORT=157${portNumber}\n" >> ${PWD}/.env
                     break
                 fi
                 let count++
             done
+        fi
+        if [[ $didPortGeneration == "true" ]]; then
+            printf "${Green}${INDENT}Generate port number ${portNumber}: OK${NC}${EOL}"
+        else
+            printf "${Red}${INDENT}Generate port number: FAIL${NC}${EOL}"
         fi
     else
         printf "${Yellow}${INDENT}Create ${PWD}/.env file with Project ID of $projectID (maintain local settings set to true): SKIPPING${NC}${EOL}"
