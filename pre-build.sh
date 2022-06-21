@@ -348,7 +348,7 @@ function run_pre_build {
             done
         fi
         if [[ $didPortGeneration == "true" ]]; then
-            printf "${Green}${INDENT}Generate port number ${portNumber}: OK${NC}${EOL}"
+            printf "${Green}${INDENT}Generate port number 157${portNumber}: OK${NC}${EOL}"
         else
             printf "${Red}${INDENT}Generate port number: FAIL${NC}${EOL}"
         fi
