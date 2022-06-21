@@ -322,11 +322,27 @@ function run_pre_build {
         cp ${PWD}/.env ${PWD}/backup/local_configs/.env
     fi
     if [[ $maintainLocalConfigs == "false" ]]; then
-        touch ${PWD}/.env && echo -e "PROJECT_ID=$projectID\nUSER_ID=$(id -u)\nGROUP_ID=$(id -g)" > ${PWD}/.env
+        touch ${PWD}/.env && echo -e "PROJECT_ID=$projectID\nUSER_ID=$(id -u)\nGROUP_ID=$(id -g)\n" > ${PWD}/.env
         if [[ $? -eq 0 ]]; then
             printf "${Green}${INDENT}Create ${BOLDGREEN}${PWD}/.env${HAIR}${Green} file with Project ID of ${BOLDGREEN}$projectID${HAIR}${Green}: OK${NC}${EOL}"
         else
             printf "${Red}${INDENT}Create ${BOLDRED}${PWD}/.env${HAIR}${Red} file with Project ID of ${BOLDRED}$projectID${HAIR}${Red}: FAIL${NC}${EOL}"
+        fi
+        if [[ -f "${PWD}/.env" ]]; then
+            count=0
+            for file in ~/.docker-og.d/*; do
+                if [[ "$file" == *"$1.conf"* ]]; then
+                    portNumber="${count}"
+                    if [[ $portNumber < 10 ]]; then
+                        portNumber="00${portNumber}"
+                    elif [[ $portNumber < 100 ]]; then
+                        portNumber="0${portNumber}"
+                    fi
+                    echo -e "PORT=157${portNumber}\n" >> ${PWD}/.env
+                    break
+                fi
+                let count++
+            done
         fi
     else
         printf "${Yellow}${INDENT}Create ${PWD}/.env file with Project ID of $projectID (maintain local settings set to true): SKIPPING${NC}${EOL}"
