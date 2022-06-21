@@ -279,19 +279,19 @@ $settings['trusted_host_patterns'] = [
 
 # search domains
 $settings['search_domain'] = [
-    'en' => 'search.open.local:'. $_ENV["PROJECT_ID"],
-    'fr' => 'search.open.local:'. $_ENV["PROJECT_ID"],
+    'en' => 'search.open.local:'. $_ENV["PROJECT_PORT"],
+    'fr' => 'search.open.local:'. $_ENV["PROJECT_PORT"],
 ];
 
 $settings['sd_search'] = [
-    'en' => 'http://search.open.local:' . $_ENV["PROJECT_ID"] . '/en/sd/id/',
-    'fr' => 'http://search.open.local:' . $_ENV["PROJECT_ID"] . '/fr/sd/id/',
+    'en' => 'http://search.open.local:' . $_ENV["PROJECT_PORT"] . '/en/sd/id/',
+    'fr' => 'http://search.open.local:' . $_ENV["PROJECT_PORT"] . '/fr/sd/id/',
 ];
 
 # default domains
 $settings['default_domain'] = [
-    'en' => 'search.open.local:' . $_ENV["PROJECT_ID"],
-    'fr' => 'search.open.local:' . $_ENV["PROJECT_ID"],
+    'en' => 'search.open.local:' . $_ENV["PROJECT_PORT"],
+    'fr' => 'search.open.local:' . $_ENV["PROJECT_PORT"],
 ];
 
 # default ati email address

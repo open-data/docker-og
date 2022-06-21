@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 import logging.config
 
-PROJECT_ID = os.getenv('PROJECT_ID')
+PROJECT_ID = os.getenv('PROJECT_PORT')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

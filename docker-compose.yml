@@ -26,6 +26,7 @@ services:
       CONTAINER_ROLE: proxy
       APP_ROOT: /var/ogproxy
       PROJECT_ID: ${PROJECT_ID}
+      PROJECT_PORT: ${PORT}
       ROOT_PASS: Docker!
     volumes:
       - ${PWD}/:/var/ogproxy
@@ -35,7 +36,9 @@ services:
       # - ./nginx:/var/log/nginx
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
     ports:
-      - ${PROJECT_ID}:80
+      - ${PORT}:80
+    expose:
+      - 80
 # END
 # Proxy
 # END
@@ -83,6 +86,7 @@ services:
       PATH: '$PATH:/var/www/html/drupal/vendor/bin'
       APP_ROOT: /var/www/html
       PROJECT_ID: ${PROJECT_ID}
+      PROJECT_PORT: ${PORT}
       ROOT_PASS: Docker!
     volumes:
       - ${PWD}/:/var/www/html
@@ -92,6 +96,8 @@ services:
       - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
       # - ./nginx:/var/log/nginx
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
+    expose:
+      - 8080
 # END
 # Drupal
 # END
@@ -153,6 +159,7 @@ services:
       TEST_INI: /srv/app/ckan/registry/test.ini
       DATA_URI: https://open.canada.ca/data
       PROJECT_ID: ${PROJECT_ID}
+      PROJECT_PORT: ${PORT}
       ROOT_PASS: Docker!
     volumes:
       - ${PWD}/:/srv/app
@@ -162,6 +169,8 @@ services:
       - ~/.gitconfig:/etc/gitconfig:ro
       - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
+    expose:
+      - 5001
 # END
 # CKAN Registry
 # END
@@ -223,6 +232,7 @@ services:
       TEST_INI: /srv/app/ckan/portal/test.ini
       DATA_URI: https://open.canada.ca/data
       PROJECT_ID: ${PROJECT_ID}
+      PROJECT_PORT: ${PORT}
       ROOT_PASS: Docker!
     volumes:
       - ${PWD}/:/srv/app
@@ -232,6 +242,8 @@ services:
       - ~/.gitconfig:/etc/gitconfig:ro
       - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
+    expose:
+      - 5002
 # END
 # CKAN Portal
 # END
@@ -264,12 +276,15 @@ services:
       POSTGRES_PASSWORD: secret
       POSTGRES_HOST_AUTH_METHOD: trust
       PROJECT_ID: ${PROJECT_ID}
+      PROJECT_PORT: ${PORT}
       ROOT_PASS: Docker!
     env_file:
       - _config/docker/.docker.env
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
     ports:
-      - ${PROJECT_ID}-db:5432
+      - ${PORT}42:5432
+    expose:
+      - 5432
 # END
 # Postgres
 # END
@@ -333,10 +348,13 @@ services:
       SOLR_USER: solr
       SOLR_GROUP: solr
       PROJECT_ID: ${PROJECT_ID}
+      PROJECT_PORT: ${PORT}
       ROOT_PASS: Docker!
     env_file:
       - _config/docker/.docker.env
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
+    expose:
+      - 8983
 # END
 # Solr
 # END
@@ -366,10 +384,13 @@ services:
     environment:
       CONTAINER_ROLE: redis
       PROJECT_ID: ${PROJECT_ID}
+      PROJECT_PORT: ${PORT}
       ROOT_PASS: Docker!
     env_file:
       - _config/docker/.docker.env
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
+    expose:
+      - 6379
 # END
 # Redis
 # END
@@ -423,12 +444,15 @@ services:
       PYTHONHTTPSVERIFY: 0
       SSL_VERIFY: 0
       PROJECT_ID: ${PROJECT_ID}
+      PROJECT_PORT: ${PORT}
       ROOT_PASS: Docker!
     volumes:
       - ${PWD}/:/var/ocs
       - ~/.gitconfig:/etc/gitconfig:ro
       - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
+    expose:
+      - 8080
 # END
 # Django
 # END
