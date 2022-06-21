@@ -85,6 +85,8 @@ services:
       PGDATABASE: og_drupal_local__${PROJECT_ID}
       PGUSER: homestead
       PGPASSWORD: secret
+      WET_VERSION: v4.0.50.1
+      GCWEB_VERSION: v11.0.0
       PATH: '$PATH:/var/www/html/drupal/vendor/bin'
       APP_ROOT: /var/www/html
       PROJECT_ID: ${PROJECT_ID}
@@ -154,8 +156,8 @@ services:
       PY_VERSION: 2.7
       PIP_VERSION: 19.2.1
       SETUP_TOOLS_VERSION: 36.1
-      WET_VERSION: v4.0.31
-      GCWEB_VERSION: v5.1
+      WET_VERSION: v4.0.50.1
+      GCWEB_VERSION: v11.0.0
       PYTHONHTTPSVERIFY: 0
       SSL_VERIFY: 0
       PORTAL_CONFIG: /srv/app/ckan/portal/portal.ini
@@ -229,8 +231,8 @@ services:
       PY_VERSION: 2.7
       PIP_VERSION: 19.2.1
       SETUP_TOOLS_VERSION: 36.1
-      WET_VERSION: v4.0.31
-      GCWEB_VERSION: v5.1
+      WET_VERSION: v4.0.50.1
+      GCWEB_VERSION: v11.0.0
       PYTHONHTTPSVERIFY: 0
       SSL_VERIFY: 0
       PORTAL_CONFIG: /srv/app/ckan/portal/portal.ini
@@ -450,10 +452,10 @@ services:
       PATH: '$PATH:/usr/local/lib'
       APP_ROOT: /var/ocs
       PY_VERSION: 3.7
-      WET_VERSION: v4.0.31
+      WET_VERSION: v4.0.50.1
       CDTS_VERSION: v4_0_28
       CDTS_GCWEB_VERSION: v4_0_31
-      GCWEB_VERSION: v5.1
+      GCWEB_VERSION: v11.0.0
       PYTHONHTTPSVERIFY: 0
       SSL_VERIFY: 0
       PROJECT_ID: ${PROJECT_ID}

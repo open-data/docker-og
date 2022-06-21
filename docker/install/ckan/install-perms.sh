@@ -30,6 +30,9 @@ if [[ $installFilePermissions_CKAN == "true" ]]; then
     # set database permissions
     paster --plugin=ckan datastore set-permissions -c ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini | psql -U homestead --set ON_ERROR_STOP=1
 
+    # update triggers
+    paster --plugin=ckanext-canada canada update-triggers -c ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini
+
 fi
 # END
 # Set file permissions
