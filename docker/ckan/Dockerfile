@@ -50,7 +50,7 @@ RUN mkdir -p /srv/app \
     && mkdir -p /etc/ckan
 RUN chown -R ckan:ckan /srv/app \
     && chown -R ckan:ckan /etc/ckan \
-    && chmod +x /usr/local/bin/start
+    && chmod 777 /usr/local/bin/start
 
 ARG USER_ID
 ARG GROUP_ID

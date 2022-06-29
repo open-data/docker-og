@@ -44,7 +44,7 @@ RUN useradd homestead \
 # Create root directory
 RUN mkdir -p /var/ocs
 RUN chown -R django:django /var/ocs \
-    && chmod +x /usr/local/bin/start
+    && chmod 777 /usr/local/bin/start
 
 ARG USER_ID
 ARG GROUP_ID
