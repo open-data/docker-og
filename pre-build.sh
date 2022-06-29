@@ -332,7 +332,7 @@ function run_pre_build {
         portNumber=""
         if [[ -f "${PWD}/.env" ]]; then
             count=0
-            for file in 'ls -tU ~/.docker-og.d/*'; do
+            for file in 'ls -tUr ~/.docker-og.d/*'; do
                 if [[ "$file" == *"$1.conf"* ]]; then
                     portNumber="${count}"
                     if [[ $portNumber < 10 ]]; then
