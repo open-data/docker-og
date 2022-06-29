@@ -331,7 +331,7 @@ function run_pre_build {
         didPortGeneration="false"
         portNumber=""
         if [[ -f "${PWD}/.env" ]]; then
-            count=1
+            count=0
             for file in ~/.docker-og.d/*; do
                 if [[ "$file" == *"$1.conf"* ]]; then
                     portNumber="${count}"
@@ -341,10 +341,10 @@ function run_pre_build {
                         portNumber="0${portNumber}"
                     fi
                     didPortGeneration="true"
-                    echo -e "PORT=157${portNumber}\n" >> ${PWD}/.env
+                    echo -e "PORT=57${portNumber}\n" >> ${PWD}/.env
                     break
                 fi
-                let count++
+                let count += 2
             done
         fi
         if [[ $didPortGeneration == "true" ]]; then
