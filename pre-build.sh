@@ -328,30 +328,45 @@ function run_pre_build {
         else
             printf "${Red}${INDENT}Create ${BOLDRED}${PWD}/.env${HAIR}${Red} file with Project ID of ${BOLDRED}$projectID${HAIR}${Red}: FAIL${NC}${EOL}"
         fi
-        didPortGeneration="false"
+        # rent port numbers from pool
+        if [[ ! -d "~/.docker-og.pool" ]]; then
+            mkdir ~/.docker-og.pool
+            touch ~/.docker-og.pool/{57000..57999}.port
+        fi
         portNumber=""
         if [[ -f "${PWD}/.env" ]]; then
-            count=0
-            for file in 'ls -tUr ~/.docker-og.d/*'; do
-                if [[ "$file" == *"$1.conf"* ]]; then
-                    portNumber="${count}"
-                    if [[ $portNumber < 10 ]]; then
-                        portNumber="00${portNumber}"
-                    elif [[ $portNumber < 100 ]]; then
-                        portNumber="0${portNumber}"
-                    fi
-                    didPortGeneration="true"
-                    echo -e "PORT=57${portNumber}\n" >> ${PWD}/.env
-                    break
+            # rent port for proxy
+            portNumber=$(ls ~/.docker-og.pool/* | head -1 | sed -e "s/\.port$//")
+            echo -e "PORT=${portNumber}\n" >> ${PWD}/.env
+            if [[ $? -eq 0 ]]; then
+                printf "${Green}${INDENT}Rent port number ${portNumber} for proxy: OK${NC}${EOL}"
+                rm $(ls ~/.docker-og.pool/* | head -1)
+                if [[ $? -eq 0 ]]; then
+                    printf "${Green}${INDENT}Remove port number ${portNumber} from pool: OK${NC}${EOL}"
+                else
+                    printf "${Red}${INDENT}Remove port number ${portNumber} from pool: FAIL${NC}${EOL}"
                 fi
-                let count += 2
-            done
+            else
+                printf "${Red}${INDENT}Rent port number for proxy: FAIL${NC}${EOL}"
+            fi
+            # END -- rent port for proxy -- END
+            # rent port for postgres
+            portNumber=$(ls ~/.docker-og.pool/* | head -1 | sed -e "s/\.port$//")
+            echo -e "DBPORT=${portNumber}\n" >> ${PWD}/.env
+            if [[ $? -eq 0 ]]; then
+                printf "${Green}${INDENT}Rent port number ${portNumber} for postgres: OK${NC}${EOL}"
+                rm $(ls ~/.docker-og.pool/* | head -1)
+                if [[ $? -eq 0 ]]; then
+                    printf "${Green}${INDENT}Remove port number ${portNumber} from pool: OK${NC}${EOL}"
+                else
+                    printf "${Red}${INDENT}Remove port number ${portNumber} from pool: FAIL${NC}${EOL}"
+                fi
+            else
+                printf "${Red}${INDENT}Rent port number for postgres: FAIL${NC}${EOL}"
+            fi
+            # END -- rent port for postgres -- END
         fi
-        if [[ $didPortGeneration == "true" ]]; then
-            printf "${Green}${INDENT}Generate port number 157${portNumber}: OK${NC}${EOL}"
-        else
-            printf "${Red}${INDENT}Generate port number: FAIL${NC}${EOL}"
-        fi
+        # END -- rent port numbers from pool -- END
     else
         printf "${Yellow}${INDENT}Create ${PWD}/.env file with Project ID of $projectID (maintain local settings set to true): SKIPPING${NC}${EOL}"
     fi

@@ -282,7 +282,7 @@ services:
       - _config/docker/.docker.env
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
     ports:
-      - ${PORT}42:5432
+      - ${DBPORT}:5432
     expose:
       - 5432
 # END
