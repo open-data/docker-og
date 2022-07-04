@@ -329,7 +329,7 @@ function run_pre_build {
             printf "${Red}${INDENT}Create ${BOLDRED}${PWD}/.env${HAIR}${Red} file with Project ID of ${BOLDRED}$projectID${HAIR}${Red}: FAIL${NC}${EOL}"
         fi
         # rent port numbers from pool
-        if [[ ! -d "~/.docker-og.pool" && ! -f "~/.docker-og.pool" ]]; then
+        if [[ ! -d "$HOME/.docker-og.pool" ]]; then
             mkdir ~/.docker-og.pool
             touch ~/.docker-og.pool/{57000..57999}.port
         fi
