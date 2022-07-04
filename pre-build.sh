@@ -329,14 +329,14 @@ function run_pre_build {
             printf "${Red}${INDENT}Create ${BOLDRED}${PWD}/.env${HAIR}${Red} file with Project ID of ${BOLDRED}$projectID${HAIR}${Red}: FAIL${NC}${EOL}"
         fi
         # rent port numbers from pool
-        if [[ ! -d "~/.docker-og.pool" ]]; then
+        if [[ ! -d "~/.docker-og.pool" && ! -f "~/.docker-og.pool" ]]; then
             mkdir ~/.docker-og.pool
             touch ~/.docker-og.pool/{57000..57999}.port
         fi
         portNumber=""
         if [[ -f "${PWD}/.env" ]]; then
             # rent port for proxy
-            portNumber=$(ls ~/.docker-og.pool/* | head -1 | sed -e "s/\.port$//")
+            portNumber=$(ls ~/.docker-og.pool | head -1 | sed -e "s/\.port$//")
             echo -e "PORT=${portNumber}\n" >> ${PWD}/.env
             if [[ $? -eq 0 ]]; then
                 printf "${Green}${INDENT}Rent port number ${portNumber} for proxy: OK${NC}${EOL}"
@@ -351,7 +351,7 @@ function run_pre_build {
             fi
             # END -- rent port for proxy -- END
             # rent port for postgres
-            portNumber=$(ls ~/.docker-og.pool/* | head -1 | sed -e "s/\.port$//")
+            portNumber=$(ls ~/.docker-og.pool | head -1 | sed -e "s/\.port$//")
             echo -e "DBPORT=${portNumber}\n" >> ${PWD}/.env
             if [[ $? -eq 0 ]]; then
                 printf "${Green}${INDENT}Rent port number ${portNumber} for postgres: OK${NC}${EOL}"
