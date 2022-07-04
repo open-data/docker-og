@@ -323,10 +323,12 @@ function run_pre_build {
     fi
     if [[ $maintainLocalConfigs == "false" ]]; then
         hasGeneratedPorts="false"
+        hasGeneratedOctets="false"
         if [[ -f "${PWD}/.env" ]]; then
             source ${PWD}/.env
             hasGeneratedPorts="true"
-            touch ${PWD}/.env && echo -e "PROJECT_ID=$projectID\nUSER_ID=$(id -u)\nGROUP_ID=$(id -g)\nPORT=${PORT}\nDBPORT=${DBPORT}\n" > ${PWD}/.env
+            hasGeneratedOctets="true"
+            touch ${PWD}/.env && echo -e "PROJECT_ID=$projectID\nUSER_ID=$(id -u)\nGROUP_ID=$(id -g)\nPORT=${PORT}\nDBPORT=${DBPORT}\nOCTET=${nOCTET}\n" > ${PWD}/.env
             if [[ $? -eq 0 ]]; then
                 printf "${Green}${INDENT}Create ${BOLDGREEN}${PWD}/.env${HAIR}${Green} file with Project ID of ${BOLDGREEN}$projectID${HAIR}${Green}: OK${NC}${EOL}"
             else
@@ -334,6 +336,7 @@ function run_pre_build {
             fi
         else
             hasGeneratedPorts="false"
+            hasGeneratedOctets="false"
             touch ${PWD}/.env && echo -e "PROJECT_ID=$projectID\nUSER_ID=$(id -u)\nGROUP_ID=$(id -g)\n" > ${PWD}/.env
             if [[ $? -eq 0 ]]; then
                 printf "${Green}${INDENT}Create ${BOLDGREEN}${PWD}/.env${HAIR}${Green} file with Project ID of ${BOLDGREEN}$projectID${HAIR}${Green}: OK${NC}${EOL}"
@@ -341,20 +344,21 @@ function run_pre_build {
                 printf "${Red}${INDENT}Create ${BOLDRED}${PWD}/.env${HAIR}${Red} file with Project ID of ${BOLDRED}$projectID${HAIR}${Red}: FAIL${NC}${EOL}"
             fi
         fi
-        # rent port numbers from pool
-        if [[ ! -d "$HOME/.docker-og.pool" ]]; then
-            mkdir ~/.docker-og.pool
-            touch ~/.docker-og.pool/{57000..57999}.port
-        fi
-        portNumber=""
+        # rent from pool
         if [[ -f "${PWD}/.env" ]]; then
+            # rent port numbers from pool
+            if [[ ! -d "$HOME/.docker-og.pools/ports" ]]; then
+                mkdir -p ~/.docker-og.pools/ports
+                touch ~/.docker-og.pools/ports/{57000..57999}.port
+            fi
+            portNumber=""
             if [[ $hasGeneratedPorts == "false" ]]; then
                 # rent port for proxy
-                portNumber=$(ls ~/.docker-og.pool | head -1 | sed -e "s/\.port$//")
+                portNumber=$(ls ~/.docker-og.pools/ports | head -1 | sed -e "s/\.port$//")
                 echo -e "PORT=${portNumber}\n" >> ${PWD}/.env
                 if [[ $? -eq 0 ]]; then
                     printf "${Green}${INDENT}Rent port number ${portNumber} for proxy: OK${NC}${EOL}"
-                    rm $(ls ~/.docker-og.pool/* | head -1)
+                    rm $(ls ~/.docker-og.pools/ports/* | head -1)
                     if [[ $? -eq 0 ]]; then
                         printf "${Green}${INDENT}Remove port number ${portNumber} from pool: OK${NC}${EOL}"
                     else
@@ -365,11 +369,11 @@ function run_pre_build {
                 fi
                 # END -- rent port for proxy -- END
                 # rent port for postgres
-                portNumber=$(ls ~/.docker-og.pool | head -1 | sed -e "s/\.port$//")
+                portNumber=$(ls ~/.docker-og.pools/ports | head -1 | sed -e "s/\.port$//")
                 echo -e "DBPORT=${portNumber}\n" >> ${PWD}/.env
                 if [[ $? -eq 0 ]]; then
                     printf "${Green}${INDENT}Rent port number ${portNumber} for postgres: OK${NC}${EOL}"
-                    rm $(ls ~/.docker-og.pool/* | head -1)
+                    rm $(ls ~/.docker-og.pools/ports/* | head -1)
                     if [[ $? -eq 0 ]]; then
                         printf "${Green}${INDENT}Remove port number ${portNumber} from pool: OK${NC}${EOL}"
                     else
@@ -380,8 +384,33 @@ function run_pre_build {
                 fi
                 # END -- rent port for postgres -- END
             fi
+            # END -- rent port numbers from pool -- END
+            # rent ip octet from pool
+            if [[ ! -d "$HOME/.docker-og.pools/octets" ]]; then
+                mkdir -p ~/.docker-og.pools/octets
+                touch ~/.docker-og.pools/octets/{1..254}.octet
+            fi
+            octet=""
+            if [[ $hasGeneratedOctets == "false" ]]; then
+                # rent ip octet for docker network
+                octet=$(ls ~/.docker-og.pools/octets | head -1 | sed -e "s/\.octet$//")
+                echo -e "OCTET=${octet}\n" >> ${PWD}/.env
+                if [[ $? -eq 0 ]]; then
+                    printf "${Green}${INDENT}Rent ip octet ${octet} for docker network: OK${NC}${EOL}"
+                    rm $(ls ~/.docker-og.pools/octets/* | head -1)
+                    if [[ $? -eq 0 ]]; then
+                        printf "${Green}${INDENT}Remove ip octet${octet} from pool: OK${NC}${EOL}"
+                    else
+                        printf "${Red}${INDENT}Remove ip octet ${octet} from pool: FAIL${NC}${EOL}"
+                    fi
+                else
+                    printf "${Red}${INDENT}Rent ip octet for docker network: FAIL${NC}${EOL}"
+                fi
+                # END -- rent ip octet for docker network -- END
+            fi
+            # END -- rent ip octet from pool -- END
         fi
-        # END -- rent port numbers from pool -- END
+        # END --  rent from pool -- END
     else
         printf "${Yellow}${INDENT}Create ${PWD}/.env file with Project ID of $projectID (maintain local settings set to true): SKIPPING${NC}${EOL}"
     fi

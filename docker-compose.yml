@@ -64,7 +64,7 @@ services:
     working_dir: /var/www/html
     depends_on:
       proxy:
-        condition: service_started
+        condition: service_healthy
       postgres:
         condition: service_started
       solr:
@@ -123,7 +123,7 @@ services:
     working_dir: /srv/app
     depends_on:
       proxy:
-        condition: service_started
+        condition: service_healthy
       postgres:
         condition: service_started
       solr:
@@ -196,7 +196,7 @@ services:
     working_dir: /srv/app
     depends_on:
       proxy:
-        condition: service_started
+        condition: service_healthy
       postgres:
         condition: service_started
       solr:
@@ -311,7 +311,7 @@ services:
     working_dir: /opt/solr
     depends_on:
       proxy:
-        condition: service_started
+        condition: service_healthy
     links:
       - proxy
     volumes:
@@ -416,7 +416,7 @@ services:
     working_dir: /var/ocs
     depends_on:
       proxy:
-        condition: service_started
+        condition: service_healthy
       postgres:
         condition: service_started
       solr:
