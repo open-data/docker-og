@@ -426,12 +426,27 @@ function run_pre_build {
     if [[ $maintainLocalConfigs == "false" ]]; then
         touch ${PWD}/docker/config/nginx/conf/.env.conf && echo -e "set \$projectID \"$projectID\";\nset \$octet $octet;\n" > ${PWD}/docker/config/nginx/conf/.env.conf
         if [[ $? -eq 0 ]]; then
-            printf "${Green}${INDENT}Create ${BOLDGREEN}${PWD}/docker/config/nginx/conf/.env.conf${HAIR}${Green} file with Project ID of ${BOLDGREEN}$projectID${HAIR}${Green}: OK${NC}${EOL}"
+            printf "${Green}${INDENT}Create ${BOLDGREEN}${PWD}/docker/config/nginx/conf/.env.conf${HAIR}${Green} file with Project ID of ${BOLDGREEN}$projectID${HAIR}${Green} and IP Octect ${BOLDGREEN}$octet${HAIR}${Green}: OK${NC}${EOL}"
         else
-            printf "${Red}${INDENT}Create ${BOLDRED}${PWD}/docker/config/nginx/conf/.env.conf${HAIR}${Red} file with Project ID of ${BOLDRED}$projectID${HAIR}${Red}: FAIL${NC}${EOL}"
+            printf "${Red}${INDENT}Create ${BOLDRED}${PWD}/docker/config/nginx/conf/.env.conf${HAIR}${Red} file with Project ID of ${BOLDRED}$projectID${HAIR}${Red} and IP Octect ${BOLDRED}$octet${HAIR}${Red}: FAIL${NC}${EOL}"
         fi
     else
-        printf "${Yellow}${INDENT}Create ${PWD}/docker/config/nginx/conf/.env.conf file with Project ID of $projectID (maintain local settings set to true): SKIPPING${NC}${EOL}"
+        printf "${Yellow}${INDENT}Create ${PWD}/docker/config/nginx/conf/.env.conf file with Project ID of $projectID and IP Octect $octet (maintain local settings set to true): SKIPPING${NC}${EOL}"
+    fi
+
+    # create nginx rendered upstream servers file
+    if [[ -f "${PWD}/docker/config/nginx/conf/.upstream_servers.conf" ]]; then
+        cp ${PWD}/docker/config/nginx/conf/.upstream_servers.conf ${PWD}/backup/local_configs/.upstream_servers.conf
+    fi
+    if [[ $maintainLocalConfigs == "false" ]]; then
+        touch ${PWD}/docker/config/nginx/conf/.upstream_servers.conf && cat ${PWD}/docker/config/nginx/conf/upstream_servers.conf | sed -e "s/\$octet/$octet/g" > ${PWD}/docker/config/nginx/conf/.upstream_servers.conf
+        if [[ $? -eq 0 ]]; then
+            printf "${Green}${INDENT}Create ${BOLDGREEN}${PWD}/docker/config/nginx/conf/.upstream_servers.conf${HAIR}${Green} file with IP Octect ${BOLDGREEN}$octet${HAIR}${Green}: OK${NC}${EOL}"
+        else
+            printf "${Red}${INDENT}Create ${BOLDRED}${PWD}/docker/config/nginx/conf/.upstream_servers.conf${HAIR}${Red} file with IP Octect ${BOLDRED}$octet${HAIR}${Red}: FAIL${NC}${EOL}"
+        fi
+    else
+        printf "${Yellow}${INDENT}Create ${PWD}/docker/config/nginx/conf/.upstream_servers.conf file with IP Octect $octet (maintain local settings set to true): SKIPPING${NC}${EOL}"
     fi
 
     # create hosts file
