@@ -21,6 +21,8 @@ HAIR='\033[0m'
 PWD=$(pwd)
 
 projectID='base'
+portNumber=''
+octet=''
 maintainLocalConfigs='false'
 noInteraction='false'
 
@@ -328,7 +330,9 @@ function run_pre_build {
             source ${PWD}/.env
             hasGeneratedPorts="true"
             hasGeneratedOctets="true"
-            touch ${PWD}/.env && echo -e "PROJECT_ID=$projectID\nUSER_ID=$(id -u)\nGROUP_ID=$(id -g)\nPORT=${PORT}\nDBPORT=${DBPORT}\nOCTET=${nOCTET}\n" > ${PWD}/.env
+            portNumber=${PORT}
+            octet=${OCTET}
+            touch ${PWD}/.env && echo -e "PROJECT_ID=$projectID\nUSER_ID=$(id -u)\nGROUP_ID=$(id -g)\nPORT=${PORT}\nDBPORT=${DBPORT}\nOCTET=${OCTET}\n" > ${PWD}/.env
             if [[ $? -eq 0 ]]; then
                 printf "${Green}${INDENT}Create ${BOLDGREEN}${PWD}/.env${HAIR}${Green} file with Project ID of ${BOLDGREEN}$projectID${HAIR}${Green}: OK${NC}${EOL}"
             else
@@ -351,8 +355,8 @@ function run_pre_build {
                 mkdir -p ~/.docker-og.pools/ports
                 touch ~/.docker-og.pools/ports/{57000..57999}.port
             fi
-            portNumber=""
             if [[ $hasGeneratedPorts == "false" ]]; then
+                portNumber=""
                 # rent port for proxy
                 portNumber=$(ls ~/.docker-og.pools/ports | head -1 | sed -e "s/\.port$//")
                 echo -e "PORT=${portNumber}\n" >> ${PWD}/.env
@@ -390,8 +394,8 @@ function run_pre_build {
                 mkdir -p ~/.docker-og.pools/octets
                 touch ~/.docker-og.pools/octets/{1..254}.octet
             fi
-            octet=""
             if [[ $hasGeneratedOctets == "false" ]]; then
+                octet=""
                 # rent ip octet for docker network
                 octet=$(ls ~/.docker-og.pools/octets | head -1 | sed -e "s/\.octet$//")
                 echo -e "OCTET=${octet}\n" >> ${PWD}/.env
@@ -420,7 +424,7 @@ function run_pre_build {
         cp ${PWD}/docker/config/nginx/conf/.env.conf ${PWD}/backup/local_configs/.env.conf
     fi
     if [[ $maintainLocalConfigs == "false" ]]; then
-        touch ${PWD}/docker/config/nginx/conf/.env.conf && echo "set \$projectID \"$projectID\";"$'\r' > ${PWD}/docker/config/nginx/conf/.env.conf
+        touch ${PWD}/docker/config/nginx/conf/.env.conf && echo -e "set \$projectID \"$projectID\";\nset \$octet $octet;\n" > ${PWD}/docker/config/nginx/conf/.env.conf
         if [[ $? -eq 0 ]]; then
             printf "${Green}${INDENT}Create ${BOLDGREEN}${PWD}/docker/config/nginx/conf/.env.conf${HAIR}${Green} file with Project ID of ${BOLDGREEN}$projectID${HAIR}${Green}: OK${NC}${EOL}"
         else

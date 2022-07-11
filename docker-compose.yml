@@ -20,6 +20,9 @@ services:
       timeout: 5s
       retries: 3
     working_dir: /var/ogproxy
+    networks:
+      og-local-network:
+        ipv4_address: ${OCTET}.0.0.3
     env_file:
       - _config/docker/.docker.env
     environment:
@@ -62,6 +65,9 @@ services:
       timeout: 5s
       retries: 3
     working_dir: /var/www/html
+    networks:
+      og-local-network:
+        ipv4_address: ${OCTET}.0.0.6
     depends_on:
       proxy:
         condition: service_healthy
@@ -121,6 +127,9 @@ services:
       timeout: 5s
       retries: 3
     working_dir: /srv/app
+    networks:
+      og-local-network:
+        ipv4_address: ${OCTET}.0.0.7
     depends_on:
       proxy:
         condition: service_healthy
@@ -194,6 +203,9 @@ services:
       timeout: 5s
       retries: 3
     working_dir: /srv/app
+    networks:
+      og-local-network:
+        ipv4_address: ${OCTET}.0.0.8
     depends_on:
       proxy:
         condition: service_healthy
@@ -267,6 +279,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    networks:
+      og-local-network:
+        ipv4_address: ${OCTET}.0.0.9
     volumes:
       - ./postgres:/var/lib/postgresql/data
       - ./docker/config/postgres:/docker-entrypoint-initdb.d
@@ -309,6 +324,9 @@ services:
       timeout: 5s
       retries: 3
     working_dir: /opt/solr
+    networks:
+      og-local-network:
+        ipv4_address: ${OCTET}.0.0.10
     depends_on:
       proxy:
         condition: service_healthy
@@ -379,6 +397,9 @@ services:
       timeout: 5s
       retries: 3
     working_dir: /data
+    networks:
+      og-local-network:
+        ipv4_address: ${OCTET}.0.0.11
     # volumes:
     #   - ./redis:/data
     environment:
@@ -414,6 +435,9 @@ services:
       timeout: 5s
       retries: 3
     working_dir: /var/ocs
+    networks:
+      og-local-network:
+        ipv4_address: ${OCTET}.0.0.12
     depends_on:
       proxy:
         condition: service_healthy
@@ -456,3 +480,12 @@ services:
 # END
 # Django
 # END
+
+networks:
+  og-local-network:
+    external : false
+    driver: bridge
+    ipam:
+      config:
+        - subnet: ${OCTET}.0.0.0/16
+          gateway: ${OCTET}.0.0.1
