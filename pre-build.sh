@@ -21,6 +21,8 @@ HAIR='\033[0m'
 PWD=$(pwd)
 
 projectID='base'
+portNumber=''
+octet=''
 maintainLocalConfigs='false'
 noInteraction='false'
 
@@ -48,6 +50,13 @@ function run_pre_build {
         fi
 
         printf "${SPACER}"
+
+    fi
+
+    if [[ "$(stat -L -c '%a' /var/run/docker.sock)" != "666" ]]; then
+
+        printf "${Cyan}${INDENT}Setting correct permissions for docker socket. Maybe prompt for admin password...${NC}${EOL}"
+        sudo chmod 666 /var/run/docker.sock
 
     fi
 
@@ -315,12 +324,97 @@ function run_pre_build {
         cp ${PWD}/.env ${PWD}/backup/local_configs/.env
     fi
     if [[ $maintainLocalConfigs == "false" ]]; then
-        touch ${PWD}/.env && echo -e "PROJECT_ID=$projectID\nUSER_ID=$(id -u)\nGROUP_ID=$(id -g)" > ${PWD}/.env
-        if [[ $? -eq 0 ]]; then
-            printf "${Green}${INDENT}Create ${BOLDGREEN}${PWD}/.env${HAIR}${Green} file with Project ID of ${BOLDGREEN}$projectID${HAIR}${Green}: OK${NC}${EOL}"
+        hasGeneratedPorts="false"
+        hasGeneratedOctets="false"
+        if [[ -f "${PWD}/.env" ]]; then
+            source ${PWD}/.env
+            hasGeneratedPorts="true"
+            hasGeneratedOctets="true"
+            portNumber=${PORT}
+            octet=${OCTET}
+            touch ${PWD}/.env && echo -e "PROJECT_ID=$projectID\nUSER_ID=$(id -u)\nGROUP_ID=$(id -g)\nPORT=${PORT}\nDBPORT=${DBPORT}\nOCTET=${OCTET}\n" > ${PWD}/.env
+            if [[ $? -eq 0 ]]; then
+                printf "${Green}${INDENT}Create ${BOLDGREEN}${PWD}/.env${HAIR}${Green} file with Project ID of ${BOLDGREEN}$projectID${HAIR}${Green}: OK${NC}${EOL}"
+            else
+                printf "${Red}${INDENT}Create ${BOLDRED}${PWD}/.env${HAIR}${Red} file with Project ID of ${BOLDRED}$projectID${HAIR}${Red}: FAIL${NC}${EOL}"
+            fi
         else
-            printf "${Red}${INDENT}Create ${BOLDRED}${PWD}/.env${HAIR}${Red} file with Project ID of ${BOLDRED}$projectID${HAIR}${Red}: FAIL${NC}${EOL}"
+            hasGeneratedPorts="false"
+            hasGeneratedOctets="false"
+            touch ${PWD}/.env && echo -e "PROJECT_ID=$projectID\nUSER_ID=$(id -u)\nGROUP_ID=$(id -g)\n" > ${PWD}/.env
+            if [[ $? -eq 0 ]]; then
+                printf "${Green}${INDENT}Create ${BOLDGREEN}${PWD}/.env${HAIR}${Green} file with Project ID of ${BOLDGREEN}$projectID${HAIR}${Green}: OK${NC}${EOL}"
+            else
+                printf "${Red}${INDENT}Create ${BOLDRED}${PWD}/.env${HAIR}${Red} file with Project ID of ${BOLDRED}$projectID${HAIR}${Red}: FAIL${NC}${EOL}"
+            fi
         fi
+        # rent from pool
+        if [[ -f "${PWD}/.env" ]]; then
+            # rent port numbers from pool
+            if [[ ! -d "$HOME/.docker-og.pools/ports" ]]; then
+                mkdir -p ~/.docker-og.pools/ports
+                touch ~/.docker-og.pools/ports/{57000..57999}.port
+            fi
+            if [[ $hasGeneratedPorts == "false" ]]; then
+                portNumber=""
+                # rent port for proxy
+                portNumber=$(ls ~/.docker-og.pools/ports | head -1 | sed -e "s/\.port$//")
+                echo -e "PORT=${portNumber}\n" >> ${PWD}/.env
+                if [[ $? -eq 0 ]]; then
+                    printf "${Green}${INDENT}Rent port number ${portNumber} for proxy: OK${NC}${EOL}"
+                    rm $(ls ~/.docker-og.pools/ports/* | head -1)
+                    if [[ $? -eq 0 ]]; then
+                        printf "${Green}${INDENT}Remove port number ${portNumber} from pool: OK${NC}${EOL}"
+                    else
+                        printf "${Red}${INDENT}Remove port number ${portNumber} from pool: FAIL${NC}${EOL}"
+                    fi
+                else
+                    printf "${Red}${INDENT}Rent port number for proxy: FAIL${NC}${EOL}"
+                fi
+                # END -- rent port for proxy -- END
+                # rent port for postgres
+                portNumber=$(ls ~/.docker-og.pools/ports | head -1 | sed -e "s/\.port$//")
+                echo -e "DBPORT=${portNumber}\n" >> ${PWD}/.env
+                if [[ $? -eq 0 ]]; then
+                    printf "${Green}${INDENT}Rent port number ${portNumber} for postgres: OK${NC}${EOL}"
+                    rm $(ls ~/.docker-og.pools/ports/* | head -1)
+                    if [[ $? -eq 0 ]]; then
+                        printf "${Green}${INDENT}Remove port number ${portNumber} from pool: OK${NC}${EOL}"
+                    else
+                        printf "${Red}${INDENT}Remove port number ${portNumber} from pool: FAIL${NC}${EOL}"
+                    fi
+                else
+                    printf "${Red}${INDENT}Rent port number for postgres: FAIL${NC}${EOL}"
+                fi
+                # END -- rent port for postgres -- END
+            fi
+            # END -- rent port numbers from pool -- END
+            # rent ip octet from pool
+            if [[ ! -d "$HOME/.docker-og.pools/octets" ]]; then
+                mkdir -p ~/.docker-og.pools/octets
+                touch ~/.docker-og.pools/octets/{1..254}.octet
+            fi
+            if [[ $hasGeneratedOctets == "false" ]]; then
+                octet=""
+                # rent ip octet for docker network
+                octet=$(ls ~/.docker-og.pools/octets | head -1 | sed -e "s/\.octet$//")
+                echo -e "OCTET=${octet}\n" >> ${PWD}/.env
+                if [[ $? -eq 0 ]]; then
+                    printf "${Green}${INDENT}Rent ip octet ${octet} for docker network: OK${NC}${EOL}"
+                    rm $(ls ~/.docker-og.pools/octets/* | head -1)
+                    if [[ $? -eq 0 ]]; then
+                        printf "${Green}${INDENT}Remove ip octet${octet} from pool: OK${NC}${EOL}"
+                    else
+                        printf "${Red}${INDENT}Remove ip octet ${octet} from pool: FAIL${NC}${EOL}"
+                    fi
+                else
+                    printf "${Red}${INDENT}Rent ip octet for docker network: FAIL${NC}${EOL}"
+                fi
+                # END -- rent ip octet for docker network -- END
+            fi
+            # END -- rent ip octet from pool -- END
+        fi
+        # END --  rent from pool -- END
     else
         printf "${Yellow}${INDENT}Create ${PWD}/.env file with Project ID of $projectID (maintain local settings set to true): SKIPPING${NC}${EOL}"
     fi
@@ -330,49 +424,64 @@ function run_pre_build {
         cp ${PWD}/docker/config/nginx/conf/.env.conf ${PWD}/backup/local_configs/.env.conf
     fi
     if [[ $maintainLocalConfigs == "false" ]]; then
-        touch ${PWD}/docker/config/nginx/conf/.env.conf && echo "set \$projectID \"$projectID\";"$'\r' > ${PWD}/docker/config/nginx/conf/.env.conf
+        touch ${PWD}/docker/config/nginx/conf/.env.conf && echo -e "set \$projectID \"$projectID\";\nset \$octet $octet;\n" > ${PWD}/docker/config/nginx/conf/.env.conf
         if [[ $? -eq 0 ]]; then
-            printf "${Green}${INDENT}Create ${BOLDGREEN}${PWD}/docker/config/nginx/conf/.env.conf${HAIR}${Green} file with Project ID of ${BOLDGREEN}$projectID${HAIR}${Green}: OK${NC}${EOL}"
+            printf "${Green}${INDENT}Create ${BOLDGREEN}${PWD}/docker/config/nginx/conf/.env.conf${HAIR}${Green} file with Project ID of ${BOLDGREEN}$projectID${HAIR}${Green} and IP Octect ${BOLDGREEN}$octet${HAIR}${Green}: OK${NC}${EOL}"
         else
-            printf "${Red}${INDENT}Create ${BOLDRED}${PWD}/docker/config/nginx/conf/.env.conf${HAIR}${Red} file with Project ID of ${BOLDRED}$projectID${HAIR}${Red}: FAIL${NC}${EOL}"
+            printf "${Red}${INDENT}Create ${BOLDRED}${PWD}/docker/config/nginx/conf/.env.conf${HAIR}${Red} file with Project ID of ${BOLDRED}$projectID${HAIR}${Red} and IP Octect ${BOLDRED}$octet${HAIR}${Red}: FAIL${NC}${EOL}"
         fi
     else
-        printf "${Yellow}${INDENT}Create ${PWD}/docker/config/nginx/conf/.env.conf file with Project ID of $projectID (maintain local settings set to true): SKIPPING${NC}${EOL}"
+        printf "${Yellow}${INDENT}Create ${PWD}/docker/config/nginx/conf/.env.conf file with Project ID of $projectID and IP Octect $octet (maintain local settings set to true): SKIPPING${NC}${EOL}"
+    fi
+
+    # create nginx rendered upstream servers file
+    if [[ -f "${PWD}/docker/config/nginx/conf/.upstream_servers.conf" ]]; then
+        cp ${PWD}/docker/config/nginx/conf/.upstream_servers.conf ${PWD}/backup/local_configs/.upstream_servers.conf
+    fi
+    if [[ $maintainLocalConfigs == "false" ]]; then
+        touch ${PWD}/docker/config/nginx/conf/.upstream_servers.conf && cat ${PWD}/docker/config/nginx/conf/upstream_servers.conf | sed -e "s/\$octet/$octet/g" > ${PWD}/docker/config/nginx/conf/.upstream_servers.conf
+        if [[ $? -eq 0 ]]; then
+            printf "${Green}${INDENT}Create ${BOLDGREEN}${PWD}/docker/config/nginx/conf/.upstream_servers.conf${HAIR}${Green} file with IP Octect ${BOLDGREEN}$octet${HAIR}${Green}: OK${NC}${EOL}"
+        else
+            printf "${Red}${INDENT}Create ${BOLDRED}${PWD}/docker/config/nginx/conf/.upstream_servers.conf${HAIR}${Red} file with IP Octect ${BOLDRED}$octet${HAIR}${Red}: FAIL${NC}${EOL}"
+        fi
+    else
+        printf "${Yellow}${INDENT}Create ${PWD}/docker/config/nginx/conf/.upstream_servers.conf file with IP Octect $octet (maintain local settings set to true): SKIPPING${NC}${EOL}"
     fi
 
     # create hosts file
     if [[ $noInteraction == "false" ]]; then
-        printf "${Cyan}${INDENT}Generating new project host file ${ITALIC}${BOLD}/etc/hosts.d/$projectID.conf${HAIR}${Cyan}. Maybe prompt for admin password...${NC}${EOL}"
+        printf "${Cyan}${INDENT}Generating host file ${ITALIC}${BOLD}/etc/hosts.d/og.conf${HAIR}${Cyan}. Maybe prompt for admin password...${NC}${EOL}"
         if [[ -d "/etc/hosts.d" ]]; then
             if [[ -f "/etc/hosts.d/default.conf" ]]; then
-                cat /etc/hosts.d/*.conf | sudo tee /etc/hosts >/dev/null
+                sudo find /etc/hosts.d -type f | sudo cat $(grep .conf) | sudo tee /etc/hosts >/dev/null
             else
                 sudo cp /etc/hosts /etc/hosts.d/default.conf
-                cat /etc/hosts.d/*.conf | sudo tee /etc/hosts >/dev/null
+                sudo find /etc/hosts.d -type f | sudo cat $(grep .conf) | sudo tee /etc/hosts >/dev/null
             fi
         else
             sudo mkdir /etc/hosts.d
             sudo cp /etc/hosts /etc/hosts.d/default.conf
-            cat /etc/hosts.d/*.conf | sudo tee /etc/hosts >/dev/null
+            sudo find /etc/hosts.d -type f | sudo cat $(grep .conf) | sudo tee /etc/hosts >/dev/null
         fi
         if [[ -d "/etc/hosts.d" ]]; then
-            if [[ -f "/etc/hosts.d/$projectID.conf" ]]; then
-                sudo rm -rf /etc/hosts.d/$projectID.conf
+            if [[ -f "/etc/hosts.d/og.conf" ]]; then
+                sudo rm -rf /etc/hosts.d/og.conf
             fi
-            sudo touch /etc/hosts.d/$projectID.conf
+            sudo touch /etc/hosts.d/og.conf
             if [[ $? -eq 0 ]]; then
-                printf "${Green}${INDENT}Generate project host file /etc/hosts.d/$projectID.conf: OK${NC}${EOL}"
+                printf "${Green}${INDENT}Generate host file /etc/hosts.dog.conf: OK${NC}${EOL}"
             else
-                printf "${Red}${INDENT}Generate project host file /etc/hosts.d/$projectID.conf: FAIL${NC}${EOL}"
+                printf "${Red}${INDENT}Generate host file /etc/hosts.d/og.conf: FAIL${NC}${EOL}"
             fi
-            echo "" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
-            echo "127.0.0.1	open-$projectID.local" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
-            echo "127.0.0.1	registry.open-$projectID.local" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
-            echo "127.0.0.1	portal.open-$projectID.local" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
-            echo "127.0.0.1	solr.open-$projectID.local" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
-            echo "127.0.0.1	search.open-$projectID.local" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
-            echo "" | sudo tee -a /etc/hosts.d/$projectID.conf >/dev/null
-            cat /etc/hosts.d/*.conf | sudo tee /etc/hosts >/dev/null
+            echo "" | sudo tee -a /etc/hosts.d/og.conf >/dev/null
+            echo "127.0.0.1	open.local" | sudo tee -a /etc/hosts.d/og.conf >/dev/null
+            echo "127.0.0.1	registry.open.local" | sudo tee -a /etc/hosts.d/og.conf >/dev/null
+            echo "127.0.0.1	portal.open.local" | sudo tee -a /etc/hosts.d/og.conf >/dev/null
+            echo "127.0.0.1	solr.open.local" | sudo tee -a /etc/hosts.d/og.conf >/dev/null
+            echo "127.0.0.1	search.open.local" | sudo tee -a /etc/hosts.d/og.conf >/dev/null
+            echo "" | sudo tee -a /etc/hosts.d/og.conf >/dev/null
+            sudo find /etc/hosts.d -type f | sudo cat $(grep .conf) | sudo tee /etc/hosts >/dev/null
         fi
     fi
 
@@ -388,42 +497,50 @@ function run_pre_build {
 
 if [[ $1 ]]; then
 
-    if [[ $2 && $2 == "no-interaction" ]]; then
+    if [ $(pgrep docker) ]; then
 
-        noInteraction='true'
+        if [[ $2 && $2 == "no-interaction" ]]; then
 
-    fi
+            noInteraction='true'
 
-    if [[ $noInteraction == "false" ]]; then
+        fi
 
-        INDENT=$INDENT$INDENT
+        if [[ $noInteraction == "false" ]]; then
 
-        read -r -p $'\n\n\033[0;31m    Are you sure you want to run the\033[1m pre build script?\033[0m\033[0;31m [y/N]:\033[0;0m    ' response
+            INDENT=$INDENT$INDENT
 
-        if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+            read -r -p $'\n\n\033[0;31m    Are you sure you want to run the\033[1m pre build script?\033[0m\033[0;31m [y/N]:\033[0;0m    ' response
 
-            projectID=$1
-            run_pre_build
+            if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+
+                projectID=$1
+                run_pre_build
+
+            else
+
+                printf "${SPACER}${Yellow}${INDENT}Exiting pre build script...${NC}${SPACER}"
+
+            fi
 
         else
 
-            printf "${SPACER}${Yellow}${INDENT}Exiting pre build script...${NC}${SPACER}"
+            if [[ $3 ]]; then
+
+                PWD=$3
+
+            fi
+
+            INDENT=$INDENT
+            BOLDGREEN=${HAIR}${Green}
+            BOLDRED=${HAIR}${Red}
+            projectID=$1
+            run_pre_build
 
         fi
 
     else
 
-        if [[ $3 ]]; then
-
-            PWD=$3
-
-        fi
-
-        INDENT=$INDENT
-        BOLDGREEN=${HAIR}${Green}
-        BOLDRED=${HAIR}${Red}
-        projectID=$1
-        run_pre_build
+        printf "${SPACER}${Yellow}${INDENT}Docker service is not running.${NC}${SPACER}"
 
     fi
 

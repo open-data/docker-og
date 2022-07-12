@@ -23,7 +23,7 @@ ADD docker/config/solr/cores /var/solr/local_data
 RUN mkdir -p /var/solr/data \
     && cp -R /var/solr/local_data/* /var/solr/data \
     && chown -R solr:solr /var/solr/data \
-    && chmod +x /usr/local/bin/start
+    && chmod 777 /usr/local/bin/start
 
 ARG USER_ID
 ARG GROUP_ID

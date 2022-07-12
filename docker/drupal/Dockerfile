@@ -75,7 +75,7 @@ RUN useradd homestead
 # Create root directory
 RUN mkdir -p /var/www/html
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod +x /usr/local/bin/start \
+    && chmod 777 /usr/local/bin/start \
     && chmod +w /usr/local/var/run \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log

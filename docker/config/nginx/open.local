@@ -2,13 +2,7 @@ server {
 
     include conf/.env.conf;
 
-    server_name "~^open-(?<requestedProjectID>.+)\.local";
-
-    if ( $projectID != $requestedProjectID ){
-
-        break;
-
-    }
+    server_name open.local;
 
     listen 8080 default_server reuseport;
 

@@ -31,13 +31,13 @@ import configparser
 
 config = configparser.ConfigParser()
 config.read(config_filepath)
-config['DEFAULT']['project_id'] = os.getenv('PROJECT_ID')
+config['DEFAULT']['project_id'] = os.getenv('PROJECT_PORT')
 with open(config_filepath,'w') as file:
     config.write(file)
 
 testConfig = configparser.ConfigParser()
 testConfig.read(test_config_filepath)
-testConfig['DEFAULT']['project_id'] = os.getenv('PROJECT_ID')
+testConfig['DEFAULT']['project_id'] = os.getenv('PROJECT_PORT')
 with open(test_config_filepath,'w') as file:
     testConfig.write(file)
     

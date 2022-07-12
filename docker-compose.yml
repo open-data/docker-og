@@ -19,16 +19,17 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    working_dir: /var/ogproxy
     networks:
       og-local-network:
-        ipv4_address: 172.0.0.3
-    working_dir: /var/ogproxy
+        ipv4_address: ${OCTET}.0.0.3
     env_file:
       - _config/docker/.docker.env
     environment:
       CONTAINER_ROLE: proxy
       APP_ROOT: /var/ogproxy
       PROJECT_ID: ${PROJECT_ID}
+      PROJECT_PORT: ${PORT}
       ROOT_PASS: Docker!
     volumes:
       - ${PWD}/:/var/ogproxy
@@ -38,8 +39,9 @@ services:
       # - ./nginx:/var/log/nginx
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
     ports:
-      - 443:443
-      - 80:80
+      - ${PORT}:80
+    expose:
+      - 80
 # END
 # Proxy
 # END
@@ -65,7 +67,7 @@ services:
     working_dir: /var/www/html
     networks:
       og-local-network:
-        ipv4_address: 172.0.0.6
+        ipv4_address: ${OCTET}.0.0.6
     depends_on:
       proxy:
         condition: service_healthy
@@ -85,9 +87,12 @@ services:
       PGDATABASE: og_drupal_local__${PROJECT_ID}
       PGUSER: homestead
       PGPASSWORD: secret
+      WET_VERSION: v4.0.50.1
+      GCWEB_VERSION: v11.0.0
       PATH: '$PATH:/var/www/html/drupal/vendor/bin'
       APP_ROOT: /var/www/html
       PROJECT_ID: ${PROJECT_ID}
+      PROJECT_PORT: ${PORT}
       ROOT_PASS: Docker!
     volumes:
       - ${PWD}/:/var/www/html
@@ -97,9 +102,8 @@ services:
       - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
       # - ./nginx:/var/log/nginx
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
-    ports:
-      - 4430:4430
-      - 8080:8080
+    expose:
+      - 8080
 # END
 # Drupal
 # END
@@ -125,7 +129,7 @@ services:
     working_dir: /srv/app
     networks:
       og-local-network:
-        ipv4_address: 172.0.0.7
+        ipv4_address: ${OCTET}.0.0.7
     depends_on:
       proxy:
         condition: service_healthy
@@ -154,8 +158,8 @@ services:
       PY_VERSION: 2.7
       PIP_VERSION: 19.2.1
       SETUP_TOOLS_VERSION: 36.1
-      WET_VERSION: v4.0.31
-      GCWEB_VERSION: v5.1
+      WET_VERSION: v4.0.50.1
+      GCWEB_VERSION: v11.0.0
       PYTHONHTTPSVERIFY: 0
       SSL_VERIFY: 0
       PORTAL_CONFIG: /srv/app/ckan/portal/portal.ini
@@ -164,6 +168,7 @@ services:
       TEST_INI: /srv/app/ckan/registry/test.ini
       DATA_URI: https://open.canada.ca/data
       PROJECT_ID: ${PROJECT_ID}
+      PROJECT_PORT: ${PORT}
       ROOT_PASS: Docker!
     volumes:
       - ${PWD}/:/srv/app
@@ -173,8 +178,8 @@ services:
       - ~/.gitconfig:/etc/gitconfig:ro
       - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
-    ports:
-      - 5001:5001
+    expose:
+      - 5001
 # END
 # CKAN Registry
 # END
@@ -200,7 +205,7 @@ services:
     working_dir: /srv/app
     networks:
       og-local-network:
-        ipv4_address: 172.0.0.8
+        ipv4_address: ${OCTET}.0.0.8
     depends_on:
       proxy:
         condition: service_healthy
@@ -229,8 +234,8 @@ services:
       PY_VERSION: 2.7
       PIP_VERSION: 19.2.1
       SETUP_TOOLS_VERSION: 36.1
-      WET_VERSION: v4.0.31
-      GCWEB_VERSION: v5.1
+      WET_VERSION: v4.0.50.1
+      GCWEB_VERSION: v11.0.0
       PYTHONHTTPSVERIFY: 0
       SSL_VERIFY: 0
       PORTAL_CONFIG: /srv/app/ckan/portal/portal.ini
@@ -239,6 +244,7 @@ services:
       TEST_INI: /srv/app/ckan/portal/test.ini
       DATA_URI: https://open.canada.ca/data
       PROJECT_ID: ${PROJECT_ID}
+      PROJECT_PORT: ${PORT}
       ROOT_PASS: Docker!
     volumes:
       - ${PWD}/:/srv/app
@@ -248,8 +254,8 @@ services:
       - ~/.gitconfig:/etc/gitconfig:ro
       - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
-    ports:
-      - 5002:5002
+    expose:
+      - 5002
 # END
 # CKAN Portal
 # END
@@ -275,7 +281,7 @@ services:
       retries: 3
     networks:
       og-local-network:
-        ipv4_address: 172.0.0.9
+        ipv4_address: ${OCTET}.0.0.9
     volumes:
       - ./postgres:/var/lib/postgresql/data
       - ./docker/config/postgres:/docker-entrypoint-initdb.d
@@ -285,12 +291,15 @@ services:
       POSTGRES_PASSWORD: secret
       POSTGRES_HOST_AUTH_METHOD: trust
       PROJECT_ID: ${PROJECT_ID}
+      PROJECT_PORT: ${PORT}
       ROOT_PASS: Docker!
     env_file:
       - _config/docker/.docker.env
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
     ports:
-      - 15438:5432
+      - ${DBPORT}:5432
+    expose:
+      - 5432
 # END
 # Postgres
 # END
@@ -317,7 +326,7 @@ services:
     working_dir: /opt/solr
     networks:
       og-local-network:
-        ipv4_address: 172.0.0.10
+        ipv4_address: ${OCTET}.0.0.10
     depends_on:
       proxy:
         condition: service_healthy
@@ -356,19 +365,14 @@ services:
       SOLR_SSL_ENABLED: "false"
       SOLR_USER: solr
       SOLR_GROUP: solr
-      PATH: /opt/solr/bin:/opt/docker-solr/scripts:/usr/local/openjdk-11/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-      JAVA_HOME: /usr/local/openjdk-11
-      SOLR_DATA_HOME: /var/solr/data
-      SOLR_HOME: /var/solr/data
-      SOLR_LOGS_DIR: /var/solr/logs
-      SOLR_PID_DIR: /var/solr
       PROJECT_ID: ${PROJECT_ID}
+      PROJECT_PORT: ${PORT}
       ROOT_PASS: Docker!
     env_file:
       - _config/docker/.docker.env
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
-    ports:
-      - 8981:8983
+    expose:
+      - 8983
 # END
 # Solr
 # END
@@ -395,18 +399,19 @@ services:
     working_dir: /data
     networks:
       og-local-network:
-        ipv4_address: 172.0.0.11
+        ipv4_address: ${OCTET}.0.0.11
     # volumes:
     #   - ./redis:/data
     environment:
       CONTAINER_ROLE: redis
       PROJECT_ID: ${PROJECT_ID}
+      PROJECT_PORT: ${PORT}
       ROOT_PASS: Docker!
     env_file:
       - _config/docker/.docker.env
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
-    ports:
-      - 6979:6379
+    expose:
+      - 6379
 # END
 # Redis
 # END
@@ -432,7 +437,7 @@ services:
     working_dir: /var/ocs
     networks:
       og-local-network:
-        ipv4_address: 172.0.0.12
+        ipv4_address: ${OCTET}.0.0.12
     depends_on:
       proxy:
         condition: service_healthy
@@ -456,21 +461,22 @@ services:
       PATH: '$PATH:/usr/local/lib'
       APP_ROOT: /var/ocs
       PY_VERSION: 3.7
-      WET_VERSION: v4.0.31
+      WET_VERSION: v4.0.50.1
       CDTS_VERSION: v4_0_28
       CDTS_GCWEB_VERSION: v4_0_31
-      GCWEB_VERSION: v5.1
+      GCWEB_VERSION: v11.0.0
       PYTHONHTTPSVERIFY: 0
       SSL_VERIFY: 0
       PROJECT_ID: ${PROJECT_ID}
+      PROJECT_PORT: ${PORT}
       ROOT_PASS: Docker!
     volumes:
       - ${PWD}/:/var/ocs
       - ~/.gitconfig:/etc/gitconfig:ro
       - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
-    ports:
-      - 8081:8080
+    expose:
+      - 8080
 # END
 # Django
 # END
@@ -481,5 +487,5 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.0.0.0/16
-          gateway: 172.0.0.1
+        - subnet: ${OCTET}.0.0.0/16
+          gateway: ${OCTET}.0.0.1

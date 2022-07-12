@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 set -e
 
@@ -27,6 +27,10 @@ if [[ "$role" = "proxy" ]]; then
 # Proxy
 #
 
+    # stop nginx service
+    printf "${Green}Stopping nginx service${NC}${EOL}"
+    service nginx stop
+
     # link proxy supervisord config
     ln -sf /etc/supervisor/conf.d-available/proxy.conf /etc/supervisor/conf.d/proxy.conf
 
@@ -48,10 +52,6 @@ if [[ "$role" = "proxy" ]]; then
     ln -sf /etc/nginx/sites-available/registry.open.local /etc/nginx/sites-enabled/registry.open.local
     ln -sf /etc/nginx/sites-available/search.open.local /etc/nginx/sites-enabled/search.open.local
     ln -sf /etc/nginx/sites-available/solr.open.local /etc/nginx/sites-enabled/solr.open.local
-
-    # stop nginx service
-    printf "${Green}Stopping nginx service${NC}${EOL}"
-    service nginx stop
 
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"

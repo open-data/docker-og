@@ -13,6 +13,7 @@ node_modules/
 # Project variables
 /.env
 /docker/config/nginx/conf/.env.conf
+/docker/config/nginx/conf/.upstream_servers.conf
 /_config/
 
 # Build

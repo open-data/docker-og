@@ -6,13 +6,7 @@ server {
 
     include conf/.env.conf;
 
-    server_name "~^portal\.open-(?<requestedProjectID>.+)\.local";
-
-    if ( $projectID != $requestedProjectID ){
-
-        break;
-
-    }
+    server_name portal.open.local;
 
     listen 80;
 
@@ -38,25 +32,3 @@ server {
 # END
 # CKAN Portal Back
 # END
-
-server {
-
-    include conf/.env.conf;
-
-    server_name "~^portal\.open-(?<requestedProjectID>.+)\.local";
-
-    if ( $projectID != $requestedProjectID ){
-
-        break;
-
-    }
-
-    listen 443;
-
-    location / {
-
-        return 301 http://$http_host$request_uri;
-
-    }
-
-}
