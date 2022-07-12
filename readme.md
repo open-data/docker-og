@@ -45,6 +45,7 @@ To override the use of the global backups during the installation scripts, place
 1. __Build__ the container: `docker-compose build`
    * ***The initial build will take a long time.***
    * If you are rebuilding and receive errors such as `max depth exceeded`, you may need to destroy all of the docker images (`docker image prune -a`) and then run the above build command. Please note that this will also destroy any other docker images you have on your machine.
+   * If your build fails with errors regarding failure of resolving domains, restart your docker service (`sudo service docker restart`).
 1. __Bring up__ the app and detach the shell: `docker-compose up -d` to make sure that all the containers can start correctly.
    * ***The initial up may take a long time.***
    * To stop all the containers: `docker-compose down`
