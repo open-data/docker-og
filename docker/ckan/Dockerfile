@@ -26,6 +26,7 @@ RUN apt-get update -yqq \
         nano \
         vim \
         sudo \
+        systemd \
     && npm install -g less \
     && npm install less \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \

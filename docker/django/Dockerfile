@@ -23,6 +23,7 @@ RUN apt-get update -yqq \
         vim \
         redis-server \
         sudo \
+        systemd \
     && cd /usr/bin \
     && wget -c http://www.sqlite.org/2020/sqlite-autoconf-3330000.tar.gz \
     && tar -xvf sqlite-autoconf-3330000.tar.gz \

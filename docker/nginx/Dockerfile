@@ -9,6 +9,7 @@ RUN apt-get update -yqq \
         nginx \
         iputils-ping \
         sudo \
+        systemd \
         supervisor
 
 # Supervisor
