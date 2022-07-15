@@ -111,7 +111,7 @@ elif [[ "$role" = "drupal" ]]; then
 
     # stop nginx service
     printf "${Green}Stopping nginx service${NC}${EOL}"
-    service nginx stop
+    systemctl nginx stop
 
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
