@@ -10,6 +10,7 @@ RUN apt-get update -yqq \
     && apt-get install -y --no-install-recommends \
         sudo \
         systemd \
+        sysvinit-utils \
         supervisor
 
 # Supervisor

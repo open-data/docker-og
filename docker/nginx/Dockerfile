@@ -10,6 +10,7 @@ RUN apt-get update -yqq \
         iputils-ping \
         sudo \
         systemd \
+        sysvinit-utils \
         supervisor
 
 # Supervisor

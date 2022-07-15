@@ -40,6 +40,7 @@ RUN docker-php-source extract \
         libmemcached-tools \
         sudo \
         systemd \
+        sysvinit-utils \
     && docker-php-ext-configure intl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
