@@ -14,6 +14,7 @@ RUN apt-get update -yqq \
         unzip \
         wget \
         less \
+        python3-dev \
         python3-venv \
         postgresql \
         curl \
