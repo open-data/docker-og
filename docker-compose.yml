@@ -60,7 +60,7 @@ services:
       labels:
         projectID: ${PROJECT_ID}
     healthcheck:
-      test: echo Docker! | sudo -S /bin/bash -c "if [[ '\$(which service)' ]]; then service nginx status || exit 1; elif [[ '\$(which nginx)' ]]; then nginx status || exit 1; else exit 1; fi;"
+      test: echo Docker! | sudo -S /bin/bash -c "nginx status || exit 1"
       interval: 10s
       timeout: 5s
       retries: 3
