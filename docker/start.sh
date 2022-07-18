@@ -111,7 +111,13 @@ elif [[ "$role" = "drupal" ]]; then
 
     # stop nginx service
     printf "${Green}Stopping nginx service${NC}${EOL}"
-    systemctl stop nginx
+    if [[ "$(which service)" ]]; then
+        service nginx stop
+    elif [[ "$(which nginx)" ]]; then
+        nginx stop
+    else
+        printf "${Red}FAILED to create stop nginx service. Service and Nginx not found in PATH${NC}${EOL}";
+    fi
 
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
