@@ -10,7 +10,8 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 import logging.config
 
-PROJECT_ID = os.getenv('PROJECT_PORT')
+PROJECT_ID = os.getenv('PROJECT_ID')
+PROJECT_PORT = os.getenv('PROJECT_PORT')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -241,12 +242,12 @@ SUGGESTED_DS_YAML_FILE = os.path.join(BASE_DIR, "ckan_config_files", "prop.yaml"
 
 # Open Data App Settings
 
-OPEN_CANADA_EN_URL_BASE = "http://open.local:" + PROJECT_ID + "/"
-OPEN_CANADA_FR_URL_BASE = "http://open.local:" + PROJECT_ID + "./"
-OPEN_DATA_EN_URL_BASE = "http://open.local:" + PROJECT_ID + "/data/en/dataset/"
-OPEN_DATA_FR_URL_BASE = "http://open.local:" + PROJECT_ID + "/data/fr/dataset/"
-OPEN_DATA_EN_FGP_BASE = "http://open.local:" + PROJECT_ID + "/data/en/fgpv_vpgf/"
-OPEN_DATA_FR_FGP_BASE = "http://open.local:" + PROJECT_ID + "/data/fr/fgpv_vpgf/"
+OPEN_CANADA_EN_URL_BASE = "http://open.local:" + PROJECT_PORT + "/"
+OPEN_CANADA_FR_URL_BASE = "http://open.local:" + PROJECT_PORT + "./"
+OPEN_DATA_EN_URL_BASE = "http://open.local:" + PROJECT_PORT + "/data/en/dataset/"
+OPEN_DATA_FR_URL_BASE = "http://open.local:" + PROJECT_PORT + "/data/fr/dataset/"
+OPEN_DATA_EN_FGP_BASE = "http://open.local:" + PROJECT_PORT + "/data/en/fgpv_vpgf/"
+OPEN_DATA_FR_FGP_BASE = "http://open.local:" + PROJECT_PORT + "/data/fr/fgpv_vpgf/"
 OPEN_DATA_DATASET_ID = "c4c5c7f1-bfa6-4ff6-b4a0-c164cb2060f7"
 OPEN_DATA_DATASET_TITLE_EN = "Open Data Portal Catalogue Dataset"
 OPEN_DATA_DATASET_TITLE_FR = "Catalogue du portail de données ouvertes ensemble de données"
@@ -309,8 +310,8 @@ SOLR_BN = 'http://solr:8983/solr/core_bn_search'
 ATI_DATASET_TITLE_EN = "Access To Information"
 ATI_DATASET_TITLE_FR = "Accès à l'information"
 ATI_DATASET_ID = "0797e893-751e-4695-8229-a5066e4fe43c"
-ATI_REQUEST_URL_EN = "http://open.local:" + PROJECT_ID + "/search/ati/reference/"
-ATI_REQUEST_URL_FR = "http://open.local:" + PROJECT_ID + "/fr/search/ati/reference/"
+ATI_REQUEST_URL_EN = "http://open.local:" + PROJECT_PORT + "/search/ati/reference/"
+ATI_REQUEST_URL_FR = "http://open.local:" + PROJECT_PORT + "/fr/search/ati/reference/"
 SOLR_ATI = 'http://solr:8983/solr/core_ati_search'
 
 # Experimentation Inventory App Settings
@@ -503,22 +504,22 @@ SOLR_QP = 'http://solr:8983/solr/core_qp_search'
 
 # Suggested Datasets
 SOLR_SD = 'http://solr:8983/solr/core_sd_search'
-SD_SUGGESTED_DS_FORM_EN = "http://open.local:" + PROJECT_ID + "/en/forms/suggest-dataset"
-SD_SUGGESTED_DS_FORM_FR = "http://open.local:" + PROJECT_ID + "/fr/formulaire/proposez-un-formulaire-densemble-de-donnees"
+SD_SUGGESTED_DS_FORM_EN = "http://open.local:" + PROJECT_PORT + "/en/forms/suggest-dataset"
+SD_SUGGESTED_DS_FORM_FR = "http://open.local:" + PROJECT_PORT + "/fr/formulaire/proposez-un-formulaire-densemble-de-donnees"
 SD_ABOUT_EN = "Is there Government of Canada data that you would like to be released, and made available on our " \
               "site? Please let us know by filling out the Suggest a Dataset form, but first search below to see " \
               "if someone has already requested the same dataset. If you find it, you can check on its status and " \
               "add your request by clicking on the thumbs up."
 SD_ABOUT_FR = "En tradution"
-SD_COMMENTS_BASE_EN = "http://search.open.local:" + PROJECT_ID + "/en/external-comment/suggest-dataset/"
-SD_COMMENTS_BASE_FR = "http://search.open.local:" + PROJECT_ID + "/fr/external-comment/suggest-dataset/"
-SD_SUGGEST_A_DATASET_EN = "http://open.local:" + PROJECT_ID + "/en/suggested-datasets"
-SD_SUGGEST_A_DATASET_FR = "http://open.local:" + PROJECT_ID + "/fr/jeux-de-donnees-suggeres"
-SD_VOTES_BASE_EN = "http://search.open.local:" + PROJECT_ID + "/en/external-vote/suggest-dataset/"
-SD_VOTES_BASE_FR = "http://search.open.local:" + PROJECT_ID + "/fr/external-vote/suggest-dataset/"
+SD_COMMENTS_BASE_EN = "http://search.open.local:" + PROJECT_PORT + "/en/external-comment/suggest-dataset/"
+SD_COMMENTS_BASE_FR = "http://search.open.local:" + PROJECT_PORT + "/fr/external-comment/suggest-dataset/"
+SD_SUGGEST_A_DATASET_EN = "http://open.local:" + PROJECT_PORT + "/en/suggested-datasets"
+SD_SUGGEST_A_DATASET_FR = "http://open.local:" + PROJECT_PORT + "/fr/jeux-de-donnees-suggeres"
+SD_VOTES_BASE_EN = "http://search.open.local:" + PROJECT_PORT + "/en/external-vote/suggest-dataset/"
+SD_VOTES_BASE_FR = "http://search.open.local:" + PROJECT_PORT + "/fr/external-vote/suggest-dataset/"
 
-SD_RECORD_URL_EN = 'http://search.open.local:' + PROJECT_ID + '/en/sd/id/'
-SD_RECORD_URL_FR = 'http://search.open.local:' + PROJECT_ID + '/fr/sd/id/'
+SD_RECORD_URL_EN = 'http://search.open.local:' + PROJECT_PORT + '/en/sd/id/'
+SD_RECORD_URL_FR = 'http://search.open.local:' + PROJECT_PORT + '/fr/sd/id/'
 SD_ALERT_EMAIL_FROM = ['My Name', 'my.email', 'my.domain.org']
 
 EXPORT_FILE_CACHE_DIR = "/tmp"
