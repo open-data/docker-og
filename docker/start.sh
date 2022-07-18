@@ -29,7 +29,13 @@ if [[ "$role" = "proxy" ]]; then
 
     # stop nginx service
     printf "${Green}Stopping nginx service${NC}${EOL}"
-    service nginx stop
+    if [[ $(which service) ]]; then
+        service nginx stop
+    elif [[ $(which nginx) ]]; then
+        nginx stop
+    else
+        printf "${Red}FAILED to stop nginx service. Service and Nginx not found in PATH${NC}${EOL}";
+    fi
 
     # link proxy supervisord config
     ln -sf /etc/supervisor/conf.d-available/proxy.conf /etc/supervisor/conf.d/proxy.conf
@@ -111,12 +117,12 @@ elif [[ "$role" = "drupal" ]]; then
 
     # stop nginx service
     printf "${Green}Stopping nginx service${NC}${EOL}"
-    if [[ "$(which service)" ]]; then
+    if [[ $(which service) ]]; then
         service nginx stop
-    elif [[ "$(which nginx)" ]]; then
+    elif [[ $(which nginx) ]]; then
         nginx stop
     else
-        printf "${Red}FAILED to create stop nginx service. Service and Nginx not found in PATH${NC}${EOL}";
+        printf "${Red}FAILED to stop nginx service. Service and Nginx not found in PATH${NC}${EOL}";
     fi
 
     # change volume ownerships
