@@ -1,11 +1,11 @@
-# -- CKAN 2.8 --
+# -- CKAN 2.9 --
 
 import os
-activate_this = os.path.join('/srv/app/ckan/registry/bin/activate_this.py')
+activate_this = os.path.join('/srv/app/ckan/portal/bin/activate_this.py')
 execfile(activate_this, dict(__file__=activate_this))
 
-config_filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'portal.ini')
-test_config_filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test.ini')
+config_filepath = os.path.join('/srv/app/ckan/portal/portal.ini')
+test_config_filepath = os.path.join('/srv/app/ckan/portal/test.ini')
 
 import configparser
 
