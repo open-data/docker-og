@@ -1,7 +1,7 @@
 <?php
 
 // @codingStandardsIgnoreFile
-$dbName = 'og_drupal_local__' . $_ENV["PROJECT_ID"];
+$dbName = 'og_drupal_local';
 $databases['default']['default'] = [
     'driver'    => 'pgsql',
     'namespace' => 'Drupal\\Core\\Database\\Driver\\pgsql',
