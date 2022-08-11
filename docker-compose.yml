@@ -84,7 +84,7 @@ services:
     environment:
       CONTAINER_ROLE: drupal
       PGHOST: postgres
-      PGDATABASE: og_drupal_local__${PROJECT_ID}
+      PGDATABASE: og_drupal_local
       PGUSER: homestead
       PGPASSWORD: secret
       WET_VERSION: v4.0.50.1

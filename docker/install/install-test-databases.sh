@@ -4,11 +4,11 @@ printf "${SPACER}${Cyan}${INDENT}Select what databases you want to clone:${HAIR}
 
 # Options for the user to select from
 options=(
-    "og_drupal_local__${PROJECT_ID}" 
-    "og_ckan_portal_local__${PROJECT_ID}" 
-    "og_ckan_portal_ds_local__${PROJECT_ID}" 
-    "og_ckan_registry_local__${PROJECT_ID}" 
-    "og_ckan_registry_ds_local__${PROJECT_ID}"
+    "og_drupal_local" 
+    "og_ckan_portal_local" 
+    "og_ckan_portal_ds_local" 
+    "og_ckan_registry_local" 
+    "og_ckan_registry_ds_local"
     "All" 
     "Exit"
 )
@@ -19,31 +19,31 @@ opt=$?
 
 case $opt in
 
-    # "og_drupal_local__${PROJECT_ID}" 
+    # "og_drupal_local" 
     (0) 
         exitScript='false'
         cloneDB_Drupal='true'
         ;;
 
-    # "og_ckan_portal_local__${PROJECT_ID}" 
+    # "og_ckan_portal_local" 
     (1) 
         exitScript='false'
         cloneDB_Portal_CKAN='true'
         ;;
 
-    # "og_ckan_portal_ds_local__${PROJECT_ID}" 
+    # "og_ckan_portal_ds_local" 
     (2)
         exitScript='false'
         cloneDB_Portal_DS_CKAN='true'
         ;;
 
-    # "og_ckan_registry_local__${PROJECT_ID}" 
+    # "og_ckan_registry_local" 
     (3)
         exitScript='false'
         cloneDB_Registry_CKAN='true'
         ;;
 
-    # "og_ckan_registry_ds_local__${PROJECT_ID}"
+    # "og_ckan_registry_ds_local"
     (4)
         exitScript='false'
         cloneDB_Registry_DS_CKAN='true'
@@ -187,9 +187,9 @@ if [[ $exitScript != "true" ]]; then
     if [[ $cloneDB_Drupal == "true" ]]; then
 
       psql -v ON_ERROR_STOP=0 --username "homestead" --dbname "postgres" <<-EOSQL
-        CREATE DATABASE og_drupal_local__${PROJECT_ID}__test WITH TEMPLATE og_drupal_local__${PROJECT_ID};
-        GRANT ALL PRIVILEGES ON DATABASE og_drupal_local__${PROJECT_ID}__test TO homestead;
-        GRANT ALL PRIVILEGES ON DATABASE og_drupal_local__${PROJECT_ID}__test TO homestead_reader;
+        CREATE DATABASE og_drupal_local__test WITH TEMPLATE og_drupal_local;
+        GRANT ALL PRIVILEGES ON DATABASE og_drupal_local__test TO homestead;
+        GRANT ALL PRIVILEGES ON DATABASE og_drupal_local__test TO homestead_reader;
 EOSQL
 
     fi
@@ -203,9 +203,9 @@ EOSQL
     if [[ $cloneDB_Portal_CKAN == "true" ]]; then
 
       psql -v ON_ERROR_STOP=0 --username "homestead" --dbname "postgres" <<-EOSQL
-        CREATE DATABASE og_ckan_portal_local__${PROJECT_ID}__test WITH TEMPLATE og_ckan_portal_local__${PROJECT_ID};
-        GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_local__${PROJECT_ID}__test TO homestead;
-        GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_local__${PROJECT_ID}__test TO homestead_reader;
+        CREATE DATABASE og_ckan_portal_local__test WITH TEMPLATE og_ckan_portal_local;
+        GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_local__test TO homestead;
+        GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_local__test TO homestead_reader;
 EOSQL
 
     fi
@@ -219,9 +219,9 @@ EOSQL
     if [[ $cloneDB_Portal_DS_CKAN == "true" ]]; then
 
       psql -v ON_ERROR_STOP=0 --username "homestead" --dbname "postgres" <<-EOSQL
-        CREATE DATABASE og_ckan_portal_ds_local__${PROJECT_ID}__test WITH TEMPLATE og_ckan_portal_ds_local__${PROJECT_ID};
-        GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_ds_local__${PROJECT_ID}__test TO homestead;
-        GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_ds_local__${PROJECT_ID}__test TO homestead_reader;
+        CREATE DATABASE og_ckan_portal_ds_local__test WITH TEMPLATE og_ckan_portal_ds_local;
+        GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_ds_local__test TO homestead;
+        GRANT ALL PRIVILEGES ON DATABASE og_ckan_portal_ds_local__test TO homestead_reader;
 EOSQL
 
     fi
@@ -235,9 +235,9 @@ EOSQL
     if [[ $cloneDB_Registry_CKAN == "true" ]]; then
 
       psql -v ON_ERROR_STOP=0 --username "homestead" --dbname "postgres" <<-EOSQL
-        CREATE DATABASE og_ckan_registry_local__${PROJECT_ID}__test WITH TEMPLATE og_ckan_registry_local__${PROJECT_ID};
-        GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_local__${PROJECT_ID}__test TO homestead;
-        GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_local__${PROJECT_ID}__test TO homestead_reader;
+        CREATE DATABASE og_ckan_registry_local__test WITH TEMPLATE og_ckan_registry_local;
+        GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_local__test TO homestead;
+        GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_local__test TO homestead_reader;
 EOSQL
 
     fi
@@ -251,9 +251,9 @@ EOSQL
     if [[ $cloneDB_Registry_DS_CKAN == "true" ]]; then
 
       psql -v ON_ERROR_STOP=0 --username "homestead" --dbname "postgres" <<-EOSQL
-        CREATE DATABASE og_ckan_registry_ds_local__${PROJECT_ID}__test WITH TEMPLATE og_ckan_registry_ds_local__${PROJECT_ID};
-        GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_ds_local__${PROJECT_ID}__test TO homestead;
-        GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_ds_local__${PROJECT_ID}__test TO homestead_reader;
+        CREATE DATABASE og_ckan_registry_ds_local__test WITH TEMPLATE og_ckan_registry_ds_local;
+        GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_ds_local__test TO homestead;
+        GRANT ALL PRIVILEGES ON DATABASE og_ckan_registry_ds_local__test TO homestead_reader;
 EOSQL
 
     fi
