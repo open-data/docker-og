@@ -52,10 +52,6 @@ if [[ $installRepos_CKAN == "true" ]]; then
     pip install uwsgi
     # install future
     pip install future==0.18.2
-    # update certifi
-    pip install --upgrade certifi
-    # install correct version of cryptography
-    pip install cryptography==3.3.2
 
     # install ckan core into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Core repository${HAIR}${Cyan} from https://github.com:open-data/ckan.git@canada-v2.9 and installing into Python environment${NC}${SPACER}"
@@ -135,9 +131,6 @@ if [[ $installRepos_CKAN == "true" ]]; then
 
     # install request with security modules
     pip install requests[security]==2.25.1
-
-    # install correct version of cryptography
-    pip install cryptography==3.3.2
 
     # update vdm
     pip install --upgrade vdm
