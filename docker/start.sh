@@ -243,6 +243,8 @@ elif [[ "$role" = "ckan" ]]; then
         fi;
     fi;
 
+    #TODO: add `paster --plugin=ckan -c ${APP_ROOT}/ckan/${ckanRole}/${ckanRole}.ini db migrate`
+
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown ckan:ckan -R /srv/app"
