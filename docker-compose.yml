@@ -408,6 +408,7 @@ services:
       PROJECT_ID: ${PROJECT_ID}
       PROJECT_PORT: ${PORT}
       ROOT_PASS: Docker!
+      #TODO: fix issues with permissions in redis container. chown everything to user:group on startup with ROOT_PASS?
     env_file:
       - _config/docker/.docker.env
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
