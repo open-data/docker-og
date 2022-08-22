@@ -4,6 +4,19 @@ USER root
 
 RUN echo 'root:Docker!' | chpasswd
 
+RUN apt-get update -yqq \
+    && apt-get install -y --no-install-recommends \
+        sudo \
+        systemd \
+        sysvinit-utils \
+        supervisor
+
+# Supervisor
+ADD docker/config/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
+ADD docker/config/supervisor/conf.d/*.conf /etc/supervisor/conf.d-available/
+
+ADD docker/start.sh /usr/local/bin/start
+
 ARG USER_ID
 ARG GROUP_ID
 
@@ -37,9 +50,17 @@ RUN if $(id -un ${USER_ID} >/dev/null 2>&1); then \
         fi \
     fi \
     && \
-    chown redis-og:redis-og -R /data
+    chown redis-og:redis-og -R /data \
+    && \
+    chown redis-og:redis-og -R /etc/supervisor
+
+RUN mkdir -p /data \
+    && chown redis-og:redis-og -R /data \
+    && chmod 777 /usr/local/bin/start
 
 RUN echo 'redis-og:Docker!' | chpasswd \
     && usermod -a -G sudo redis-og
 
 USER redis-og
+
+CMD ["/usr/local/bin/start"]
