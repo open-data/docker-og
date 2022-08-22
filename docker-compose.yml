@@ -401,8 +401,8 @@ services:
     networks:
       og-local-network:
         ipv4_address: ${OCTET}.0.0.11
-    # volumes:
-    #   - ./redis:/data
+    volumes:
+      - ./redis:/data
     environment:
       CONTAINER_ROLE: redis
       PROJECT_ID: ${PROJECT_ID}
