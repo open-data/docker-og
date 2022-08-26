@@ -4,8 +4,8 @@ import os
 activate_this = os.path.join('/srv/app/ckan/registry/bin/activate_this.py')
 execfile(activate_this, dict(__file__=activate_this))
 
-config_filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'registry.ini')
-test_config_filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test.ini')
+config_filepath = os.path.join('/srv/app/ckan/registry/registry.ini')
+test_config_filepath = os.path.join('/srv/app/ckan/registry/test.ini')
 
 import configparser
 
