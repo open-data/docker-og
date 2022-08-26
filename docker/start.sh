@@ -243,6 +243,8 @@ elif [[ "$role" = "ckan" ]]; then
         fi;
     fi;
 
+    #TODO: add `paster --plugin=ckan -c ${APP_ROOT}/ckan/${ckanRole}/${ckanRole}.ini db migrate`
+
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown ckan:ckan -R /srv/app"
@@ -283,6 +285,25 @@ elif [[ "$role" = "solr" ]]; then
 
 # END
 # Solr
+# END
+elif [[ "$role" = "redis" ]]; then
+#
+# Redis
+#
+
+    # link redis supervisord config
+    ln -sf /etc/supervisor/conf.d-available/redis.conf /etc/supervisor/conf.d/redis.conf
+
+    # change volume ownerships
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown redis-og:redis-og -R /data"
+
+    # start supervisord service
+    printf "${Green}Executing supervisord${NC}${EOL}"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown redis-og:redis-og -R /etc/supervisor"
+    echo ${ROOT_PASS} | sudo -S -E /bin/bash -c "supervisord -c /etc/supervisor/supervisord.conf"
+
+# END
+# Redis
 # END
 else
 
