@@ -488,5 +488,5 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.25.${OCTET}.0/12
+        - subnet: 172.25.${OCTET}.0/16
           gateway: 172.25.${OCTET}.1
