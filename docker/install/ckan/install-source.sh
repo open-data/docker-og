@@ -142,6 +142,8 @@ if [[ $installRepos_CKAN == "true" ]]; then
     # install nltk punkt
     if [[ -d "${APP_ROOT}/ckan/${CKAN_ROLE}/lib/python${PY_VERSION}/site-packages/nltk" ]]; then
         printf "${SPACER}${Cyan}${INDENT}Installing nltk.punkt into ${CKAN_ROLE} environment${NC}${SPACER}"
+        mkdir -p /home/ckan/nltk_data
+        chown ckan:ckan -R /home/ckan/nltk_data
         python2 -c "import nltk; nltk.download('punkt');"
     fi
 
