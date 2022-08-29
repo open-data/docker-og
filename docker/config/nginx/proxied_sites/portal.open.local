@@ -28,6 +28,27 @@ server {
 
     }
 
+    location /GCWeb/ {
+
+        alias /var/ogproxy/ckan/static_files/GCWeb/;
+        autoindex off;
+
+    }
+    
+    location /static/ {
+
+        alias /var/ogproxy/ckan/static_files/static/;
+        autoindex off;
+
+    }
+
+    location /data/ {
+
+        alias /srv/ogproxy/ckan/static_files/data/;
+        autoindex off;
+
+    }
+
 }
 # END
 # CKAN Portal Back
