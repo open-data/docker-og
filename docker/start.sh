@@ -247,12 +247,15 @@ elif [[ "$role" = "ckan" ]]; then
     # install nltk punkt
     if [[ -d "${APP_ROOT}/ckan/${ckanRole}/lib/python${PY_VERSION}/site-packages/nltk" ]]; then
         printf "${Green}Installing nltk.punkt into ${ckanRole} environment${NC}${EOL}"
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /home/ckan/nltk_data"
+        echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown ckan:ckan -R /home/ckan/nltk_data"
         ${APP_ROOT}/ckan/${ckanRole}/bin/python2 -c "import nltk; nltk.download('punkt');"
     fi;
 
     # run any database migrations
     if [[ -f "${APP_ROOT}/ckan/${ckanRole}/bin/paster" ]]; then
-        ${APP_ROOT}/ckan/${ckanRole}/bin/paster --plugin=ckan -c ${APP_ROOT}/ckan/${ckanRole}/${ckanRole}.ini db migrate
+        printf "${Green}Running database migrations...${NC}${EOL}"
+        ${APP_ROOT}/ckan/${ckanRole}/bin/paster --plugin=ckan db upgrade -c ${APP_ROOT}/ckan/${ckanRole}/${ckanRole}.ini
     fi
 
     # change volume ownerships
