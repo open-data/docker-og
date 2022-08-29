@@ -209,6 +209,15 @@ elif [[ "$role" = "ckan" ]]; then
     printf "${Green}Copying the ${ckanRole} test configuration file to the virtual environment${NC}${EOL}"
     cp ${APP_ROOT}/_config/ckan/${ckanRole}-test.ini ${APP_ROOT}/ckan/${ckanRole}/test.ini
 
+    # compile ckan config files
+    printf "${Green}Compiling local ${ckanRole} config file${NC}${EOL}"
+    python ${APP_ROOT}/docker/install/ckan/compile-${ckanRole}-config.py
+    if [[ $? -eq 0 ]]; then
+        printf "${Green}Compiled ${ckanRole} ini file${NC}${EOL}";
+    else
+        printf "${Red}FAILED to compile ${ckanRole} ini file${NC}${EOL}";
+    fi
+
     # copy the wsgi.py files
     printf "${Green}Copying the ${ckanRole} wsgi configuration file to the virtual environment${NC}${EOL}"
     cp ${APP_ROOT}/docker/config/ckan/wsgi/${ckanRole}.py ${APP_ROOT}/ckan/${ckanRole}/wsgi.py
@@ -236,12 +245,15 @@ elif [[ "$role" = "ckan" ]]; then
     fi;
 
     # install nltk punkt
-    if [[ $ckanRole == 'portal' ]]; then
-        if [[ -d "${APP_ROOT}/ckan/${ckanRole}/lib/python${PY_VERSION}/site-packages/nltk" ]]; then
-            printf "${Green}Installing nltk.punkt into ${ckanRole} environment${NC}${EOL}"
-            ${APP_ROOT}/ckan/${ckanRole}/bin/python2 -c "import nltk; nltk.download('punkt');"
-        fi;
+    if [[ -d "${APP_ROOT}/ckan/${ckanRole}/lib/python${PY_VERSION}/site-packages/nltk" ]]; then
+        printf "${Green}Installing nltk.punkt into ${ckanRole} environment${NC}${EOL}"
+        ${APP_ROOT}/ckan/${ckanRole}/bin/python2 -c "import nltk; nltk.download('punkt');"
     fi;
+
+    # run any database migrations
+    if [[ -f "${APP_ROOT}/ckan/${ckanRole}/bin/paster" ]]; then
+        ${APP_ROOT}/ckan/${ckanRole}/bin/paster --plugin=ckan -c ${APP_ROOT}/ckan/${ckanRole}/${ckanRole}.ini db migrate
+    fi
 
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
@@ -283,6 +295,25 @@ elif [[ "$role" = "solr" ]]; then
 
 # END
 # Solr
+# END
+elif [[ "$role" = "redis" ]]; then
+#
+# Redis
+#
+
+    # link redis supervisord config
+    ln -sf /etc/supervisor/conf.d-available/redis.conf /etc/supervisor/conf.d/redis.conf
+
+    # change volume ownerships
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown redis-og:redis-og -R /data"
+
+    # start supervisord service
+    printf "${Green}Executing supervisord${NC}${EOL}"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown redis-og:redis-og -R /etc/supervisor"
+    echo ${ROOT_PASS} | sudo -S -E /bin/bash -c "supervisord -c /etc/supervisor/supervisord.conf"
+
+# END
+# Redis
 # END
 else
 

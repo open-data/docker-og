@@ -52,10 +52,6 @@ if [[ $installRepos_CKAN == "true" ]]; then
     pip install uwsgi
     # install future
     pip install future==0.18.2
-    # update certifi
-    pip install --upgrade certifi
-    # install correct version of cryptography
-    pip install cryptography==2.2.2
 
     # install ckan core into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Core repository${HAIR}${Cyan} from https://github.com:open-data/ckan.git@canada-v2.8 and installing into Python environment${NC}${SPACER}"
@@ -118,8 +114,12 @@ if [[ $installRepos_CKAN == "true" ]]; then
     pip install -e 'git+https://github.com/open-data/goodtables.git@canada#egg=goodtables' -r 'https://raw.githubusercontent.com/open-data/goodtables/canada/requirements.txt'
 
     # install ckan wet boew into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Wet-Boew repository${HAIR}${Cyan} from https://ithub.com:open-data/ckanext-wet-boew.git and installing into Python environment${NC}${SPACER}"
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Wet-Boew repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-wet-boew.git and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/open-data/ckanext-wet-boew.git#egg=ckanext-wet-boew' -r 'https://raw.githubusercontent.com/open-data/ckanext-wet-boew/master/requirements.txt'
+
+    # install ckan gc notify into the python environment
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN GC Notify repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-gcnotify.git@ckan-v2.8 and installing into Python environment${NC}${SPACER}"
+    pip install -e 'git+https://github.com/open-data/ckanext-gcnotify.git@ckan-v2.8#egg=ckanext-gcnotify' -r 'https://raw.githubusercontent.com/open-data/ckanext-gcnotify/ckan-v2.8/requirements.txt'
 
     # install flask admin
     pip install Flask-Admin==1.4.0
@@ -136,18 +136,13 @@ if [[ $installRepos_CKAN == "true" ]]; then
     # install request with security modules
     pip install requests[security]==2.11.1
 
-    # install correct version of cryptography
-    pip install cryptography==2.2.2
-
     # update vdm
     pip install --upgrade vdm
 
     # install nltk punkt
-    if [[ $CKAN_ROLE == 'portal' ]]; then
+    if [[ -d "${APP_ROOT}/ckan/${CKAN_ROLE}/lib/python${PY_VERSION}/site-packages/nltk" ]]; then
         printf "${SPACER}${Cyan}${INDENT}Installing nltk.punkt into ${CKAN_ROLE} environment${NC}${SPACER}"
         python2 -c "import nltk; nltk.download('punkt');"
-    else
-        printf "${SPACER}${Cyan}${INDENT}Skipping nltk.punkt installation for ${CKAN_ROLE} environment${NC}${SPACER}"
     fi
 
     #

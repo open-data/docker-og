@@ -12,6 +12,7 @@ node_modules/
 
 # Project variables
 /.env
+/.python.env
 /docker/config/nginx/conf/.env.conf
 /docker/config/nginx/conf/.upstream_servers.conf
 /_config/

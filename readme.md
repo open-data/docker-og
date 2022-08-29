@@ -12,9 +12,13 @@
 ## Prebuild
 
 1. __Run__ the pre build script with a Project ID: `./pre-build.sh example`
-1. __portal.ini__ and __resgirsty.ini__ files:
+1. ___config/ckan/portal.ini__ and ___config/ckan/registry.ini__ files:
    1. __Change__ `ckanext.cloudstorage.container_name` value to `<your user name>-dev`
    1. __Change__ `ckanext.cloudstorage.driver_options` secret value to the secret key for `opencanadastaging`
+   1. __Change__ `ckanext.gcnotify.secret_key` value to `<your GC Notify secret key>`
+   1. __Change__ `ckanext.gcnotify.base_url` value to the GC Notify base url
+   1. __Change__ `ckanext.gcnotify.template_ids` dict values to the development template IDs
+   1. __Change__ `canada.notification_new_user_email` value to `<your email>`
 
 ### Backups
 
