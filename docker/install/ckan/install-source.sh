@@ -140,11 +140,9 @@ if [[ $installRepos_CKAN == "true" ]]; then
     pip install --upgrade vdm
 
     # install nltk punkt
-    if [[ $CKAN_ROLE == 'portal' ]]; then
+    if [[ -d "${APP_ROOT}/ckan/${CKAN_ROLE}/lib/python${PY_VERSION}/site-packages/nltk" ]]; then
         printf "${SPACER}${Cyan}${INDENT}Installing nltk.punkt into ${CKAN_ROLE} environment${NC}${SPACER}"
         python2 -c "import nltk; nltk.download('punkt');"
-    else
-        printf "${SPACER}${Cyan}${INDENT}Skipping nltk.punkt installation for ${CKAN_ROLE} environment${NC}${SPACER}"
     fi
 
     #

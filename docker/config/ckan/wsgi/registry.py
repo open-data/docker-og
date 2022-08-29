@@ -43,4 +43,5 @@ config['DEFAULT']['project_port'] = os.getenv('PROJECT_PORT')
 with open(test_config_filepath,'w') as file:
     testConfig.write(file)
     
-application = loadapp('config:%s' % config_filepath)
+from werkzeug.debug import DebuggedApplication
+application = DebuggedApplication(loadapp('config:%s' % config_filepath), evalex=True)
