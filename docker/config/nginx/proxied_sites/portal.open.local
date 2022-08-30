@@ -34,6 +34,13 @@ server {
         autoindex off;
 
     }
+
+    location /wet-boew/ {
+
+        alias /var/ogproxy/ckan/static_files/wet-boew/;
+        autoindex off;
+
+    }
     
     location /static/ {
 
