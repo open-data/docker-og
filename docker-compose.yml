@@ -60,7 +60,7 @@ services:
       labels:
         projectID: ${PROJECT_ID}
     healthcheck:
-      test: echo Docker! | sudo -S /bin/bash -c "drush status || exit 1"
+      test: echo Docker! | sudo -S /bin/bash -c "service nginx status || exit 1"
       interval: 10s
       timeout: 5s
       retries: 3
