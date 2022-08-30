@@ -43,6 +43,12 @@ server {
 
     }
 
+    location /favicon.ico {
+
+        alias /var/ogproxy/docker/assets/favicon.png;
+
+    }
+
     location /sites/default/files/favicon.ico {
 
         alias /var/ogproxy/docker/assets/favicon.png;

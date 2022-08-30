@@ -28,6 +28,12 @@ server {
 
     }
 
+    location /favicon.ico {
+
+        alias /var/ogproxy/docker/assets/favicon.png;
+
+    }
+
     location /GCWeb/ {
 
         alias /var/ogproxy/ckan/static_files/GCWeb/;
