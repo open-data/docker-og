@@ -22,6 +22,12 @@ server {
 
     }
 
+    location /favicon.ico {
+
+        alias /var/ogproxy/docker/assets/favicon.png;
+
+    }
+
     location /static/ {
 
         alias /var/ogproxy/django/src/ogc-search/ogc_search/static/;

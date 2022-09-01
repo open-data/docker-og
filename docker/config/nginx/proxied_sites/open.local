@@ -43,6 +43,12 @@ server {
 
     }
 
+    location /favicon.ico {
+
+        alias /var/ogproxy/docker/assets/favicon.png;
+
+    }
+
     location /sites/default/files/favicon.ico {
 
         alias /var/ogproxy/docker/assets/favicon.png;
@@ -52,6 +58,13 @@ server {
     location /GCWeb/ {
 
         alias /var/ogproxy/ckan/static_files/GCWeb/;
+        autoindex off;
+
+    }
+
+    location /wet-boew/ {
+
+        alias /var/ogproxy/ckan/static_files/wet-boew/;
         autoindex off;
 
     }
