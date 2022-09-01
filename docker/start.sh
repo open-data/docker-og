@@ -253,9 +253,9 @@ elif [[ "$role" = "ckan" ]]; then
     fi;
 
     # run any database migrations
-    if [[ -f "${APP_ROOT}/ckan/${ckanRole}/bin/paster" ]]; then
+    if [[ -f "${APP_ROOT}/ckan/${ckanRole}/bin/ckan" ]]; then
         printf "${Green}Running database migrations...${NC}${EOL}"
-        ${APP_ROOT}/ckan/${ckanRole}/bin/paster --plugin=ckan db upgrade -c ${APP_ROOT}/ckan/${ckanRole}/${ckanRole}.ini
+        ${APP_ROOT}/ckan/${ckanRole}/bin/ckan -c ${APP_ROOT}/ckan/${ckanRole}/${ckanRole}.ini db upgrade
     fi
 
     # change volume ownerships
