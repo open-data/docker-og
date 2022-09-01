@@ -35,4 +35,4 @@ with open(test_config_filepath,'w') as file:
 config = CKANConfigLoader(config_filepath).get_config()
 
 from werkzeug.debug import DebuggedApplication
-application = DebuggedApplication(loadapp('config:%s' % config_filepath), evalex=True)
+application = DebuggedApplication(make_app(config), evalex=True)
