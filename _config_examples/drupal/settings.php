@@ -81,6 +81,11 @@ $config['search_api.server.drupal_content']['backend_config']['connector_config'
 $config['search_api.server.drupal_content']['backend_config']['connector_config']['path'] = '/';
 
 /**
+ * Config for ckan public path
+ */
+$settings['ckan_public_path'] = '/var/www/html/backup';
+
+/**
  * @file
  * Local development override configuration feature.
  *
