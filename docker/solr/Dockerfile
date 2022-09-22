@@ -65,7 +65,8 @@ RUN if $(id -un ${USER_ID} >/dev/null 2>&1); then \
     chown solr:solr -R /etc/supervisor
 
 RUN echo 'solr:Docker!' | chpasswd \
-    && usermod -a -G sudo solr
+    && usermod -a -G sudo solr \
+    && echo 'solr	    ALL=(ALL:ALL) ALL' >> /etc/sudoers
 
 USER solr
 

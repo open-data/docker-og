@@ -40,6 +40,7 @@ RUN if $(id -un ${USER_ID} >/dev/null 2>&1); then \
     chown postgres:postgres -R /var/lib/postgresql
 
 RUN echo 'postgres:Docker!' | chpasswd \
-    && usermod -a -G sudo postgres
+    && usermod -a -G sudo postgres \
+    && echo 'postgres	    ALL=(ALL:ALL) ALL' >> /etc/sudoers
 
 USER postgres

@@ -92,7 +92,8 @@ RUN if $(id -un ${USER_ID} >/dev/null 2>&1); then \
     chown ckan:ckan -R /etc/supervisor
 
 RUN echo 'ckan:Docker!' | chpasswd \
-    && usermod -a -G sudo ckan
+    && usermod -a -G sudo ckan \
+    && echo 'ckan	    ALL=(ALL:ALL) ALL' >> /etc/sudoers
 
 USER ckan
 

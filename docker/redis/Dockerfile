@@ -59,7 +59,8 @@ RUN mkdir -p /data \
     && chmod 777 /usr/local/bin/start
 
 RUN echo 'redis-og:Docker!' | chpasswd \
-    && usermod -a -G sudo redis-og
+    && usermod -a -G sudo redis-og \
+    && echo 'redis-og	    ALL=(ALL:ALL) ALL' >> /etc/sudoers
 
 USER redis-og
 

@@ -88,7 +88,8 @@ RUN if $(id -un ${USER_ID} >/dev/null 2>&1); then \
     chown django:django -R /etc/supervisor
 
 RUN echo 'django:Docker!' | chpasswd \
-    && usermod -a -G sudo django
+    && usermod -a -G sudo django \
+    && echo 'django	    ALL=(ALL:ALL) ALL' >> /etc/sudoers
 
 USER django
 
