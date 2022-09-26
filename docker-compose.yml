@@ -485,7 +485,7 @@ services:
 
 networks:
   og-local-network:
-    external : false
+    external: true
     driver: bridge
     ipam:
       config:
