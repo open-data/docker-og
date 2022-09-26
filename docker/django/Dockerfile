@@ -4,7 +4,8 @@ USER root
 
 RUN echo 'root:Docker!' | chpasswd
 
-RUN apt-get update -yqq \
+RUN chmod 777 /etc/resolv.conf \
+    && apt-get update -yqq \
     && apt-get install -y --no-install-recommends \
         supervisor \
         procps \

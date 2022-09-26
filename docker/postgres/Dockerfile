@@ -4,6 +4,8 @@ USER root
 
 RUN echo 'root:Docker!' | chpasswd
 
+RUN chmod 777 /etc/resolv.conf
+
 ARG USER_ID
 ARG GROUP_ID
 
