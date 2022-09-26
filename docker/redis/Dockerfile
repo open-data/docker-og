@@ -4,8 +4,7 @@ USER root
 
 RUN echo 'root:Docker!' | chpasswd
 
-RUN chmod o+r /etc/resolv.conf \
-    && apt-get update -yqq \
+RUN apt-get update -yqq \
     && apt-get install -y --no-install-recommends \
         sudo \
         systemd \
