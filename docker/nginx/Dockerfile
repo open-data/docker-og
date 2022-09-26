@@ -78,7 +78,7 @@ RUN if $(id -un ${USER_ID} >/dev/null 2>&1); then \
 
 RUN echo 'www-data:Docker!' | chpasswd \
     && usermod -a -G sudo www-data \
-    && echo 'www-data	    ALL=(ALL:ALL) ALL' >> /etc/sudoers
+    && echo 'www-data    ALL=(ALL:ALL) ALL' >> /etc/sudoers
 
 USER www-data
 

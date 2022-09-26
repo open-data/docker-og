@@ -60,7 +60,7 @@ RUN mkdir -p /data \
 
 RUN echo 'redis-og:Docker!' | chpasswd \
     && usermod -a -G sudo redis-og \
-    && echo 'redis-og	    ALL=(ALL:ALL) ALL' >> /etc/sudoers
+    && echo 'redis-og    ALL=(ALL:ALL) ALL' >> /etc/sudoers
 
 USER redis-og
 

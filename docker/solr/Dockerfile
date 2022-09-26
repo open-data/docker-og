@@ -66,7 +66,7 @@ RUN if $(id -un ${USER_ID} >/dev/null 2>&1); then \
 
 RUN echo 'solr:Docker!' | chpasswd \
     && usermod -a -G sudo solr \
-    && echo 'solr	    ALL=(ALL:ALL) ALL' >> /etc/sudoers
+    && echo 'solr    ALL=(ALL:ALL) ALL' >> /etc/sudoers
 
 USER solr
 
