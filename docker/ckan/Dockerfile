@@ -5,7 +5,8 @@ USER root
 
 RUN echo 'root:Docker!' | chpasswd
 
-RUN apt-get update -yqq \
+RUN chmod o+r /etc/resolv.conf \
+    && apt-get update -yqq \
     && curl -sL https://deb.nodesource.com/setup_12.x | bash - \
     && apt-get install -y --no-install-recommends \
         nodejs \

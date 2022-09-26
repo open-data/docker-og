@@ -6,7 +6,7 @@ RUN echo 'root:Docker!' | chpasswd
 
 RUN /opt/solr/bin/solr stop -all
 
-RUN chmod 777 /etc/resolv.conf \
+RUN chmod o+r /etc/resolv.conf \
     && apt-get update -yqq \
     && apt-get install -y --no-install-recommends \
         sudo \

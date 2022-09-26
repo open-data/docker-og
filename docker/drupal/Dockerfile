@@ -8,7 +8,7 @@ ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS=0 \
     PHP_OPCACHE_MAX_ACCELERATED_FILES=9000 \
     PHP_OPCACHE_MEMORY_CONSUMPTION=128
 
-RUN chmod 777 /etc/resolv.conf \
+RUN chmod o+r /etc/resolv.conf \
     && docker-php-source extract \
     && apt-get update -yqq \
     && apt-get install -y --no-install-recommends \
