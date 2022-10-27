@@ -1,5 +1,7 @@
 FROM opendatacanada/solr
 
+USER root
+
 RUN /opt/solr/bin/solr stop -all
 
 ARG USER_ID
@@ -36,5 +38,7 @@ RUN if $(id -un ${USER_ID} >/dev/null 2>&1); then \
     fi \
     && \
     chown solr:solr -R /var/solr
+
+USER solr
 
 CMD ["/usr/local/bin/start"]
