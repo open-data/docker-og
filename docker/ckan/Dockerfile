@@ -11,6 +11,7 @@ RUN apt-get update -yqq \
     && curl -sL https://deb.nodesource.com/setup_12.x | bash - \
     && apt-get install -y --no-install-recommends \
         nodejs \
+        npm \
         supervisor \
 		git \
 		libzip-dev \
