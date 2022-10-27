@@ -1,5 +1,7 @@
 FROM opendatacanada/solr
 
+RUN /opt/solr/bin/solr stop -all
+
 ARG USER_ID
 ARG GROUP_ID
 
