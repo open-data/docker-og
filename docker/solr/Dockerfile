@@ -1,31 +1,8 @@
-FROM solr:8
+FROM opendatacanada/solr
 
 USER root
 
-RUN echo 'root:Docker!' | chpasswd
-
 RUN /opt/solr/bin/solr stop -all
-
-RUN apt-get update -yqq \
-    && apt-get install -y --no-install-recommends \
-        sudo \
-        systemd \
-        sysvinit-utils \
-        supervisor
-
-# Supervisor
-ADD docker/config/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
-ADD docker/config/supervisor/conf.d/*.conf /etc/supervisor/conf.d-available/
-
-ADD docker/start.sh /usr/local/bin/start
-
-# Copy local_data volumes into data directory
-# Set new files with correct user:group
-ADD docker/config/solr/cores /var/solr/local_data
-RUN mkdir -p /var/solr/data \
-    && cp -R /var/solr/local_data/* /var/solr/data \
-    && chown -R solr:solr /var/solr/data \
-    && chmod 777 /usr/local/bin/start
 
 ARG USER_ID
 ARG GROUP_ID
@@ -60,12 +37,7 @@ RUN if $(id -un ${USER_ID} >/dev/null 2>&1); then \
         fi \
     fi \
     && \
-    chown solr:solr -R /var/solr \
-    && \
-    chown solr:solr -R /etc/supervisor
-
-RUN echo 'solr:Docker!' | chpasswd \
-    && usermod -a -G sudo solr
+    chown solr:solr -R /var/solr
 
 USER solr
 
