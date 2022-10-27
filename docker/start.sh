@@ -271,34 +271,6 @@ elif [[ "$role" = "ckan" ]]; then
 # END
 # CKAN Registry & Portal
 # END
-elif [[ "$role" = "solr" ]]; then
-#
-# Solr
-#
-
-    # link solr supervisord config
-    ln -sf /etc/supervisor/conf.d-available/solr.conf /etc/supervisor/conf.d/solr.conf
-
-    # change volume ownerships
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /var/solr"
-
-    # copy all local core data to solr data directory
-    printf "${Green}Loading local cores${NC}${EOL}"
-    cp -R /var/solr/local_data/* /var/solr/data
-
-    # change volume ownerships
-    printf "${Green}Setting volume ownership${NC}${EOL}"
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /var/solr"
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /home/solr && chown solr:solr -R /home/solr"
-
-    # start supervisord service
-    printf "${Green}Executing supervisord${NC}${EOL}"
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown solr:solr -R /etc/supervisor"
-    echo ${ROOT_PASS} | sudo -S -E /bin/bash -c "supervisord -c /etc/supervisor/supervisord.conf"
-
-# END
-# Solr
-# END
 elif [[ "$role" = "redis" ]]; then
 #
 # Redis

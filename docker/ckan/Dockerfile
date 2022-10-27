@@ -1,5 +1,4 @@
 FROM openknowledge/ckan-base:2.8
-FROM php:7.4-fpm
 
 USER root
 
