@@ -360,8 +360,6 @@ services:
       - ./solr/core_sd_search:/var/solr/data/core_sd_search
       # Persisting Drupal Solr Cores
       - ./solr/drupal_content:/var/solr/data/drupal_content
-      # Base Solr Cores
-      - ./docker/config/solr/cores:/var/solr/local_data
     environment:
       CONTAINER_ROLE: solr
       SOLR_SSL_ENABLED: "false"
