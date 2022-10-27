@@ -1,9 +1,11 @@
 FROM openknowledge/ckan-base:2.8
-FROM ubuntu
+FROM ubuntu:20.04
 
 USER root
 
 RUN echo 'root:Docker!' | chpasswd
+
+ENV DEBIAN_FRONTEND=noninteractive 
 
 RUN apt-get update -yqq \
     && curl -sL https://deb.nodesource.com/setup_12.x | bash - \
@@ -29,10 +31,7 @@ RUN apt-get update -yqq \
         systemd \
         sysvinit-utils \
     && npm install -g less \
-    && npm install less \
-    && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
-    && docker-php-ext-install pdo pdo_pgsql pgsql zip \
-    && docker-php-ext-enable pdo_pgsql pgsql
+    && npm install less
 
 # Supervisor
 ADD docker/config/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
