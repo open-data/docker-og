@@ -39,7 +39,7 @@ services:
       # - ./nginx:/var/log/nginx
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
     ports:
-      - ${PORT}:80
+      - 127.0.0.1:${PORT}:80
     expose:
       - 80
 # END
