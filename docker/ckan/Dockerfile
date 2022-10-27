@@ -1,4 +1,5 @@
 FROM openknowledge/ckan-base:2.8
+FROM ubuntu
 
 USER root
 
