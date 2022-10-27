@@ -8,8 +8,7 @@ ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS=0 \
     PHP_OPCACHE_MAX_ACCELERATED_FILES=9000 \
     PHP_OPCACHE_MEMORY_CONSUMPTION=128
 
-RUN docker-php-source extract \
-    && apt-get update -yqq \
+RUN apt-get update -yqq \
     && apt-get install -y --no-install-recommends \
         nginx \
         libfreetype6-dev \
@@ -47,8 +46,7 @@ RUN docker-php-source extract \
     && docker-php-ext-install sockets pdo pdo_pgsql pgsql gd zip exif bcmath intl pcntl \
     && pecl install xdebug \
     && pecl install redis \
-    && docker-php-ext-enable sockets xdebug opcache redis pdo_pgsql pgsql \
-    && docker-php-source delete
+    && docker-php-ext-enable sockets xdebug opcache redis pdo_pgsql pgsql
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php \
