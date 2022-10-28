@@ -210,13 +210,15 @@ elif [[ "$role" = "ckan" ]]; then
     cp ${APP_ROOT}/_config/ckan/${ckanRole}-test.ini ${APP_ROOT}/ckan/${ckanRole}/test.ini
 
     # compile ckan config files
-    printf "${Green}Compiling local ${ckanRole} config file${NC}${EOL}"
-    python ${APP_ROOT}/docker/install/ckan/compile-${ckanRole}-config.py
-    if [[ $? -eq 0 ]]; then
-        printf "${Green}Compiled ${ckanRole} ini file${NC}${EOL}";
-    else
-        printf "${Red}FAILED to compile ${ckanRole} ini file${NC}${EOL}";
-    fi
+    if [[ -f "/srv/app/ckan/${ckanRole}/bin/activate_this.py" ]]; then
+        printf "${Green}Compiling local ${ckanRole} config file${NC}${EOL}"
+        python ${APP_ROOT}/docker/install/ckan/compile-${ckanRole}-config.py
+        if [[ $? -eq 0 ]]; then
+            printf "${Green}Compiled ${ckanRole} ini file${NC}${EOL}";
+        else
+            printf "${Red}FAILED to compile ${ckanRole} ini file${NC}${EOL}";
+        fi
+    fi;
 
     # copy the wsgi.py files
     printf "${Green}Copying the ${ckanRole} wsgi configuration file to the virtual environment${NC}${EOL}"
