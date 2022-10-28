@@ -1,17 +1,23 @@
 FROM openknowledge/ckan-base:2.8
-FROM ubuntu:20.04
+FROM debian:bullseye-slim
 
 USER root
 
 RUN echo 'root:Docker!' | chpasswd
 
-ENV DEBIAN_FRONTEND=noninteractive 
+ENV DEBIAN_FRONTEND=noninteractive
+
+WORKDIR /srv/app
 
 RUN apt-get update -yqq \
+    && apt-get purge --auto-remove python3 -y \
+    && apt-get install -y --no-install-recommends \
+        curl \
     && curl -sL https://deb.nodesource.com/setup_12.x | bash - \
     && apt-get install -y --no-install-recommends \
         nodejs \
         npm \
+        gcc \
         supervisor \
 		git \
 		libzip-dev \
@@ -23,9 +29,9 @@ RUN apt-get update -yqq \
         libpq-dev \
         libpcre3 \
         libpcre3-dev \
+        libmagic-dev \
         virtualenv \
         redis-server \
-        curl \
         nano \
         vim \
         sudo \
