@@ -60,24 +60,6 @@ function run_pre_build {
 
     fi
 
-    if [[ $noInteraction == "false" ]]; then
-
-        # create basic network if it does not exist
-        docker network inspect og-local-network >/dev/null 2>&1 || docker network create og-local-network | sed 's/^/        /g'
-
-        # create local network if it does not exist
-        docker network inspect og-local-network--$projectID >/dev/null 2>&1 || docker network create og-local-network--$projectID | sed 's/^/        /g'
-
-    else
-
-        # create basic network if it does not exist
-        docker network inspect og-local-network >/dev/null 2>&1 || docker network create og-local-network | sed 's/^/    /g'
-
-        # create local network if it does not exist
-        docker network inspect og-local-network--$projectID >/dev/null 2>&1 || docker network create og-local-network--$projectID | sed 's/^/    /g'
-
-    fi
-
     # creat backup directory
     if [[ ! -d "${PWD}/backup" ]]; then
         mkdir ${PWD}/backup
