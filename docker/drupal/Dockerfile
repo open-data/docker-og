@@ -44,7 +44,7 @@ RUN apt-get update -yqq \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
     && docker-php-ext-install sockets pdo pdo_pgsql pgsql gd zip exif bcmath intl pcntl \
-    && pecl install xdebug \
+    && pecl install xdebug-2.9.0 \
     && pecl install redis \
     && docker-php-ext-enable sockets xdebug opcache redis pdo_pgsql pgsql
 
