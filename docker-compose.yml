@@ -18,7 +18,8 @@ services:
       test: echo Docker! | sudo -S /bin/bash -c "service nginx status || exit 1"
       interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 6
+      start_period: 10s
     working_dir: /var/ogproxy
     networks:
       og-local-network:
@@ -63,7 +64,8 @@ services:
       test: echo Docker! | sudo -S /bin/bash -c "service nginx status || exit 1"
       interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 6
+      start_period: 90s
     working_dir: /var/www/html
     networks:
       og-local-network:
@@ -125,7 +127,8 @@ services:
       test: /srv/app/ckan/registry/bin/uwsgi --connect-and-read 127.0.0.1:1717 || exit 1
       interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 6
+      start_period: 90s
     working_dir: /srv/app
     networks:
       og-local-network:
@@ -203,7 +206,8 @@ services:
       test: /srv/app/ckan/portal/bin/uwsgi --connect-and-read 127.0.0.1:1717 || exit 1
       interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 6
+      start_period: 90s
     working_dir: /srv/app
     networks:
       og-local-network:
@@ -282,7 +286,8 @@ services:
       test: pg_isready -U postgres || exit 1
       interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 6
+      start_period: 10s
     networks:
       og-local-network:
         ipv4_address: 172.25.${OCTET}.9
@@ -326,7 +331,8 @@ services:
       test: solr status || exit 1
       interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 6
+      start_period: 45s
     working_dir: /opt/solr
     networks:
       og-local-network:
@@ -397,7 +403,8 @@ services:
       test: redis-cli info server || exit 1
       interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 6
+      start_period: 10s
     working_dir: /data
     networks:
       og-local-network:
@@ -435,7 +442,8 @@ services:
       test: /var/ocs/django/bin/uwsgi --connect-and-read 127.0.0.1:1717 || exit 1
       interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 6
+      start_period: 90s
     working_dir: /var/ocs
     networks:
       og-local-network:
