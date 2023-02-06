@@ -218,6 +218,17 @@ elif [[ "$role" = "ckan" ]]; then
         else
             printf "${Red}FAILED to compile ${ckanRole} ini file${NC}${EOL}";
         fi
+        # run ckanext-canada setup
+        if [[ -d "/srv/app/ckan/${ckanRole}/src/ckanext-canada" ]]; then
+            cd ${APP_ROOT}/ckan/${ckanRole}/src/ckanext-canada;
+            python setup.py develop;
+            if [[ $? -eq 0 ]]; then
+                printf "${Green}Ran ckanext-canada setup${NC}${EOL}";
+            else
+                printf "${Red}FAILED to run ckanext-canada setup${NC}${EOL}";
+            fi;
+            cd ${APP_ROOT};
+        fi;
     fi;
 
     # copy the wsgi.py files
