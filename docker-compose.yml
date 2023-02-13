@@ -369,30 +369,30 @@ services:
       # Persisting Drupal Solr Cores
       - ./solr/drupal_content:/var/solr/data/drupal_content
       # Persisting CKAN Test Solr Cores
-      - ./solr/ckan_registry:/var/solr/data/test__ckan_registry
-      - ./solr/ckan_portal:/var/solr/data/test__ckan_portal
-      - ./solr/core_ati:/var/solr/data/test__core_ati
-      - ./solr/core_contracts:/var/solr/data/test__core_contracts
-      - ./solr/core_grants:/var/solr/data/test__core_grants
-      - ./solr/core_hospitalityq:/var/solr/data/test__core_hospitalityq
-      - ./solr/core_inventory:/var/solr/data/test__core_inventory
-      - ./solr/core_reclassification:/var/solr/data/test__core_reclassification
-      - ./solr/core_travela:/var/solr/data/test__core_travela
-      - ./solr/core_travelq:/var/solr/data/test__core_travelq
-      - ./solr/core_wrongdoing:/var/solr/data/test__core_wrongdoing
+      - ./solr/test__ckan_registry:/var/solr/data/test__ckan_registry
+      - ./solr/test__ckan_portal:/var/solr/data/test__ckan_portal
+      - ./solr/test__core_ati:/var/solr/data/test__core_ati
+      - ./solr/test__core_contracts:/var/solr/data/test__core_contracts
+      - ./solr/test__core_grants:/var/solr/data/test__core_grants
+      - ./solr/test__core_hospitalityq:/var/solr/data/test__core_hospitalityq
+      - ./solr/test__core_inventory:/var/solr/data/test__core_inventory
+      - ./solr/test__core_reclassification:/var/solr/data/test__core_reclassification
+      - ./solr/test__core_travela:/var/solr/data/test__core_travela
+      - ./solr/test__core_travelq:/var/solr/data/test__core_travelq
+      - ./solr/test__core_wrongdoing:/var/solr/data/test__core_wrongdoing
       # Persisting Django Test Solr Cores
-      - ./solr/core_od_search:/var/solr/data/test__core_od_search
-      - ./solr/core_bn_search:/var/solr/data/test__core_bn_search
-      - ./solr/core_ati_search:/var/solr/data/test__core_ati_search
-      - ./solr/core_ei_search:/var/solr/data/test__core_ei_search
-      - ./solr/core_ct_search:/var/solr/data/test__core_ct_search
-      - ./solr/core_gc_search:/var/solr/data/test__core_gc_search
-      - ./solr/core_ap_search:/var/solr/data/test__core_ap_search
-      - ./solr/core_sv_search:/var/solr/data/test__core_sv_search
-      - ./solr/core_qp_search:/var/solr/data/test__core_qp_search
-      - ./solr/core_sd_search:/var/solr/data/test__core_sd_search
+      - ./solr/test__core_od_search:/var/solr/data/test__core_od_search
+      - ./solr/test__core_bn_search:/var/solr/data/test__core_bn_search
+      - ./solr/test__core_ati_search:/var/solr/data/test__core_ati_search
+      - ./solr/test__core_ei_search:/var/solr/data/test__core_ei_search
+      - ./solr/test__core_ct_search:/var/solr/data/test__core_ct_search
+      - ./solr/test__core_gc_search:/var/solr/data/test__core_gc_search
+      - ./solr/test__core_ap_search:/var/solr/data/test__core_ap_search
+      - ./solr/test__core_sv_search:/var/solr/data/test__core_sv_search
+      - ./solr/test__core_qp_search:/var/solr/data/test__core_qp_search
+      - ./solr/test__core_sd_search:/var/solr/data/test__core_sd_search
       # Persisting Drupal Test Solr Cores
-      - ./solr/drupal_content:/var/solr/data/test__drupal_content
+      - ./solr/test__drupal_content:/var/solr/data/test__drupal_content
     environment:
       CONTAINER_ROLE: solr
       SOLR_SSL_ENABLED: "false"
