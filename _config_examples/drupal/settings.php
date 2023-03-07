@@ -301,3 +301,7 @@ $settings['default_domain'] = [
 
 # default ati email address
 $settings['ati_email'] = 'open-ouvert@tbs-sct.gc.ca';
+
+# custom queue class
+$settings['queue_service_ogp_queue'] = 'og_ext_cron.queue';
+$settings['queue_reliable_service_ogp_queue'] = 'og_ext_cron.queue';
