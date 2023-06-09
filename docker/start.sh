@@ -266,10 +266,10 @@ elif [[ "$role" = "ckan" ]]; then
     fi;
 
     # run any database migrations
-    if [[ -f "${APP_ROOT}/ckan/${ckanRole}/bin/ckan" ]]; then
-        printf "${Green}Running database migrations...${NC}${EOL}"
-        ${APP_ROOT}/ckan/${ckanRole}/bin/ckan -c ${APP_ROOT}/ckan/${ckanRole}/${ckanRole}.ini db upgrade
-    fi
+    # if [[ -f "${APP_ROOT}/ckan/${ckanRole}/bin/ckan" ]]; then
+    #     printf "${Green}Running database migrations...${NC}${EOL}"
+    #     ${APP_ROOT}/ckan/${ckanRole}/bin/ckan -c ${APP_ROOT}/ckan/${ckanRole}/${ckanRole}.ini db upgrade
+    # fi;
 
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"

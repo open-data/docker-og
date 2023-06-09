@@ -121,6 +121,10 @@ if [[ $installRepos_CKAN == "true" ]]; then
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN GC Notify repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-gcnotify.git@ckan-v2.8 and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/open-data/ckanext-gcnotify.git@ckan-v2.8#egg=ckanext-gcnotify' -r 'https://raw.githubusercontent.com/open-data/ckanext-gcnotify/ckan-v2.8/requirements.txt'
 
+    # install Queensland CSRF filter into the python environment
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN CSRF Filter repository${HAIR}${Cyan} from https://github.com/qld-gov-au/ckanext-csrf-filter.git and installing into Python environment${NC}${SPACER}"
+    pip install -e 'git+https://github.com/qld-gov-au/ckanext-csrf-filter.git#egg=ckanext-csrf-filter' -r 'https://raw.githubusercontent.com/qld-gov-au/ckanext-csrf-filter/main/requirements.txt'
+
     # install flask admin
     pip install Flask-Admin==1.4.0
 
@@ -160,7 +164,7 @@ if [[ $installRepos_CKAN == "true" ]]; then
     else
         printf "${Red}${INDENT}${INDENT}Copy ${CKAN_ROLE}.ini to ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini: FAIL${NC}${EOL}"
     fi
-    
+
 
     # copy local ckan test config file
     cp ${APP_ROOT}/_config/ckan/${CKAN_ROLE}-test.ini ${APP_ROOT}/ckan/${CKAN_ROLE}/test.ini
