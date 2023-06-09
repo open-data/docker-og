@@ -125,6 +125,10 @@ if [[ $installRepos_CKAN == "true" ]]; then
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN CSRF Filter repository${HAIR}${Cyan} from https://github.com/qld-gov-au/ckanext-csrf-filter.git and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/qld-gov-au/ckanext-csrf-filter.git#egg=ckanext-csrf-filter' -r 'https://raw.githubusercontent.com/qld-gov-au/ckanext-csrf-filter/main/requirements.txt'
 
+    # install Open API View into the python environment
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Open API View repository${HAIR}${Cyan} from https://github.com/open-data/ckanext-openapiview.git and installing into Python environment${NC}${SPACER}"
+    pip install -e 'git+https://github.com/open-data/ckanext-openapiview.git#egg=ckanext-openapiview'
+
     # install flask admin
     pip install Flask-Admin==1.4.0
 
