@@ -6,12 +6,13 @@ function do_clone_databases {
 
     # Options for the user to select from
     options=(
-        "og_drupal_local" 
-        "og_ckan_portal_local" 
-        "og_ckan_portal_ds_local" 
-        "og_ckan_registry_local" 
+        "og_drupal_local"
+        "og_ckan_portal_local"
+        "og_ckan_portal_ds_local"
+        "og_ckan_registry_local"
         "og_ckan_registry_ds_local"
-        "All" 
+        "og_search_local"
+        "All"
         "Exit"
     )
 
@@ -21,25 +22,25 @@ function do_clone_databases {
 
     case $opt in
 
-        # "og_drupal_local" 
-        (0) 
+        # "og_drupal_local"
+        (0)
             exitScript='false'
             cloneDB_Drupal='true'
             ;;
 
-        # "og_ckan_portal_local" 
-        (1) 
+        # "og_ckan_portal_local"
+        (1)
             exitScript='false'
             cloneDB_Portal_CKAN='true'
             ;;
 
-        # "og_ckan_portal_ds_local" 
+        # "og_ckan_portal_ds_local"
         (2)
             exitScript='false'
             cloneDB_Portal_DS_CKAN='true'
             ;;
 
-        # "og_ckan_registry_local" 
+        # "og_ckan_registry_local"
         (3)
             exitScript='false'
             cloneDB_Registry_CKAN='true'
@@ -51,18 +52,25 @@ function do_clone_databases {
             cloneDB_Registry_DS_CKAN='true'
             ;;
 
+        # "og_search_local"
+        (5)
+            exitScript='false'
+            cloneDB_Search_DJANGO='true'
+            ;;
+
         # "All"
-        (5) 
+        (6)
             exitScript='false'
             cloneDB_Drupal='true'
             cloneDB_Portal_CKAN='true'
             cloneDB_Portal_DS_CKAN='true'
             cloneDB_Registry_CKAN='true'
             cloneDB_Registry_DS_CKAN='true'
+            cloneDB_Search_DJANGO='true'
             ;;
 
         # "Exit"
-        (6)
+        (7)
             exitScript='true'
             ;;
 
@@ -184,6 +192,29 @@ function do_clone_databases {
         # END
 
         #
+        # Confirm DJANGO Searcj database clone
+        #
+        if [[ $cloneDB_Search_DJANGO == "true" ]]; then
+
+          read -r -p $'\n\n\033[0;31m    Are you sure you want clone the\033[1m existing DJANGO Search database\033[0m\033[0;31m? [y/N]:\033[0;0m    ' response
+
+          if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+
+            cloneDB_Search_DJANGO='true'
+
+          else
+
+            cloneDB_Search_DJANGO='false'
+
+          fi
+
+        fi
+
+        # END
+        # Confirm DJANGO Searcj database clone
+        # END
+
+        #
         # Clone Drupal database
         #
         if [[ $cloneDB_Drupal == "true" ]]; then
@@ -263,6 +294,22 @@ EOSQL
         # Clone CKAN Registry Datastore database
         # END
 
+        #
+        # Clone DJANGO Search database
+        #
+        if [[ $cloneDB_Search_DJANGO == "true" ]]; then
+
+          psql -v ON_ERROR_STOP=0 --username "homestead" --dbname "postgres" <<-EOSQL
+            CREATE DATABASE og_search_local__test WITH TEMPLATE og_search_local;
+            GRANT ALL PRIVILEGES ON DATABASE og_search_local__test TO homestead;
+            GRANT ALL PRIVILEGES ON DATABASE og_search_local__test TO homestead_reader;
+EOSQL
+
+        fi
+        # END
+        # Clone DJANGO Search database
+        # END
+
     else
 
         printf "${SPACER}${Yellow}${INDENT}Exiting install script...${NC}${SPACER}"
@@ -280,12 +327,13 @@ function do_create_blank_databases {
 
     # Options for the user to select from
     options=(
-        "og_drupal_local__test" 
-        "og_ckan_portal_local__test" 
-        "og_ckan_portal_ds_local__test" 
-        "og_ckan_registry_local__test" 
+        "og_drupal_local__test"
+        "og_ckan_portal_local__test"
+        "og_ckan_portal_ds_local__test"
+        "og_ckan_registry_local__test"
         "og_ckan_registry_ds_local__test"
-        "All" 
+        "og_search_local__test"
+        "All"
         "Exit"
     )
 
@@ -295,25 +343,25 @@ function do_create_blank_databases {
 
     case $opt in
 
-        # "og_drupal_local__test" 
-        (0) 
+        # "og_drupal_local__test"
+        (0)
             exitScript='false'
             create_Test_DB_Drupal='true'
             ;;
 
-        # "og_ckan_portal_local__test" 
-        (1) 
+        # "og_ckan_portal_local__test"
+        (1)
             exitScript='false'
             create_Test_DB_Portal_CKAN='true'
             ;;
 
-        # "og_ckan_portal_ds_local__test" 
+        # "og_ckan_portal_ds_local__test"
         (2)
             exitScript='false'
             create_Test_DB_Portal_DS_CKAN='true'
             ;;
 
-        # "og_ckan_registry_local__test" 
+        # "og_ckan_registry_local__test"
         (3)
             exitScript='false'
             create_Test_DB_Registry_CKAN='true'
@@ -325,18 +373,25 @@ function do_create_blank_databases {
             create_Test_DB_Registry_DS_CKAN='true'
             ;;
 
+        # "og_search_local__test"
+        (5)
+            exitScript='false'
+            create_Test_DB_Search_DJANGO='true'
+            ;;
+
         # "All"
-        (5) 
+        (6)
             exitScript='false'
             create_Test_DB_Drupal='true'
             create_Test_DB_Portal_CKAN='true'
             create_Test_DB_Portal_DS_CKAN='true'
             create_Test_DB_Registry_CKAN='true'
             create_Test_DB_Registry_DS_CKAN='true'
+            create_Test_DB_Search_DJANGO='true'
             ;;
 
         # "Exit"
-        (6)
+        (7)
             exitScript='true'
             ;;
 
@@ -427,6 +482,22 @@ EOSQL
         # Create blank CKAN Registry Datastore database
         # END
 
+        #
+        # Create blank DJANGO Search database
+        #
+        if [[ $create_Test_DB_Search_DJANGO == "true" ]]; then
+
+          psql -v ON_ERROR_STOP=0 --username "homestead" --dbname "postgres" <<-EOSQL
+            CREATE DATABASE og_search_local__test;
+            GRANT ALL PRIVILEGES ON DATABASE og_search_local__test TO homestead;
+            GRANT ALL PRIVILEGES ON DATABASE og_search_local__test TO homestead_reader;
+EOSQL
+
+        fi
+        # END
+        # Create blank DJANGO Search database
+        # END
+
     else
 
       printf "${SPACER}${Yellow}${INDENT}Exiting install script...${NC}${SPACER}"
@@ -442,8 +513,8 @@ printf "${SPACER}${Cyan}${INDENT}Select what you want to do:${NC}${SPACER}"
 
 # Options for the user to select from
 options=(
-    "Clone existing databases" 
-    "Create blank test databases"  
+    "Clone existing databases"
+    "Create blank test databases"
     "Exit"
 )
 
@@ -452,15 +523,15 @@ select_option "${options[@]}"
 opt=$?
 
 case $opt in
-    # "Clone existing databases" 
-    (0) 
+    # "Clone existing databases"
+    (0)
         exitScript='false'
         cloneDatabases='true'
         createBlankDatabases='false'
         ;;
 
-    # "Create blank test databases" 
-    (1) 
+    # "Create blank test databases"
+    (1)
         exitScript='false'
         createBlankDatabases='true'
         loneDatabases='false'
