@@ -37,3 +37,4 @@ pgrestore.log
 /docker/config/solr/certs/*.jks
 /docker/config/solr/certs/*.p12
 /docker/config/solr/cores/*/data/
+/django3/**

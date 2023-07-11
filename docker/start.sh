@@ -150,9 +150,24 @@ elif [[ "$role" = "search" ]]; then
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown django:django -R /var/ocs"
 
     # copy the django settings file
-    if [[ -d "${APP_ROOT}/django/src/ogc-search/ogc_search/ogc_search" ]]; then
+    if [[ -d "${APP_ROOT}/django/src/oc-search/oc_search" ]]; then
         printf "${Green}Copying the Django settings file to the virtual environment${NC}${EOL}"
-        cp ${APP_ROOT}/_config/django/settings.py ${APP_ROOT}/django/src/ogc-search/ogc_search/ogc_search/settings.py
+        cp ${APP_ROOT}/_config/django/settings.py ${APP_ROOT}/django/src/oc-search/oc_search/settings.py
+
+        printf "${Green}Copying the setup file to the virtual environment${NC}${EOL}"
+        cp ${APP_ROOT}/docker/config/django/etup.py ${APP_ROOT}/django/src/oc-search/setup.py
+        chown django:django ${APP_ROOT}/django/src/oc-search/setup.py
+    fi;
+
+    # copy the wsgi.py files
+    if [[ -d "${APP_ROOT}/django" ]]; then
+      printf "${Green}Copying the wsgi configuration file to the virtual environment${NC}${EOL}"
+      cp ${APP_ROOT}/docker/config/django/wsgi.py ${APP_ROOT}/django/wsgi.py
+      chown django:django ${APP_ROOT}/django/wsgi.py
+
+      printf "${Green}Copying the activation file to the virtual environment${NC}${EOL}"
+      cp ${APP_ROOT}/docker/config/django/activate_this.py ${APP_ROOT}/django/bin/activate_this.py
+      chown django:django ${APP_ROOT}/django/bin/activate_this.py
     fi;
 
     # change volume ownerships
