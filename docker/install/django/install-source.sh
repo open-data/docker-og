@@ -115,20 +115,6 @@ if [[ $installApp_Django == "true" ]]; then
         printf "${Red}${INDENT}${INDENT}Copy ${APP_ROOT}/_config/django/settings.py to ${APP_ROOT}/django/src/oc-search/oc_search/settings.py: FAIL${NC}${EOL}"
     fi
 
-    # download yaml config files
-    printf "${SPACER}${Cyan}${INDENT}Download CKAN config files${NC}${SPACER}"
-    mkdir -p ${APP_ROOT}/django/src/oc-search/oc_search/ckan_config_files
-    cd ${APP_ROOT}/django/src/oc-search/oc_search/ckan_config_files
-    wget https://raw.githubusercontent.com/open-data/ckanext-canada/master/ckanext/canada/schemas/presets.yaml
-    wget https://raw.githubusercontent.com/open-data/ckanext-canada/master/ckanext/canada/tables/briefingt.yaml
-    wget https://raw.githubusercontent.com/open-data/ckanext-canada/master/ckanext/canada/tables/contracts.yaml
-    wget https://raw.githubusercontent.com/open-data/ckanext-canada/master/ckanext/canada/tables/grants.yaml
-    wget https://raw.githubusercontent.com/open-data/ckanext-canada/master/ckanext/canada/tables/nap.yaml
-    wget https://raw.githubusercontent.com/open-data/ckanext-canada/master/ckanext/canada/tables/qpnotes.yaml
-    wget https://raw.githubusercontent.com/open-data/ckanext-canada/master/ckanext/canada/tables/service.yaml
-    wget https://raw.githubusercontent.com/open-data/ckanext-canada/master/ckanext/canada/tables/choices/minister.json
-    wget https://raw.githubusercontent.com/open-data/ckanext-canada/master/ckanext/canada/schemas/prop.yaml
-
     # set ownership
     cd ${APP_ROOT}/django
     chown django:django -R ${APP_ROOT}/django
