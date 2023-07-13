@@ -4,10 +4,11 @@ printf "${SPACER}${Cyan}${INDENT}Select what to install for ${BOLD}Django:${HAIR
 
 # Options for the user to select from
 options=(
-  "OGC Django Search App (version 1)" 
-  "Static Files" 
-  "Set File Permissions" 
-  "All" 
+  "OC Django Search App (version 2)"
+  "Static Files"
+  "Searches"
+  "Set File Permissions"
+  "All"
   "Exit"
 )
 
@@ -17,34 +18,41 @@ opt=$?
 
 case $opt in
 
-  # "OGC Django Search App (version 1)"
-  (0) 
+  # "OC Django Search App (version 2)"
+  (0)
     exitScript='false'
     installApp_Django='true'
     ;;
 
   # "Static Files"
-  (1) 
+  (1)
     exitScript='false'
     installFiles_Django='true'
     ;;
 
-  # "Set File Permissions"
+  # "Searches"
   (2)
+    exitScript='false'
+    installSearches_Django='true'
+    ;;
+
+  # "Set File Permissions"
+  (3)
     exitScript='false'
     installFilePermissions_Django='true'
     ;;
 
   # "All"
-  (3)
+  (4)
     exitScript='false'
     installApp_Django='true'
     installFiles_Django='true'
+    installSearches_Django='true'
     installFilePermissions_Django='true'
     ;;
 
   # "Exit"
-  (4)
+  (5)
     exitScript='true'
     ;;
 
@@ -61,6 +69,8 @@ if [[ $exitScript != "true" ]]; then
   . ${PWD}/docker/install/django/install-source.sh
   cd ${APP_ROOT}
   . ${PWD}/docker/install/django/install-static.sh
+  cd ${APP_ROOT}
+  . ${PWD}/docker/install/django/install-searches.sh
   cd ${APP_ROOT}
   . ${PWD}/docker/install/django/install-perms.sh
   cd ${APP_ROOT}

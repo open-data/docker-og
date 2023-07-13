@@ -43,3 +43,25 @@ fi
 # END
 # Confirm static files download
 # END
+
+#
+# Confirm searches installation
+#
+if [[ $installSearches_Django == "true" ]]; then
+
+    read -r -p $'\n\n\033[0;31m    Are you sure you want to destroy and re-install the\033[1m searches\033[0m\033[0;31m? [y/N]:\033[0;0m    ' response
+
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+
+        installSearches_Django='true'
+
+    else
+
+        installSearches_Django='false'
+
+    fi
+
+fi
+# END
+# Confirm searches installation
+# END
