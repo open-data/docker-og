@@ -213,12 +213,20 @@ EOSQL
       printf "${Red}${INDENT}${INDENT}Activate Python environment: FAIL${NC}${EOL}"
   fi
 
+  # run intitial database migrations
   printf "${Cyan}${INDENT}${INDENT}Running initial database migrations...${NC}${EOL}"
   cd ${APP_ROOT}/django/src/oc-search
   python manage.py makemigrations search
   python manage.py sqlmigrate search 0001
   python manage.py migrate
   cd ${APP_ROOT}
+
+  # create a super user
+  DJANGO_SUPERUSER_USERNAME='admin_local'
+  DJANGO_SUPERUSER_PASSWORD='12345678'
+  DJANGO_SUPERUSER_EMAIL='temp@tbs-sct.gc.ca'
+  cd ${APP_ROOT}/django/src/oc-search
+  python manage.py createsuperuser --noinput
 
   # decativate python environment
   deactivate
