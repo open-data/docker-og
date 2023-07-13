@@ -7,6 +7,8 @@ function do_clone_databases {
     # Options for the user to select from
     options=(
         "og_drupal_local"
+        "og_drupal_blog_local"
+        "og_drupal_guides_local"
         "og_ckan_portal_local"
         "og_ckan_portal_ds_local"
         "og_ckan_registry_local"
@@ -28,40 +30,54 @@ function do_clone_databases {
             cloneDB_Drupal='true'
             ;;
 
-        # "og_ckan_portal_local"
+        # "og_drupal_blog_local"
         (1)
+            exitScript='false'
+            cloneDB_Drupal_Blog='true'
+            ;;
+
+        # "og_drupal_guides_local"
+        (2)
+            exitScript='false'
+            cloneDB_Drupal_Guides='true'
+            ;;
+
+        # "og_ckan_portal_local"
+        (3)
             exitScript='false'
             cloneDB_Portal_CKAN='true'
             ;;
 
         # "og_ckan_portal_ds_local"
-        (2)
+        (4)
             exitScript='false'
             cloneDB_Portal_DS_CKAN='true'
             ;;
 
         # "og_ckan_registry_local"
-        (3)
+        (5)
             exitScript='false'
             cloneDB_Registry_CKAN='true'
             ;;
 
         # "og_ckan_registry_ds_local"
-        (4)
+        (6)
             exitScript='false'
             cloneDB_Registry_DS_CKAN='true'
             ;;
 
         # "og_search_local"
-        (5)
+        (7)
             exitScript='false'
             cloneDB_Search_DJANGO='true'
             ;;
 
         # "All"
-        (6)
+        (8)
             exitScript='false'
             cloneDB_Drupal='true'
+            cloneDB_Drupal_Blog='true'
+            cloneDB_Drupal_Guides='true'
             cloneDB_Portal_CKAN='true'
             cloneDB_Portal_DS_CKAN='true'
             cloneDB_Registry_CKAN='true'
@@ -70,7 +86,7 @@ function do_clone_databases {
             ;;
 
         # "Exit"
-        (7)
+        (9)
             exitScript='true'
             ;;
 
@@ -101,6 +117,50 @@ function do_clone_databases {
         fi
         # END
         # Confirm Drupal database clone
+        # END
+
+        #
+        # Confirm Drupal Blog database clone
+        #
+        if [[ $cloneDB_Drupal_Blog == "true" ]]; then
+
+          read -r -p $'\n\n\033[0;31m    Are you sure you want clone the\033[1m existing Drupal Blog database\033[0m\033[0;31m? [y/N]:\033[0;0m    ' response
+
+          if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+
+            cloneDB_Drupal_Blog='true'
+
+          else
+
+            cloneDB_Drupal_Blog='false'
+
+          fi
+
+        fi
+        # END
+        # Confirm Drupal Guides database clone
+        # END
+
+        #
+        # Confirm Drupal Blog database clone
+        #
+        if [[ $cloneDB_Drupal_Guides == "true" ]]; then
+
+          read -r -p $'\n\n\033[0;31m    Are you sure you want clone the\033[1m existing Drupal Guides database\033[0m\033[0;31m? [y/N]:\033[0;0m    ' response
+
+          if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+
+            cloneDB_Drupal_Guides='true'
+
+          else
+
+            cloneDB_Drupal_Guides='false'
+
+          fi
+
+        fi
+        # END
+        # Confirm Drupal Guides database clone
         # END
 
         #
@@ -231,6 +291,38 @@ EOSQL
         # END
 
         #
+        # Clone Drupal Blog database
+        #
+        if [[ $cloneDB_Drupal_Blog == "true" ]]; then
+
+          psql -v ON_ERROR_STOP=0 --username "homestead" --dbname "postgres" <<-EOSQL
+            CREATE DATABASE og_drupal_blog_local__test WITH TEMPLATE og_drupal_blog_local;
+            GRANT ALL PRIVILEGES ON DATABASE og_drupal_blog_local__test TO homestead;
+            GRANT ALL PRIVILEGES ON DATABASE og_drupal_blog_local__test TO homestead_reader;
+EOSQL
+
+        fi
+        # END
+        # Clone Drupal Blog database
+        # END
+
+        #
+        # Clone Drupal Guides database
+        #
+        if [[ $cloneDB_Drupal_Guides == "true" ]]; then
+
+          psql -v ON_ERROR_STOP=0 --username "homestead" --dbname "postgres" <<-EOSQL
+            CREATE DATABASE og_drupal_guides_local__test WITH TEMPLATE og_drupal_guides_local;
+            GRANT ALL PRIVILEGES ON DATABASE og_drupal_guides_local__test TO homestead;
+            GRANT ALL PRIVILEGES ON DATABASE og_drupal_guides_local__test TO homestead_reader;
+EOSQL
+
+        fi
+        # END
+        # Clone Drupal Guides database
+        # END
+
+        #
         # Clone CKAN Portal database
         #
         if [[ $cloneDB_Portal_CKAN == "true" ]]; then
@@ -328,6 +420,8 @@ function do_create_blank_databases {
     # Options for the user to select from
     options=(
         "og_drupal_local__test"
+        "og_drupal_blog_local__test"
+        "og_drupal_guides_local__test"
         "og_ckan_portal_local__test"
         "og_ckan_portal_ds_local__test"
         "og_ckan_registry_local__test"
@@ -349,40 +443,54 @@ function do_create_blank_databases {
             create_Test_DB_Drupal='true'
             ;;
 
-        # "og_ckan_portal_local__test"
+        # "og_drupal_blog_local__test"
         (1)
+            exitScript='false'
+            create_Test_DB_Drupal_Blog='true'
+            ;;
+
+        # "og_drupal_guides_local__test"
+        (2)
+            exitScript='false'
+            create_Test_DB_Drupal_Guides='true'
+            ;;
+
+        # "og_ckan_portal_local__test"
+        (3)
             exitScript='false'
             create_Test_DB_Portal_CKAN='true'
             ;;
 
         # "og_ckan_portal_ds_local__test"
-        (2)
+        (4)
             exitScript='false'
             create_Test_DB_Portal_DS_CKAN='true'
             ;;
 
         # "og_ckan_registry_local__test"
-        (3)
+        (5)
             exitScript='false'
             create_Test_DB_Registry_CKAN='true'
             ;;
 
         # "og_ckan_registry_ds_local__test"
-        (4)
+        (6)
             exitScript='false'
             create_Test_DB_Registry_DS_CKAN='true'
             ;;
 
         # "og_search_local__test"
-        (5)
+        (7)
             exitScript='false'
             create_Test_DB_Search_DJANGO='true'
             ;;
 
         # "All"
-        (6)
+        (8)
             exitScript='false'
             create_Test_DB_Drupal='true'
+            create_Test_DB_Drupal_Blog='true'
+            create_Test_DB_Drupal_Guides='true'
             create_Test_DB_Portal_CKAN='true'
             create_Test_DB_Portal_DS_CKAN='true'
             create_Test_DB_Registry_CKAN='true'
@@ -391,7 +499,7 @@ function do_create_blank_databases {
             ;;
 
         # "Exit"
-        (7)
+        (9)
             exitScript='true'
             ;;
 
@@ -416,6 +524,38 @@ EOSQL
         fi
         # END
         # Create blank Drupal database
+        # END
+
+        #
+        # Create blank Drupal Blog database
+        #
+        if [[ $create_Test_DB_Drupal_Blog == "true" ]]; then
+
+          psql -v ON_ERROR_STOP=0 --username "homestead" --dbname "postgres" <<-EOSQL
+            CREATE DATABASE og_drupal_blog_local__test;
+            GRANT ALL PRIVILEGES ON DATABASE og_drupal_blog_local__test TO homestead;
+            GRANT ALL PRIVILEGES ON DATABASE og_drupal_blog_local__test TO homestead_reader;
+EOSQL
+
+        fi
+        # END
+        # Create blank Drupal Blog database
+        # END
+
+        #
+        # Create blank Drupal Guides database
+        #
+        if [[ $create_Test_DB_Drupal_Guides == "true" ]]; then
+
+          psql -v ON_ERROR_STOP=0 --username "homestead" --dbname "postgres" <<-EOSQL
+            CREATE DATABASE og_drupal_guides_local__test;
+            GRANT ALL PRIVILEGES ON DATABASE og_drupal_guides_local__test TO homestead;
+            GRANT ALL PRIVILEGES ON DATABASE og_drupal_guides_local__test TO homestead_reader;
+EOSQL
+
+        fi
+        # END
+        # Create blank Drupal Guides database
         # END
 
         #
