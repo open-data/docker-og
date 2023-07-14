@@ -2,7 +2,7 @@ server {
 
     include conf/.env.conf;
 
-    server_name open.local;
+    server_name blog.open.local guides.open.local open.local;
 
     listen 8080 default_server reuseport;
 

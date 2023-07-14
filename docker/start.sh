@@ -108,6 +108,18 @@ elif [[ "$role" = "drupal" ]]; then
             cp ${APP_ROOT}/_config/drupal/settings.php ${APP_ROOT}/drupal/html/sites/default/settings.php
         fi
 
+        printf "${Green}Copying the Drupal Blog configuration file to the installation${NC}${EOL}"
+        cp ${APP_ROOT}/_config/drupal/blog_settings.php ${APP_ROOT}/drupal/html/sites/tbsblog.ca/settings.php
+
+        printf "${Green}Copying the Drupal Guides configuration file to the installation${NC}${EOL}"
+        if [[ ! -d "${APP_ROOT}/drupal/html/sites/guides" ]]; then
+            mkdir -p ${APP_ROOT}/drupal/html/sites/guides
+        fi
+        cp ${APP_ROOT}/_config/drupal/guides_settings.php ${APP_ROOT}/drupal/html/sites/guides/settings.php
+
+        printf "${Green}Copying the Drupal Sites configuration file to the installation${NC}${EOL}"
+        cp ${APP_ROOT}/_config/drupal/sites.php ${APP_ROOT}/drupal/html/sites/sites.php
+
         printf "${Green}Copying the Drupal services file to the installation${NC}${EOL}"
         cp ${APP_ROOT}/_config/drupal/services.yml ${APP_ROOT}/drupal/html/sites/development.services.yml
         if [[ -d "${APP_ROOT}/drupal/html/sites/default" ]]; then

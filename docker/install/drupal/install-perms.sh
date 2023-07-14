@@ -41,6 +41,33 @@ if [[ $installFilePermissions_Drupal == "true" ]]; then
     else
         printf "${Red}${INDENT}${INDENT}Copied settings.php to sites/default/settings.php: FAIL${NC}${EOL}"
     fi
+    # copy docker config blog_settings.php to drupal directory
+    if [[ ! -d "${APP_ROOT}/drupal/html/sites/tbsblog.ca" ]]; then
+      mkdir -p "${APP_ROOT}/drupal/html/sites/tbsblog.ca"
+    fi
+    cp ${APP_ROOT}/_config/drupal/blog_settings.php ${APP_ROOT}/drupal/html/sites/tbsblog.ca/settings.php
+    if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Copied blog_settings.php to sites/tbsblog.ca/settings.php: OK${NC}${EOL}"
+    else
+        printf "${Red}${INDENT}${INDENT}Copied blog_settings.php to sites/tbsblog.ca/settings.php: FAIL${NC}${EOL}"
+    fi
+    # copy docker config guides_settings.php to drupal directory
+    if [[ ! -d "${APP_ROOT}/drupal/html/sites/guides" ]]; then
+      mkdir -p "${APP_ROOT}/drupal/html/sites/guides"
+    fi
+    cp ${APP_ROOT}/_config/drupal/guides_settings.php ${APP_ROOT}/drupal/html/sites/guides/settings.php
+    if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Copied guides_settings.php to sites/guides/settings.php: OK${NC}${EOL}"
+    else
+        printf "${Red}${INDENT}${INDENT}Copied guides_settings.php to sites/guides/settings.php: FAIL${NC}${EOL}"
+    fi
+    # copy docker config sites.php to drupal directory
+    cp ${APP_ROOT}/_config/drupal/sites.php ${APP_ROOT}/drupal/html/sites/sites.php
+    if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Copied sites.php to sites/sites.php: OK${NC}${EOL}"
+    else
+        printf "${Red}${INDENT}${INDENT}Copied sites.php to sites/sites.php: FAIL${NC}${EOL}"
+    fi
 
     printf "${SPACER}${Cyan}${INDENT}Copy Drupal services file${NC}${SPACER}"
     # copy docker config development.services.yml to drupal directory
