@@ -1,0 +1,46 @@
+#
+# Drupal Guidebooks
+# guides.open.local
+#
+server {
+
+    include conf/.env.conf;
+
+    server_name guides.open.local;
+
+    listen 80 default_server;
+
+    include conf/default_settings.conf;
+    include conf/header_settings.conf;
+
+    set $upstreamHost "backend_host_drupal";
+    set $upstremProtocol "http://";
+
+    location / {
+
+        include conf/proxy_settings.conf;
+
+    }
+
+    location /GCWeb/assets/favicon.ico{
+
+        alias /var/ogproxy/docker/assets/favicon.png;
+
+    }
+
+    location /favicon.ico {
+
+        alias /var/ogproxy/docker/assets/favicon.png;
+
+    }
+
+    location /sites/default/files/favicon.ico {
+
+        alias /var/ogproxy/docker/assets/favicon.png;
+
+    }
+
+}
+# END
+# Drupal Guidebooks
+# END
