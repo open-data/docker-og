@@ -30,7 +30,7 @@ server {
 
     location /static/ {
 
-        alias /var/ogproxy/django/src/oc-search/oc_search/static/;
+        alias /var/ogproxy/django/static/;
         autoindex off;
 
     }
