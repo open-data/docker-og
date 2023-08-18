@@ -209,6 +209,10 @@ elif [[ "$role" = "ckan" ]]; then
     printf "${Green}Copying the ${ckanRole} test configuration file to the virtual environment${NC}${EOL}"
     cp ${APP_ROOT}/_config/ckan/${ckanRole}-test.ini ${APP_ROOT}/ckan/${ckanRole}/test.ini
 
+    # copy the ckan who configs
+    printf "${Green}Copying the who.ini configuration file to the virtual environment${NC}${EOL}"
+    cp ${APP_ROOT}/_config/ckan/who.ini ${APP_ROOT}/ckan/${ckanRole}/who.ini
+
     # compile ckan config files
     if [[ -f "/srv/app/ckan/${ckanRole}/bin/activate_this.py" ]]; then
         printf "${Green}Compiling local ${ckanRole} config file${NC}${EOL}"

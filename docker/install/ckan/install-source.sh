@@ -197,13 +197,13 @@ if [[ $installRepos_CKAN == "true" ]]; then
     # copy local ckan config files
     # END
 
-    # copy core who config file
-    cp ${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckan/ckan/config/who.ini ${APP_ROOT}/ckan/${CKAN_ROLE}/who.ini
-    printf "${SPACER}${Cyan}${INDENT}Copying Core CKAN who config file to into root Python environment${NC}${SPACER}"
+    # copy who config file
+    cp ${APP_ROOT}/_config/ckan/who.ini ${APP_ROOT}/ckan/${CKAN_ROLE}/who.ini
+    printf "${SPACER}${Cyan}${INDENT}Copying CKAN who config file to into root Python environment${NC}${SPACER}"
     if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Copy ckan/${CKAN_ROLE}/src/ckan/ckan/config/who.ini to ckan/${CKAN_ROLE}/who.ini: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Copy _config/who.ini to ckan/${CKAN_ROLE}/who.ini: OK${NC}${EOL}"
     else
-        printf "${Red}${INDENT}${INDENT}Copy ckan/${CKAN_ROLE}/src/ckan/ckan/config/who.ini to ckan/${CKAN_ROLE}/who.ini: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Copy _config/who.ini to ckan/${CKAN_ROLE}/who.ini: FAIL${NC}${EOL}"
     fi
 
     # create i18n directory
