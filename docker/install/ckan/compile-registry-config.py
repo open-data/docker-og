@@ -1,4 +1,4 @@
-# -- CKAN 2.8 --
+# -- CKAN 2.9 --
 
 import os
 activate_this = os.path.join('/srv/app/ckan/registry/bin/activate_this.py')

@@ -496,10 +496,10 @@ services:
       PATH: '$PATH:/usr/local/lib'
       APP_ROOT: /var/ocs
       PY_VERSION: 3.7
-      WET_VERSION: v4.0.50.1
+      WET_VERSION: v4.0.63
       CDTS_VERSION: v4_0_28
       CDTS_GCWEB_VERSION: v4_0_31
-      GCWEB_VERSION: v11.0.0
+      GCWEB_VERSION: v13.3.0
       PYTHONHTTPSVERIFY: 0
       PYTHONDONTWRITEBYTECODE: 1
       SSL_VERIFY: 0
