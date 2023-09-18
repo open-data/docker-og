@@ -89,8 +89,8 @@ services:
       PGDATABASE: og_drupal_local
       PGUSER: homestead
       PGPASSWORD: secret
-      WET_VERSION: v4.0.50.1
-      GCWEB_VERSION: v11.0.0
+      WET_VERSION: v4.0.63
+      GCWEB_VERSION: v13.3.0
       PATH: '$PATH:/var/www/html/drupal/vendor/bin'
       APP_ROOT: /var/www/html
       PROJECT_ID: ${PROJECT_ID}
@@ -161,8 +161,8 @@ services:
       PY_VERSION: 2.7
       PIP_VERSION: 19.2.1
       SETUP_TOOLS_VERSION: 36.1
-      WET_VERSION: v4.0.50.1
-      GCWEB_VERSION: v11.0.0
+      WET_VERSION: v4.0.63
+      GCWEB_VERSION: v13.3.0
       PYTHONHTTPSVERIFY: 0
       PYTHONDONTWRITEBYTECODE: 1
       SSL_VERIFY: 0
@@ -240,8 +240,8 @@ services:
       PY_VERSION: 2.7
       PIP_VERSION: 19.2.1
       SETUP_TOOLS_VERSION: 36.1
-      WET_VERSION: v4.0.50.1
-      GCWEB_VERSION: v11.0.0
+      WET_VERSION: v4.0.63
+      GCWEB_VERSION: v13.3.0
       PYTHONHTTPSVERIFY: 0
       PYTHONDONTWRITEBYTECODE: 1
       SSL_VERIFY: 0

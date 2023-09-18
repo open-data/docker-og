@@ -236,6 +236,10 @@ elif [[ "$role" = "ckan" ]]; then
     printf "${Green}Copying the ${ckanRole} test configuration file to the virtual environment${NC}${EOL}"
     cp ${APP_ROOT}/_config/ckan/${ckanRole}-test.ini ${APP_ROOT}/ckan/${ckanRole}/test.ini
 
+    # copy the ckan who configs
+    printf "${Green}Copying the who.ini configuration file to the virtual environment${NC}${EOL}"
+    cp ${APP_ROOT}/_config/ckan/who.ini ${APP_ROOT}/ckan/${ckanRole}/who.ini
+
     # compile ckan config files
     if [[ -f "/srv/app/ckan/${ckanRole}/bin/activate_this.py" ]]; then
         printf "${Green}Compiling local ${ckanRole} config file${NC}${EOL}"
@@ -293,10 +297,10 @@ elif [[ "$role" = "ckan" ]]; then
     fi;
 
     # run any database migrations
-    if [[ -f "${APP_ROOT}/ckan/${ckanRole}/bin/paster" ]]; then
-        printf "${Green}Running database migrations...${NC}${EOL}"
-        ${APP_ROOT}/ckan/${ckanRole}/bin/paster --plugin=ckan db upgrade -c ${APP_ROOT}/ckan/${ckanRole}/${ckanRole}.ini
-    fi
+    # if [[ -f "${APP_ROOT}/ckan/${ckanRole}/bin/ckan" ]]; then
+    #     printf "${Green}Running database migrations...${NC}${EOL}"
+    #     ${APP_ROOT}/ckan/${ckanRole}/bin/ckan -c ${APP_ROOT}/ckan/${ckanRole}/${ckanRole}.ini db upgrade
+    # fi;
 
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
