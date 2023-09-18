@@ -9,6 +9,23 @@
    * You will also need your git configuration to be accessible to your user, located by default at `~/.gitconfig`. This will be attached to the Docker container so that the build scripts can pull the repositories.
    * If using WSL2, you will need to have this config set up inside of WSL2 for your WSL2 user.
 
+## Recommendations
+
+It is __highly__ recommended to use the [OG CLI](https://github.com/open-data/og-cli) tool to manage docker-og projects.
+
+The OG CLI tool will give you an easier command-line interface to view, manage, and run Docker projects that use docker-og.
+
+It will also allow you simpler git tooling and debugging.
+
+## Networking
+
+The docker-og scripts use port and IP octet renting from a pool of pre-defined ports and octets.
+
+__Ports:__ 57000 - 57999
+__IP Addresses:__ 172.25.__1__.0/24 - 172.25.__254__.0/24
+
+You can see the project's important variables in the `.env` file after running the pre-build script.
+
 ## Prebuild
 
 1. __Run__ the pre build script with a Project ID: `./pre-build.sh example`
@@ -64,7 +81,7 @@ Though there is an initialization script to create the databases on the initial 
 1. __Run__ the install script in the docker container: `docker-compose exec <drupal or ckan> ./install.sh`
    1. __Select__ `Databases (fixes missing databases, privileges, and users)`
 
-### Drupal
+### Drupal (D8)
 
 1. __Bring up__ the Drupal docker container: `docker-compose up -d drupal`
 1. __Run__ the install script in the docker container: `docker-compose exec drupal ./install.sh`
@@ -81,7 +98,7 @@ Though there is an initialization script to create the databases on the initial 
    1. Username: `admin.local`
    1. Password: `12345678`
 
-### CKAN
+### CKAN (2.9)
 
 #### Registry
 
@@ -137,7 +154,7 @@ Though there is an initialization script to create the databases on the initial 
       * `All`: will execute all of the above, use this for first time install or if you wish to re-install everything.
       * `Exit`: will exit the installation script.
 
-#### Django
+#### Django (Search App v1 - DEPRECATED)
 
 1. __Bring up__ the Django docker container: `docker-compose up -d django`
 1. __Run__ the install script in the docker container: `docker-compose exec django ./install.sh`
@@ -150,25 +167,29 @@ Though there is an initialization script to create the databases on the initial 
       * `Set File Permissions`: will set the correct file and directory ownerships and permissions.
       * `All`: will execute all of the above, use this for first time install or if you wish to re-install everything.
       * `Exit`: will exit the installation script.
-   
+
 ## Usage
 
-### Drupal
+### Drupal (D8)
 
 1. __Bring up__ the Drupal docker container: `docker-compose up -d drupal`
-1. __Open__ a browser into: `http://open-${PROJECT ID}.local`
-1. Login here: `http://open-${PROJECT ID}.local/en/user/login`
+1. __Open__ a browser into: `http://open.local:<project port>`
+1. Login here: `http://open.local:<project port>/en/user/login`
    1. Username: `admin.local`
    1. Password: `12345678`
 
-### Solr
+Multisites are also available at:
+  * `http://blog.open.local:<project port>`
+  * `http://guides.open.local:<project port>`
+
+### Solr (solr:8)
 
 _The Solr container will automatically be brought up with the CKAN and Drupal containers._
 
 1. __Bring up__ the Solr docker container: `docker-compose up -d solr`
-1. __Open__ a browser into: `http://solr.open-${PROJECT ID}.local`
+1. __Open__ a browser into: `http://solr.open.local:<project port>`
 
-### Postgres
+### Postgres (postgres:9.6)
 
 _The Postgres container will automatically be brought up with the CKAN and Drupal containers._
 
@@ -176,17 +197,17 @@ _The Postgres container will automatically be brought up with the CKAN and Drupa
 1. You can use the [pgAdmin](https://www.pgadmin.org/download/) software to connect to the Postgres container and query the databases.
 1. For the connection info:
    * Hostname/address: `127.0.0.1`
-   * Port: `15438`
+   * Port: `<project database port>`
    * Username: `homestead`
    * Maintenance database: `postgres`
 
-### CKAN
+### CKAN (2.9)
 
 #### Registry
 
 1. __Bring up__ the CKAN Registry docker container: `docker-compose up -d ckan`
-1. __Open__ a browser into: `http://registry.open-${PROJECT ID}.local`
-   1. Login here: `http://registry.open-${PROJECT ID}.local/en/user/login`
+1. __Open__ a browser into: `http://registry.open.local:<project port>`
+   1. Login here: `http://registry.open.local:<project port>/en/user/login`
       1. Normal User:
          1. Username: `user_local`
          1. Password: `12345678`
@@ -199,10 +220,9 @@ _The Postgres container will automatically be brought up with the CKAN and Drupa
 #### Portal
 
 1. __Bring up__ the CKAN Portal docker container: `docker-compose up -d ckanapi`
-1. __Open__ a browser into: `http://open-${PROJECT ID}.local/data/en/dataset`
+1. __Open__ a browser into: `http://open.local:<project port>/data/en/dataset`
 
-### Django
+### Django (Search App v1 - DEPRECATED)
 
 1. __Bring up__ the Django docker container: `docker-compose up -d django`
-1. __Open__ a browser into: `http://search.open-${PROJECT ID}.local`
-   
+1. __Open__ a browser into: `http://search.open.local:<project port>`
