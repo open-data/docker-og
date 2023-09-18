@@ -60,7 +60,7 @@ server {
 
     }
 
-    client_max_body_size 750M;
+    client_max_body_size 2048M;
 
     include conf/header_settings.conf;
 
