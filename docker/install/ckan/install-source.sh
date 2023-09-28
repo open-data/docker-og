@@ -120,19 +120,22 @@ if [[ $installRepos_CKAN == "true" ]]; then
     pip install -e 'git+https://github.com/open-data/ckanext-excelforms.git@main#egg=ckanext-excelforms' -r 'https://raw.githubusercontent.com/open-data/ckanext-excelforms/main/requirements.txt'
 
     # install flask admin
-    pip install Flask-Admin
+    pip install Flask-Admin==1.4.0
 
     # install flask login
-    pip install Flask-Login
+    pip install Flask-Login==0.3.0
 
     # install flask sql alchemy
-    pip install Flask-SQLAlchemy
+    pip install Flask-SQLAlchemy==2.5.1
+
+    # install correct version of sql alchemy
+    pip install sqlalchemy==1.3.5
 
     # install correct version of slugify
-    pip install python-slugify
+    pip install python-slugify==1.2.0
 
     # install request with security modules
-    pip install requests[security]
+    pip install requests[security]==2.25.1
 
     # update vdm
     pip install --upgrade vdm
