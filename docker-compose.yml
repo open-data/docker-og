@@ -158,7 +158,7 @@ services:
       SSH_AUTH_SOCK: /ssh-agent
       APP_ROOT: /srv/app
       PATH: '$PATH:/srv/app/ckan/registry/bin'
-      PY_VERSION: 2.7
+      PY_VERSION: 3.9
       PIP_VERSION: 19.2.1
       SETUP_TOOLS_VERSION: 36.1
       WET_VERSION: v4.0.63
@@ -237,7 +237,7 @@ services:
       SSH_AUTH_SOCK: /ssh-agent
       APP_ROOT: /srv/app
       PATH: '$PATH:/srv/app/ckan/portal/bin'
-      PY_VERSION: 2.7
+      PY_VERSION: 3.9
       PIP_VERSION: 19.2.1
       SETUP_TOOLS_VERSION: 36.1
       WET_VERSION: v4.0.63

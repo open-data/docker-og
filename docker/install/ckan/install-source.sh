@@ -26,7 +26,7 @@ if [[ $installRepos_CKAN == "true" ]]; then
     fi
 
     # create virtual environment
-    virtualenv --python=python2 ${APP_ROOT}/ckan/${CKAN_ROLE}
+    python3 -m venv ${APP_ROOT}/ckan/${CKAN_ROLE}
     cd ${APP_ROOT}/ckan/${CKAN_ROLE}
 
     # set ownership
@@ -55,7 +55,7 @@ if [[ $installRepos_CKAN == "true" ]]; then
 
     # install ckan core into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Core repository${HAIR}${Cyan} from https://github.com:open-data/ckan.git@canada-v2.9 and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckan.git@canada-v2.9#egg=ckan' -r 'https://raw.githubusercontent.com/open-data/ckan/canada-v2.9/requirements-py2.txt' -r 'https://raw.githubusercontent.com/open-data/ckan/canada-v2.9/dev-requirements.txt'
+    pip install -e 'git+https://github.com/open-data/ckan.git@canada-v2.9#egg=ckan' -r 'https://raw.githubusercontent.com/open-data/ckan/canada-v2.9/requirements.txt' -r 'https://raw.githubusercontent.com/open-data/ckan/canada-v2.9/dev-requirements.txt'
 
     # install ckanapi into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN API repository${HAIR}${Cyan} from https://github.com:ckan/ckanapi.git and installing into Python environment${NC}${SPACER}"
@@ -95,7 +95,7 @@ if [[ $installRepos_CKAN == "true" ]]; then
 
     # install ckan security into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Security repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-security@canada-v2.9.git and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckanext-security.git@canada-v2.9#egg=ckanext-security' -r 'https://raw.githubusercontent.com/open-data/ckanext-security/canada-v2.9/requirements-py2.txt'
+    pip install -e 'git+https://github.com/open-data/ckanext-security.git@canada-v2.9#egg=ckanext-security' -r 'https://raw.githubusercontent.com/open-data/ckanext-security/canada-v2.9/requirements.txt'
 
     # install ckan validation into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Validation repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-validation.git@canada and installing into Python environment${NC}${SPACER}"

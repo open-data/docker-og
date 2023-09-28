@@ -1,4 +1,4 @@
-FROM openknowledge/ckan-base:2.8
+FROM openknowledge/ckan-base:2.9
 FROM debian:bullseye-slim
 
 USER root
@@ -10,7 +10,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /srv/app
 
 RUN apt-get update -yqq \
-    && apt-get purge --auto-remove python3 -y \
     && apt-get install -y --no-install-recommends \
         curl \
     && curl -sL https://deb.nodesource.com/setup_12.x | bash - \
@@ -24,13 +23,13 @@ RUN apt-get update -yqq \
         zip \
         unzip \
         wget \
-        python2-dev \
+        python3-dev \
+        python3-venv \
         postgresql \
         libpq-dev \
         libpcre3 \
         libpcre3-dev \
         libmagic-dev \
-        virtualenv \
         redis-server \
         nano \
         vim \
@@ -43,10 +42,6 @@ RUN apt-get update -yqq \
 # Supervisor
 ADD docker/config/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 ADD docker/config/supervisor/conf.d/*.conf /etc/supervisor/conf.d-available/
-
-# PIP2
-RUN curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py \
-    && python2 get-pip.py
 
 ADD docker/start.sh /usr/local/bin/start
 
