@@ -50,8 +50,6 @@ if [[ $installRepos_CKAN == "true" ]]; then
     pip install --upgrade pip==${PIP_VERSION}
     # install uwsgi
     pip install uwsgi
-    # install future
-    pip install future==0.18.2
 
     # install ckan core into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Core repository${HAIR}${Cyan} from https://github.com:open-data/ckan.git@canada-v2.9 and installing into Python environment${NC}${SPACER}"
@@ -73,21 +71,13 @@ if [[ $installRepos_CKAN == "true" ]]; then
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN DCat repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-dcat.git and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/open-data/ckanext-dcat.git#egg=ckanext-dcat' -r 'https://raw.githubusercontent.com/open-data/ckanext-dcat/master/requirements.txt'
 
-    # install ckan extended activity into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Extended Activity${HAIR}${Cyan} repository from https://github.com:open-data/ckanext-extendedactivity.git and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckanext-extendedactivity.git#egg=ckanext-extendedactivity'
-
-    # install ckan extractor into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Extractor repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-extractor.git and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckanext-extractor.git#egg=ckanext-extractor' -r 'https://raw.githubusercontent.com/open-data/ckanext-extractor/master/requirements.txt'
-
     # install ckan fluent into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Fluent repository${HAIR}${Cyan} from https://github.com:ckan/ckanext-fluent.git and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/ckan/ckanext-fluent.git#egg=ckanext-fluent' -r 'https://raw.githubusercontent.com/ckan/ckanext-fluent/master/requirements.txt'
 
     # install ckan recombinant into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Recombinant repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-recombinant.git@canada-v2.9 and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckanext-recombinant.git@canada-v2.9#egg=ckanext-recombinant' -r 'https://raw.githubusercontent.com/open-data/ckanext-recombinant/canada-v2.9/requirements.txt'
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Recombinant repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-recombinant.git and installing into Python environment${NC}${SPACER}"
+    pip install -e 'git+https://github.com/open-data/ckanext-recombinant.git@master#egg=ckanext-recombinant' -r 'https://raw.githubusercontent.com/open-data/ckanext-recombinant/master/requirements.txt'
 
     # install ckan scheming into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Scheming repository${HAIR}${Cyan} from https://github.com:ckan/ckanext-scheming.git and installing into Python environment${NC}${SPACER}"
@@ -113,10 +103,6 @@ if [[ $installRepos_CKAN == "true" ]]; then
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}Goodtables repository${HAIR}${Cyan} from https://github.com:open-data/goodtables.git@canada and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/open-data/goodtables.git@canada#egg=goodtables' -r 'https://raw.githubusercontent.com/open-data/goodtables/canada/requirements.txt'
 
-    # install ckan wet boew into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Wet-Boew repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-wet-boew.git and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckanext-wet-boew.git#egg=ckanext-wet-boew' -r 'https://raw.githubusercontent.com/open-data/ckanext-wet-boew/master/requirements.txt'
-
     # install ckan gc notify into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN GC Notify repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-gcnotify.git@master and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/open-data/ckanext-gcnotify.git@master#egg=ckanext-gcnotify' -r 'https://raw.githubusercontent.com/open-data/ckanext-gcnotify/master/requirements.txt'
@@ -134,19 +120,19 @@ if [[ $installRepos_CKAN == "true" ]]; then
     pip install -e 'git+https://github.com/open-data/ckanext-excelforms.git@canada-v2.9#egg=ckanext-excelforms'
 
     # install flask admin
-    pip install Flask-Admin==1.4.0
+    pip install Flask-Admin
 
     # install flask login
-    pip install Flask-Login==0.3.0
+    pip install Flask-Login
 
     # install flask sql alchemy
-    pip install Flask-SQLAlchemy==2.5.1
+    pip install Flask-SQLAlchemy
 
     # install correct version of slugify
-    pip install python-slugify==1.2.0
+    pip install python-slugify
 
     # install request with security modules
-    pip install requests[security]==2.25.1
+    pip install requests[security]
 
     # update vdm
     pip install --upgrade vdm
@@ -184,6 +170,14 @@ if [[ $installRepos_CKAN == "true" ]]; then
     fi
 
     # compile ckan config files
+    printf "${SPACER}${Cyan}${INDENT}Copying activation script into ${CKAN_ROLE} venv${NC}${SPACER}"
+    cp ${APP_ROOT}/docker/install/ckan/activate_this.py ${APP_ROOT}/ckan/${CKAN_ROLE}/bin/activate_this.py
+    if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Copy ${CKAN_ROLE} activation script: OK${NC}${EOL}"
+    else
+        printf "${Red}${INDENT}${INDENT}Copy ${CKAN_ROLE} activation script: FAIL${NC}${EOL}"
+    fi
+    chown ckan:ckan ${APP_ROOT}/ckan/${CKAN_ROLE}/bin/activate_this.py
     printf "${SPACER}${Cyan}${INDENT}Compiling local ${CKAN_ROLE} config files${NC}${SPACER}"
     python ${PWD}/docker/install/ckan/compile-${CKAN_ROLE}-config.py
     if [[ $? -eq 0 ]]; then
@@ -215,8 +209,8 @@ if [[ $installRepos_CKAN == "true" ]]; then
     fi
 
     # generate translation files
-    cd /srv/app/ckan/${CKAN_ROLE}/src/ckanext-canada/bin
-    . build-combined-ckan-mo.sh
+    cd /srv/app/ckan/${CKAN_ROLE}/src/ckanext-canada
+    python setup.py compile_catalog
 
     # decativate python environment
     deactivate
