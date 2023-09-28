@@ -64,12 +64,12 @@ if [[ $installRepos_CKAN == "true" ]]; then
     pip install -e 'git+https://github.com/open-data/ckanext-canada.git@master#egg=ckanext-canada' -r 'https://raw.githubusercontent.com/open-data/ckanext-canada/master/requirements.txt'
 
     # install ckan cloud storage into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Cloud Storage repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-cloudstorage.git and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckanext-cloudstorage.git#egg=ckanext-cloudstorage'
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Cloud Storage repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-cloudstorage.git@canada-v2.9 and installing into Python environment${NC}${SPACER}"
+    pip install -e 'git+https://github.com/open-data/ckanext-cloudstorage.git@canada-v2.9#egg=ckanext-cloudstorage' -r 'https://raw.githubusercontent.com/open-data/ckanext-cloudstorage/canada-v2.9/requirements.txt'
 
     # install ckan dcat into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN DCat repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-dcat.git and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckanext-dcat.git#egg=ckanext-dcat' -r 'https://raw.githubusercontent.com/open-data/ckanext-dcat/master/requirements.txt'
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN DCat repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-dcat.git@canada-v2.9 and installing into Python environment${NC}${SPACER}"
+    pip install -e 'git+https://github.com/open-data/ckanext-dcat.git@canada-v2.9#egg=ckanext-dcat' -r 'https://raw.githubusercontent.com/open-data/ckanext-dcat/canada-v2.9/requirements.txt'
 
     # install ckan fluent into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Fluent repository${HAIR}${Cyan} from https://github.com:ckan/ckanext-fluent.git and installing into Python environment${NC}${SPACER}"
