@@ -255,7 +255,7 @@ elif [[ "$role" = "ckan" ]]; then
     # compile ckan config files
     if [[ -f "/srv/app/ckan/${ckanRole}/bin/activate_this.py" ]]; then
         printf "${Green}Compiling local ${ckanRole} config file${NC}${EOL}"
-        python ${APP_ROOT}/docker/install/ckan/compile-${ckanRole}-config.py
+        python3.7 ${APP_ROOT}/docker/install/ckan/compile-${ckanRole}-config.py
         if [[ $? -eq 0 ]]; then
             printf "${Green}Compiled ${ckanRole} ini file${NC}${EOL}";
         else
@@ -264,7 +264,7 @@ elif [[ "$role" = "ckan" ]]; then
         # run ckanext-canada setup
         if [[ -d "/srv/app/ckan/${ckanRole}/src/ckanext-canada" ]]; then
             cd ${APP_ROOT}/ckan/${ckanRole}/src/ckanext-canada;
-            python setup.py develop;
+            python3.7 setup.py develop;
             if [[ $? -eq 0 ]]; then
                 printf "${Green}Ran ckanext-canada setup${NC}${EOL}";
             else
@@ -305,7 +305,7 @@ elif [[ "$role" = "ckan" ]]; then
         printf "${Green}Installing nltk.punkt into ${ckanRole} environment${NC}${EOL}"
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /home/ckan/nltk_data"
         echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown ckan:ckan -R /home/ckan/nltk_data"
-        ${APP_ROOT}/ckan/${ckanRole}/bin/python2 -c "import nltk; nltk.download('punkt');"
+        ${APP_ROOT}/ckan/${ckanRole}/bin/python3.7 -c "import nltk; nltk.download('punkt');"
     fi;
 
     # run any database migrations

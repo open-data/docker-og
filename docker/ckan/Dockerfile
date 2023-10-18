@@ -23,8 +23,6 @@ RUN apt-get update -yqq \
         zip \
         unzip \
         wget \
-        python3.7-dev \
-        python3.7-venv \
         postgresql \
         libpq-dev \
         libpcre3 \
@@ -36,12 +34,31 @@ RUN apt-get update -yqq \
         sudo \
         systemd \
         sysvinit-utils \
+        build-essential \
+        zlib1g-dev \
+        libncurses5-dev \
+        libgdbm-dev \
+        libnss3-dev \
+        libssl-dev \
+        libsqlite3-dev \
+        libreadline-dev \
+        libffi-dev \
+        libbz2-dev \
     && npm install -g less \
-    && npm install less
+    && npm install less \
+    && wget https://www.python.org/ftp/python/3.7.9/Python-3.7.9.tgz \
+    && tar -xf Python-3.7.9.tgz \
+    && cd Python-3.7.9 \
+    && ./configure --enable-optimizations \
+    && make -j 8 \
+    && sudo make altinstall
 
 # Supervisor
 ADD docker/config/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 ADD docker/config/supervisor/conf.d/*.conf /etc/supervisor/conf.d-available/
+
+# PIP 3.7
+RUN curl https://bootstrap.pypa.io/get-pip.py | sudo python3.7
 
 ADD docker/start.sh /usr/local/bin/start
 
