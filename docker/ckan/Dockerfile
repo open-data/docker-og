@@ -23,8 +23,8 @@ RUN apt-get update -yqq \
         zip \
         unzip \
         wget \
-        python3-dev \
-        python3-venv \
+        python3.7-dev \
+        python3.7-venv \
         postgresql \
         libpq-dev \
         libpcre3 \

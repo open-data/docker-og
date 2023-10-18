@@ -3,8 +3,8 @@
 # -- CKAN 2.9 --
 
 import os
-activate_this = os.path.join('/srv/app/ckan/portal/bin/activate_this.py')
-execfile(activate_this, dict(__file__=activate_this))
+activate_this = '/srv/app/ckan/portal/bin/activate_this.py'
+exec(open(activate_this).read(), {'__file__': activate_this})
 from ckan.config.middleware import make_app
 from ckan.cli import CKANConfigLoader
 from logging.config import fileConfig as loggingFileConfig
