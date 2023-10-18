@@ -26,7 +26,7 @@ if [[ $installRepos_CKAN == "true" ]]; then
     fi
 
     # create virtual environment
-    python3.7 -m venv ${APP_ROOT}/ckan/${CKAN_ROLE}
+    python3 -m venv ${APP_ROOT}/ckan/${CKAN_ROLE}
     cd ${APP_ROOT}/ckan/${CKAN_ROLE}
 
     # set ownership
@@ -145,7 +145,7 @@ if [[ $installRepos_CKAN == "true" ]]; then
         printf "${SPACER}${Cyan}${INDENT}Installing nltk.punkt into ${CKAN_ROLE} environment${NC}${SPACER}"
         mkdir -p /home/ckan/nltk_data
         chown ckan:ckan -R /home/ckan/nltk_data
-        python3.7 -c "import nltk; nltk.download('punkt');"
+        python3 -c "import nltk; nltk.download('punkt');"
     fi
 
     #
@@ -182,7 +182,7 @@ if [[ $installRepos_CKAN == "true" ]]; then
     fi
     chown ckan:ckan ${APP_ROOT}/ckan/${CKAN_ROLE}/bin/activate_this.py
     printf "${SPACER}${Cyan}${INDENT}Compiling local ${CKAN_ROLE} config files${NC}${SPACER}"
-    python3.7 ${PWD}/docker/install/ckan/compile-${CKAN_ROLE}-config.py
+    python3 ${PWD}/docker/install/ckan/compile-${CKAN_ROLE}-config.py
     if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Compile ${CKAN_ROLE} ini files: OK${NC}${EOL}"
     else
@@ -213,7 +213,7 @@ if [[ $installRepos_CKAN == "true" ]]; then
 
     # generate translation files
     cd /srv/app/ckan/${CKAN_ROLE}/src/ckanext-canada
-    python3.7 setup.py compile_catalog
+    python3 setup.py compile_catalog
 
     # decativate python environment
     deactivate
