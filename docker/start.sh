@@ -240,6 +240,13 @@ elif [[ "$role" = "ckan" ]]; then
     printf "${Green}Copying the who.ini configuration file to the virtual environment${NC}${EOL}"
     cp ${APP_ROOT}/_config/ckan/who.ini ${APP_ROOT}/ckan/${ckanRole}/who.ini
 
+    # misc instillations outside venv
+    if [[ -d "/srv/app/ckan/${ckanRole}/bin" ]]; then
+      printf "${Green}Installing misc dependencies...${NC}${EOL}"
+      echo ${ROOT_PASS} | sudo -S /bin/bash -c "pip install importlib-metadata"
+      echo ${ROOT_PASS} | sudo -S /bin/bash -c "pip install supervisor==4.2.2"
+    fi;
+
     # copy activate this script
     if [[ -d "/srv/app/ckan/${ckanRole}/bin" ]]; then
         printf "${Green}Copying activation script to ${ckanRole} venv bin${NC}${EOL}"
@@ -250,21 +257,33 @@ elif [[ "$role" = "ckan" ]]; then
             printf "${Red}FAILED to copy activation script to ${ckanRole} venv bin${NC}${EOL}";
         fi;
         chown ckan:ckan ${APP_ROOT}/ckan/${ckanRole}/bin/activate_this.py
+        PYTHONPATH=${APP_ROOT}/ckan/${ckanRole}/lib/python${PY_VERSION}/site-packages
     fi;
 
     # compile ckan config files
     if [[ -f "/srv/app/ckan/${ckanRole}/bin/activate_this.py" ]]; then
         printf "${Green}Compiling local ${ckanRole} config file${NC}${EOL}"
-        python3 ${APP_ROOT}/docker/install/ckan/compile-${ckanRole}-config.py
+        ${APP_ROOT}/ckan/${ckanRole}/bin/python3 ${APP_ROOT}/docker/install/ckan/compile-${ckanRole}-config.py
         if [[ $? -eq 0 ]]; then
             printf "${Green}Compiled ${ckanRole} ini file${NC}${EOL}";
         else
             printf "${Red}FAILED to compile ${ckanRole} ini file${NC}${EOL}";
         fi
+        # run ckan setup
+        if [[ -d "/srv/app/ckan/${ckanRole}/src/ckan" ]]; then
+            cd ${APP_ROOT}/ckan/${ckanRole}/src/ckan;
+            ${APP_ROOT}/ckan/${ckanRole}/bin/python3 setup.py develop;
+            if [[ $? -eq 0 ]]; then
+                printf "${Green}Ran ckan setup${NC}${EOL}";
+            else
+                printf "${Red}FAILED to run ckan setup${NC}${EOL}";
+            fi;
+            cd ${APP_ROOT};
+        fi;
         # run ckanext-canada setup
         if [[ -d "/srv/app/ckan/${ckanRole}/src/ckanext-canada" ]]; then
             cd ${APP_ROOT}/ckan/${ckanRole}/src/ckanext-canada;
-            python3 setup.py develop;
+            ${APP_ROOT}/ckan/${ckanRole}/bin/python3 setup.py develop;
             if [[ $? -eq 0 ]]; then
                 printf "${Green}Ran ckanext-canada setup${NC}${EOL}";
             else
