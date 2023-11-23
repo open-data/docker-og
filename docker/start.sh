@@ -339,6 +339,7 @@ elif [[ "$role" = "ckan" ]]; then
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /home/ckan && chown ckan:ckan -R /home/ckan"
 
     # start supervisord service
+    #TODO: make super fancy option to run ckan run -H 0.0.0.0 -p 5001 to allow for pdb
     printf "${Green}Executing supervisord${NC}${EOL}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown ckan:ckan -R /etc/supervisor"
     echo ${ROOT_PASS} | sudo -S -E /bin/bash -c "supervisord -c /etc/supervisor/supervisord.conf"
