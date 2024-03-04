@@ -15,11 +15,57 @@ if [[ $installFiles_Django == "true" ]]; then
     printf "${SPACER}${Cyan}${INDENT}Creating static directory...${NC}${SPACER}"
     mkdir -p ${APP_ROOT}/django/static
 
-    # download wet-boew/themes-cdn
-    printf "${SPACER}${Cyan}${INDENT}Download the wet-boew theme${NC}${SPACER}"
-    mkdir -p ${APP_ROOT}/django/static/themes-dist-GCWeb
-    cd ${APP_ROOT}/django/static/themes-dist-GCWeb
-    curl -L https://github.com/wet-boew/themes-cdn/archive/${GCWEB_VERSION}-gcweb.tar.gz | tar -zvx --strip-components 1 --directory=${APP_ROOT}/django/static/themes-dist-GCWeb
+    # activate python environment
+    . ${APP_ROOT}/django/bin/activate
+    if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Activate Python environment: OK${NC}${EOL}"
+    else
+        printf "${Red}${INDENT}${INDENT}Activate Python environment: FAIL${NC}${EOL}"
+    fi
+
+    # make temp cdts dir
+    mkdir -p ${APP_ROOT}/django/static/cdts
+
+    # gather static files
+    cd ${APP_ROOT}/django/src/oc-search
+    python manage.py collectstatic --no-input
+    cd ${APP_ROOT}
+
+    # decativate python environment
+    deactivate
+    if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Deactivate Python environment: OK${NC}${EOL}"
+    else
+        printf "${Red}${INDENT}${INDENT}Deactivate Python environment: FAIL${NC}${EOL}"
+    fi
+
+    ramp_static_dir="${APP_ROOT}/django/static/ramp"
+
+    # install fgp to ramp static
+    printf "${SPACER}${Cyan}${INDENT}Download the FGPV distro${NC}${SPACER}"
+    cd ${ramp_static_dir}
+    wget https://github.com/fgpv-vpgf/fgpv-vpgf/releases/download/v${FGP_VERSION}/fgpv-${FGP_VERSION}.zip
+    unzip fgpv-${FGP_VERSION}.zip
+    rm -f fgpv-${FGP_VERSION}.zip
+    cd ${APP_ROOT}
+
+    # download the wet GCWeb distro into ramp viewer
+    printf "${SPACER}${Cyan}${INDENT}Download the GCWeb distro${NC}${SPACER}"
+    mkdir -p ${ramp_static_dir}/GCWeb
+    cd ${ramp_static_dir}/GCWeb
+    wget https://github.com/wet-boew/GCWeb/archive/v${GCWEB_DISTRO_VERSION}.zip
+    unzip v${GCWEB_DISTRO_VERSION}.zip
+    rm -f v${GCWEB_DISTRO_VERSION}.zip
+    cd ${APP_ROOT}
+
+    # download wet-boew distro into ramp viewer
+    printf "${SPACER}${Cyan}${INDENT}Download the wet-boew distro${NC}${SPACER}"
+    mkdir -p ${ramp_static_dir}/wet-boew
+    cd ${ramp_static_dir}/wet-boew
+    wget https://github.com/wet-boew/wet-boew/releases/download/v${WET_DISTRO_VERSION}/wet-boew-dist-${WET_DISTRO_VERSION}.zip
+    unzip wet-boew-dist-${WET_DISTRO_VERSION}.zip
+    rm -f wet-boew-dist-${WET_DISTRO_VERSION}.zip
+    cd ${APP_ROOT}
 
     # pull the cenw-wscoe/sgdc-cdts repo
     printf "${SPACER}${Cyan}${INDENT}Pull the CDTS repo${NC}${SPACER}"
@@ -29,13 +75,14 @@ if [[ $installFiles_Django == "true" ]]; then
     rm -rf ./.??*
     git clone https://github.com/cenw-wscoe/sgdc-cdts.git .
 
-    # unpack the GCWeb Static release
+    # unpack the cdts static release
     printf "${SPACER}${Cyan}${INDENT}Unpack the GCWeb Static release from the CDTS repo${NC}${SPACER}"
     unzip ${APP_ROOT}/django/static/cdts/source/GCWeb/static/Gcwebstatic-${CDTS_GCWEB_VERSION}.zip -d ${APP_ROOT}/django/static/cdts
     cd ${APP_ROOT}/django/static/cdts/static
     mv * ../
     cd ${APP_ROOT}/django/static/cdts
     rm -rf ${APP_ROOT}/django/static/cdts/static
+    cd ${APP_ROOT}
 
     # set ownership
     cd ${APP_ROOT}/django

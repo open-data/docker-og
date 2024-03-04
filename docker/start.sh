@@ -167,7 +167,7 @@ elif [[ "$role" = "search" ]]; then
         cp ${APP_ROOT}/_config/django/settings.py ${APP_ROOT}/django/src/oc-search/oc_search/settings.py
 
         printf "${Green}Copying the setup file to the virtual environment${NC}${EOL}"
-        cp ${APP_ROOT}/docker/config/django/etup.py ${APP_ROOT}/django/src/oc-search/setup.py
+        cp ${APP_ROOT}/docker/config/django/setup.py ${APP_ROOT}/django/src/oc-search/setup.py
         chown django:django ${APP_ROOT}/django/src/oc-search/setup.py
     fi;
 
