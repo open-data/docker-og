@@ -1,5 +1,17 @@
 # Local Docker Setup for Open Government Portal
 
+| Table of Contents    |
+| -------- |
+| [Prerequisites](#prerequisites)  |
+| [Recommendations](#recommendations) |
+| [Docker Networking](#networking)    |
+| [Project Prebuild](#prebuild)    |
+| [Database and File Backups](#backups)    |
+| [Build Containers](#build)    |
+| [Installing Applications](#installation)    |
+| [How to Use](#usage)    |
+| [Postgres Version Upgrade](#upgrading-postgres)    |
+
 ## Prerequisites
 
 * [WSL2](https://docs.microsoft.com/en-us/windows/wsl/install) ***if using Windows***
@@ -28,14 +40,11 @@ You can see the project's important variables in the `.env` file after running t
 
 ## Prebuild
 
-1. __Run__ the pre build script with a Project ID: `./pre-build.sh example`
-1. ___config/ckan/portal.ini__ and ___config/ckan/registry.ini__ files:
-   1. __Change__ `ckanext.cloudstorage.container_name` value to `<your user name>-dev`
-   1. __Change__ `ckanext.cloudstorage.driver_options` secret value to the secret key for `opencanadastaging`
-   1. __Change__ `ckanext.gcnotify.secret_key` value to `<your GC Notify secret key>`
-   1. __Change__ `ckanext.gcnotify.base_url` value to the GC Notify base url
-   1. __Change__ `ckanext.gcnotify.template_ids` dict values to the development template IDs
-   1. __Change__ `canada.notification_new_user_email` value to `<your email>`
+__Note:__ If using the `og-cli` tool, you do not need to run the `pre-build.sh` script.
+
+Otherwise:
+
+- __Run__ the pre build script with a Project ID: `./pre-build.sh example`
 
 ### Backups
 
@@ -78,13 +87,14 @@ To override the use of the global backups during the installation scripts, place
 Though there is an initialization script to create the databases on the initial up of the `postgres` container, this script only runs once. After you have built the containers once, this script will no longer run. To fix any issues with missing databases, users, or password:
 
 1. __Bring up__ the Drupal or CKAN docker container: `docker-compose up -d <drupal or ckan>`
-1. __Run__ the install script in the docker container: `docker-compose exec <drupal or ckan> ./install.sh`
+1. __Run__ the install script in the docker container: `docker-compose exec <drupal or ckan> bash` and then `./install.sh`
    1. __Select__ `Databases (fixes missing databases, privileges, and users)`
+   1. __Select__ `Test Databases (clones existing databases into empty ones)` _(Optional for destructive, unit tests)_
 
-### Drupal (D8)
+### Drupal (D9)
 
 1. __Bring up__ the Drupal docker container: `docker-compose up -d drupal`
-1. __Run__ the install script in the docker container: `docker-compose exec drupal ./install.sh`
+1. __Run__ the install script in the docker container: `docker-compose exec drupal bash` and then `./install.sh`
    1. __Select__ `Drupal`
    1. __Select__ what you want to install for Drupal:
       * `Database`: will destroy the current `og_drupal_local` database and import a fresh one from `backup/drupal_db.pgdump`
@@ -103,7 +113,7 @@ Though there is an initialization script to create the databases on the initial 
 #### Registry
 
 1. __Bring up__ the CKAN Registry docker container: `docker-compose up -d ckan`
-1. __Run__ the install script in the docker container: `docker-compose exec ckan ./install.sh`
+1. __Run__ the install script in the docker container: `docker-compose exec ckan bash` and then `./install.sh`
    1. __Select__ `CKAN (registry)`
    1. __Select__ what you want to install for CKAN Registry:
       * `Registry Database`: will destroy the current `og_ckan_registry_local` database and import a fresh one from `backup/ckan_registry_db.pgdump`
@@ -130,7 +140,7 @@ Though there is an initialization script to create the databases on the initial 
 #### Portal
 
 1. __Bring up__ the CKAN Portal docker container: `docker-compose up -d ckanapi`
-1. __Run__ the install script in the docker container: `docker-compose exec ckanapi ./install.sh`
+1. __Run__ the install script in the docker container: `docker-compose exec ckanapi bash` and then `./install.sh`
    1. __Select__ `CKAN (portal)`
    1. __Select__ what you want to install for CKAN Portal:
       * `Portal Database`: will destroy the current `og_ckan_portal_local` database and import a fresh one from `backup/ckan_portal_db.pgdump`
@@ -170,7 +180,7 @@ Though there is an initialization script to create the databases on the initial 
 
 ## Usage
 
-### Drupal (D8)
+### Drupal (D9)
 
 1. __Bring up__ the Drupal docker container: `docker-compose up -d drupal`
 1. __Open__ a browser into: `http://open.local:<project port>`
@@ -189,7 +199,7 @@ _The Solr container will automatically be brought up with the CKAN and Drupal co
 1. __Bring up__ the Solr docker container: `docker-compose up -d solr`
 1. __Open__ a browser into: `http://solr.open.local:<project port>`
 
-### Postgres (postgres:9.6)
+### Postgres (postgres:13.14)
 
 _The Postgres container will automatically be brought up with the CKAN and Drupal containers._
 
@@ -226,3 +236,26 @@ _The Postgres container will automatically be brought up with the CKAN and Drupa
 
 1. __Bring up__ the Django docker container: `docker-compose up -d django`
 1. __Open__ a browser into: `http://search.open.local:<project port>`
+
+## Upgrading Postgres
+
+If you need to upgrade major versions of PostgreSQL, you can dump all of the databases via the install script, and restore them  all after the PostgreSQL major version upgrade.
+
+1. While still on your current version of PostgreSQL (viewable in the Dockerfile at `docker/postgres/Dockefile`).
+
+    ```
+    FROM postgres:9.6
+    ```
+1. __Bring up__ the Drupal or CKAN docker container: `docker-compose up -d <drupal or ckan>`
+1. __Run__ the install script in the docker container: `docker-compose exec <drupal or ckan> bash` and then `./install.sh`
+    1. __Select__ `Postgres Upgrade (dump and load existing databases for psql version upgrade)`
+    1. __Select__ `Dump all existing databases (do PRIOR to Postgres version upgrade)` _(Do this prior to upgrading the Postgres major version)_
+1. __Bring down__ all the containers: `docker-compose down`
+1. Modify the Dockerfile `docker/postgres/Dockefile`:
+    ```
+    FROM postgres:13.14
+    ```
+1. __Rebuild__ the postgres container: `docker-compose build postgres`
+1. __Run__ the install script in the docker container: `docker-compose exec <drupal or ckan> bash` and then `./install.sh`
+    1. __Select__ `Postgres Upgrade (dump and load existing databases for psql version upgrade)`
+    1. __Select__ `Restore all databases (do AFTER Postgres version upgrade)` _(Do this after upgrading the Postgres major version)_
