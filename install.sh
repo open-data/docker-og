@@ -72,16 +72,29 @@ function install_database_copies {
 # Install Database Copies
 # END
 
+#
+# Install Database Upgrades
+#
+function install_database_upgrades {
+
+  . ${PWD}/docker/install/install-database-upgrades.sh
+
+}
+# END
+# Install Database Upgrades
+# END
+
 printf "${SPACER}${Cyan}${INDENT}Select what to install:${NC}${SPACER}"
 
 if [[ ${CONTAINER_ROLE} == "drupal" ]]; then
 
   # Options for the user to select from
   options=(
-    "Drupal" 
+    "Drupal"
     "Databases (fixes missing databases, privileges, and users)"
     "Test Databases (clones existing databases into empty ones)"
-    "All" 
+    "Postgres Upgrade (dump and load existing databases for psql version upgrade)"
+    "All"
     "Exit"
   )
 
@@ -92,7 +105,8 @@ elif [[ ${CONTAINER_ROLE} == "ckan" ]]; then
     "CKAN (${CKAN_ROLE})"
     "Databases (fixes missing databases, privileges, and users)"
     "Test Databases (clones existing databases into empty ones)"
-    "All" 
+    "Postgres Upgrade (dump and load existing databases for psql version upgrade)"
+    "All"
     "Exit"
   )
 
@@ -103,7 +117,8 @@ elif [[ ${CONTAINER_ROLE} == "search" ]]; then
     "Django"
     "Databases (fixes missing databases, privileges, and users)"
     "Test Databases (clones existing databases into empty ones)"
-    "All" 
+    "Postgres Upgrade (dump and load existing databases for psql version upgrade)"
+    "All"
     "Exit"
   )
 
@@ -116,7 +131,7 @@ opt=$?
 case $opt in
 
   # "Drupal or CKAN or Django"
-  (0) 
+  (0)
     if [[ ${CONTAINER_ROLE} == "drupal" ]]; then
       exitScript='false'
       installDrupal='true'
@@ -141,8 +156,14 @@ case $opt in
     installDatabaseCopies='true'
     ;;
 
+  # "Postgres Upgrade (dump and load existing databases for psql version upgrade)"
+  (3)
+    exitScript='false'
+    installDatabaseUpgrade='true'
+    ;;
+
   # "All"
-  (3) 
+  (4)
     if [[ ${CONTAINER_ROLE} == "drupal" ]]; then
       installDrupal='true'
       installCKAN='false'
@@ -161,7 +182,7 @@ case $opt in
     ;;
 
   # "Exit"
-  (4)
+  (5)
     exitScript='true'
     ;;
 
@@ -181,6 +202,12 @@ if [[ $exitScript != "true" ]]; then
   if [[ $installDatabaseCopies == "true" ]]; then
 
     install_database_copies
+
+  fi
+
+  if [[ $installDatabaseUpgrade == "true" ]]; then
+
+    install_database_upgrades
 
   fi
 

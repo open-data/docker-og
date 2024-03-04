@@ -133,6 +133,14 @@ if [[ $installRepos_CKAN == "true" ]]; then
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Excel Forms repository${HAIR}${Cyan} from https://github.com/open-data/ckanext-excelforms.git@canada-v2.9 and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/open-data/ckanext-excelforms.git@canada-v2.9#egg=ckanext-excelforms'
 
+    # install Plotly into the python environment
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Plotly repository${HAIR}${Cyan} from https://github.com/open-data/ckanext-plotly.git@canada and installing into Python environment${NC}${SPACER}"
+    pip install -e 'git+https://github.com/open-data/ckanext-plotly.git@canada#egg=ckanext-plotly'
+
+    # install DataStore Audit into the python environment
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN DS Audit repository${HAIR}${Cyan} from https://github.com/open-data/ckanext-dsaudit.git and installing into Python environment${NC}${SPACER}"
+    pip install -e 'git+https://github.com/open-data/ckanext-dsaudit.git#egg=ckanext-dsaudit'
+
     # install flask admin
     pip install Flask-Admin==1.4.0
 
