@@ -28,6 +28,10 @@ fi
 if [[ $do_restore_databases == "true" ]]; then
 
     printf "${SPACER}${Cyan}${INDENT}Restoring all databases. This may take a while...${NC}${SPACER}"
+    if [[ -d "${APP_ROOT}/postgres" ]]; then
+      # remove old database data
+      rm -rf ${APP_ROOT}/postgres/*
+    fi
 
     cat ${APP_ROOT}/backup/psql_upgrade/all_databases.sql | psql -U homestead
 

@@ -28,7 +28,10 @@ fi
 if [[ $do_dump_databases == "true" ]]; then
 
     printf "${SPACER}${Cyan}${INDENT}Dumping all databases. This may take a while...${NC}${SPACER}"
-    rm -rf ${APP_ROOT}/backup/psql_upgrade/*.sql
+    if [[ -f "${APP_ROOT}/backup/psql_upgrade/all_databases.sql" ]]; then
+      # remove old all db backup file
+      rm -f ${APP_ROOT}/backup/psql_upgrade/all_databases.sql
+    fi
 
     pg_dumpall -v -U homestead > ${APP_ROOT}/backup/psql_upgrade/all_databases.sql
 
