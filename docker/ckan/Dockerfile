@@ -18,6 +18,7 @@ RUN apt-get update -yqq \
         npm \
         gcc \
         supervisor \
+        build-essential \
 		git \
 		libzip-dev \
         zip \
