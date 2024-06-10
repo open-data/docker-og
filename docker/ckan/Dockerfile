@@ -1,4 +1,4 @@
-FROM openknowledge/ckan-base:2.8
+FROM openknowledge/ckan-base:2.9
 FROM debian:bullseye-slim
 
 USER root
@@ -10,7 +10,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /srv/app
 
 RUN apt-get update -yqq \
-    && apt-get purge --auto-remove python3 -y \
     && apt-get install -y --no-install-recommends \
         curl \
     && curl -sL https://deb.nodesource.com/setup_12.x | bash - \
@@ -25,29 +24,50 @@ RUN apt-get update -yqq \
         zip \
         unzip \
         wget \
-        python2-dev \
         postgresql \
         libpq-dev \
         libpcre3 \
         libpcre3-dev \
         libmagic-dev \
-        virtualenv \
         redis-server \
         nano \
         vim \
         sudo \
         systemd \
         sysvinit-utils \
+        build-essential \
+        zlib1g-dev \
+        libncurses5-dev \
+        libgdbm-dev \
+        libnss3-dev \
+        libssl-dev \
+        libsqlite3-dev \
+        libreadline-dev \
+        libffi-dev \
+        libbz2-dev \
     && npm install -g less \
-    && npm install less
+    && npm install less \
+    && wget https://www.python.org/ftp/python/3.7.9/Python-3.7.9.tgz \
+    && tar -xf Python-3.7.9.tgz \
+    && cd Python-3.7.9 \
+    && ./configure --enable-shared \
+    && make -j 8 \
+    && sudo make altinstall \
+    && sudo ldconfig /usr/local/bin/python3.7 \
+    && sudo update-alternatives --install /usr/bin/python3 python3 /usr/local/bin/python3.7 1 \
+    && sudo update-alternatives --config python3 \
+    && sudo update-alternatives --install /usr/bin/python python /usr/local/bin/python3.7 1 \
+    && sudo update-alternatives --config python
+# note: --enable-optimizations in the configure python
+# runs many tests which slows the build down a lot.
+# if python3.7.9 is not working, add it and re-run the build.
 
 # Supervisor
 ADD docker/config/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 ADD docker/config/supervisor/conf.d/*.conf /etc/supervisor/conf.d-available/
 
-# PIP2
-RUN curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py \
-    && python2 get-pip.py
+# PIP 3.7
+RUN curl https://bootstrap.pypa.io/get-pip.py | sudo python3.7
 
 ADD docker/start.sh /usr/local/bin/start
 
