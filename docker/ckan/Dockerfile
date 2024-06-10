@@ -1,4 +1,4 @@
-FROM openknowledge/ckan-base:2.9
+FROM openknowledge/ckan-base:2.10
 FROM debian:bullseye-slim
 
 USER root
