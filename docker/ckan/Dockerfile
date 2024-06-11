@@ -1,4 +1,4 @@
-FROM openknowledge/ckan-base:2.10
+FROM ckan/ckan-dev:2.10
 FROM debian:bullseye-slim
 
 USER root
@@ -45,29 +45,18 @@ RUN apt-get update -yqq \
         libreadline-dev \
         libffi-dev \
         libbz2-dev \
+        python3-dev \
+        python3-venv \
+        python3-pip \
     && npm install -g less \
-    && npm install less \
-    && wget https://www.python.org/ftp/python/3.7.9/Python-3.7.9.tgz \
-    && tar -xf Python-3.7.9.tgz \
-    && cd Python-3.7.9 \
-    && ./configure --enable-shared \
-    && make -j 8 \
-    && sudo make altinstall \
-    && sudo ldconfig /usr/local/bin/python3.7 \
-    && sudo update-alternatives --install /usr/bin/python3 python3 /usr/local/bin/python3.7 1 \
-    && sudo update-alternatives --config python3 \
-    && sudo update-alternatives --install /usr/bin/python python /usr/local/bin/python3.7 1 \
-    && sudo update-alternatives --config python
+    && npm install less
 # note: --enable-optimizations in the configure python
 # runs many tests which slows the build down a lot.
-# if python3.7.9 is not working, add it and re-run the build.
+# if python is not working, add it and re-run the build.
 
 # Supervisor
 ADD docker/config/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 ADD docker/config/supervisor/conf.d/*.conf /etc/supervisor/conf.d-available/
-
-# PIP 3.7
-RUN curl https://bootstrap.pypa.io/get-pip.py | sudo python3.7
 
 ADD docker/start.sh /usr/local/bin/start
 
