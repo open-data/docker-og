@@ -48,8 +48,6 @@ if [[ $installRepos_CKAN == "true" ]]; then
     pip install setuptools==${SETUP_TOOLS_VERSION}
     # update pip
     pip install --upgrade pip==${PIP_VERSION}
-    # install uwsgi
-    pip install uwsgi
 
     # install ckan core into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Core repository${HAIR}${Cyan} from https://github.com:open-data/ckan.git@canada-py3 and installing into Python environment${NC}${SPACER}"
@@ -143,6 +141,9 @@ if [[ $installRepos_CKAN == "true" ]]; then
 
     # update vdm
     pip install --upgrade vdm
+
+    # install uwsgi
+    pip install uwsgi
 
     # install nltk punkt
     if [[ -d "${APP_ROOT}/ckan/${CKAN_ROLE}/lib/python${PY_VERSION}/site-packages/nltk" ]]; then
