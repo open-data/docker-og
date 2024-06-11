@@ -107,10 +107,6 @@ if [[ $installRepos_CKAN == "true" ]]; then
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN GC Notify repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-gcnotify.git@master and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/open-data/ckanext-gcnotify.git@master#egg=ckanext-gcnotify' -r 'https://raw.githubusercontent.com/open-data/ckanext-gcnotify/master/requirements.txt'
 
-    # install Queensland CSRF filter into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN CSRF Filter repository${HAIR}${Cyan} from https://github.com/open-data/ckanext-csrf-filter.git@canada-py3 and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckanext-csrf-filter.git@canada-py3#egg=ckanext-csrf-filter' -r 'https://raw.githubusercontent.com/open-data/ckanext-csrf-filter/canada-py3/requirements.txt'
-
     # install Open API View into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Open API View repository${HAIR}${Cyan} from https://github.com/open-data/ckanext-openapiview.git and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/open-data/ckanext-openapiview.git#egg=ckanext-openapiview'
