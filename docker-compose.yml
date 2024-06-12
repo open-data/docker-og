@@ -37,7 +37,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./docker/config/nginx/conf:/etc/nginx/conf
-      # - ./nginx:/var/log/nginx
+      #- ./nginx:/var/log/nginx
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
     ports:
       - 127.0.0.1:${PORT}:80
@@ -175,6 +175,7 @@ services:
       PROJECT_ID: ${PROJECT_ID}
       PROJECT_PORT: ${PORT}
       ROOT_PASS: Docker!
+      LC_ALL: C.UTF-8
     volumes:
       - ${PWD}/:/srv/app
       - ./docker/config/ckan:/docker-entrypoint.d
