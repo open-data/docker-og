@@ -356,16 +356,17 @@ services:
       - ./solr/core_travelq:/var/solr/data/core_travelq
       - ./solr/core_wrongdoing:/var/solr/data/core_wrongdoing
       # Persisting Django Solr Cores
-      - ./solr/core_od_search:/var/solr/data/core_od_search
-      - ./solr/core_bn_search:/var/solr/data/core_bn_search
-      - ./solr/core_ati_search:/var/solr/data/core_ati_search
-      - ./solr/core_ei_search:/var/solr/data/core_ei_search
-      - ./solr/core_ct_search:/var/solr/data/core_ct_search
-      - ./solr/core_gc_search:/var/solr/data/core_gc_search
-      - ./solr/core_ap_search:/var/solr/data/core_ap_search
-      - ./solr/core_sv_search:/var/solr/data/core_sv_search
-      - ./solr/core_qp_search:/var/solr/data/core_qp_search
-      - ./solr/core_sd_search:/var/solr/data/core_sd_search
+      - ./solr/search_adminaircraft:/var/solr/data/search_adminaircraft
+      - ./solr/search_briefingt:/var/solr/data/search_briefingt
+      - ./solr/search_contracts:/var/solr/data/search_contracts
+      - ./solr/search_ei:/var/solr/data/search_ei
+      - ./solr/search_grants:/var/solr/data/search_grants
+      - ./solr/search_nap5:/var/solr/data/search_nap5
+      - ./solr/search_opencanada:/var/solr/data/search_opencanada
+      - ./solr/search_qpnotes:/var/solr/data/search_qpnotes
+      - ./solr/search_suggesteddatasets:/var/solr/data/search_suggesteddatasets
+      - ./solr/search_travela:/var/solr/data/search_travela
+      - ./solr/search_travelq:/var/solr/data/search_travelq
       # Persisting Drupal Solr Cores
       - ./solr/drupal_content:/var/solr/data/drupal_content
       # Persisting CKAN Test Solr Cores
@@ -381,16 +382,17 @@ services:
       - ./solr/test__core_travelq:/var/solr/data/test__core_travelq
       - ./solr/test__core_wrongdoing:/var/solr/data/test__core_wrongdoing
       # Persisting Django Test Solr Cores
-      - ./solr/test__core_od_search:/var/solr/data/test__core_od_search
-      - ./solr/test__core_bn_search:/var/solr/data/test__core_bn_search
-      - ./solr/test__core_ati_search:/var/solr/data/test__core_ati_search
-      - ./solr/test__core_ei_search:/var/solr/data/test__core_ei_search
-      - ./solr/test__core_ct_search:/var/solr/data/test__core_ct_search
-      - ./solr/test__core_gc_search:/var/solr/data/test__core_gc_search
-      - ./solr/test__core_ap_search:/var/solr/data/test__core_ap_search
-      - ./solr/test__core_sv_search:/var/solr/data/test__core_sv_search
-      - ./solr/test__core_qp_search:/var/solr/data/test__core_qp_search
-      - ./solr/test__core_sd_search:/var/solr/data/test__core_sd_search
+      - ./solr/test__search_adminaircraft:/var/solr/data/test__search_adminaircraft
+      - ./solr/test__search_briefingt:/var/solr/data/test__search_briefingt
+      - ./solr/test__search_contracts:/var/solr/data/test__search_contracts
+      - ./solr/test__search_ei:/var/solr/data/test__search_ei
+      - ./solr/test__search_grants:/var/solr/data/test__search_grants
+      - ./solr/test__search_nap5:/var/solr/data/test__search_nap5
+      - ./solr/test__search_opencanada:/var/solr/data/test__search_opencanada
+      - ./solr/test__search_qpnotes:/var/solr/data/test__search_qpnotes
+      - ./solr/test__search_suggesteddatasets:/var/solr/data/test__search_suggesteddatasets
+      - ./solr/test__search_travela:/var/solr/data/test__search_travela
+      - ./solr/test__search_travelq:/var/solr/data/test__search_travelq
       # Persisting Drupal Test Solr Cores
       - ./solr/test__drupal_content:/var/solr/data/test__drupal_content
     environment:
@@ -496,10 +498,10 @@ services:
       PATH: '$PATH:/usr/local/lib'
       APP_ROOT: /var/ocs
       PY_VERSION: 3.7
-      WET_VERSION: v4.0.63
-      CDTS_VERSION: v4_0_28
+      FGP_VERSION: 3.3.7
+      GCWEB_DISTRO_VERSION: 13.4.0
+      WET_DISTRO_VERSION: 4.0.64.1
       CDTS_GCWEB_VERSION: v4_0_31
-      GCWEB_VERSION: v13.3.0
       PYTHONHTTPSVERIFY: 0
       PYTHONDONTWRITEBYTECODE: 1
       SSL_VERIFY: 0

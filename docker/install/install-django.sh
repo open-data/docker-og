@@ -7,6 +7,7 @@ options=(
   "OC Django Search App (version 2)"
   "Static Files"
   "Searches"
+  "Create Admin User"
   "Set File Permissions"
   "All"
   "Exit"
@@ -36,23 +37,30 @@ case $opt in
     installSearches_Django='true'
     ;;
 
-  # "Set File Permissions"
+  # "Create Admin User"
   (3)
+    exitScript='false'
+    installUser_Django='true'
+    ;;
+
+  # "Set File Permissions"
+  (4)
     exitScript='false'
     installFilePermissions_Django='true'
     ;;
 
   # "All"
-  (4)
+  (5)
     exitScript='false'
     installApp_Django='true'
     installFiles_Django='true'
     installSearches_Django='true'
+    installUser_Django='true'
     installFilePermissions_Django='true'
     ;;
 
   # "Exit"
-  (5)
+  (6)
     exitScript='true'
     ;;
 
@@ -71,6 +79,8 @@ if [[ $exitScript != "true" ]]; then
   . ${PWD}/docker/install/django/install-static.sh
   cd ${APP_ROOT}
   . ${PWD}/docker/install/django/install-searches.sh
+  cd ${APP_ROOT}
+  . ${PWD}/docker/install/django/install-user.sh
   cd ${APP_ROOT}
   . ${PWD}/docker/install/django/install-perms.sh
   cd ${APP_ROOT}
