@@ -110,16 +110,16 @@ if [[ $installRepos_CKAN == "true" ]]; then
     pip install -e 'git+https://github.com/open-data/ckanext-openapiview.git#egg=ckanext-openapiview'
 
     # install Excel Forms into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Excel Forms repository${HAIR}${Cyan} from https://github.com/open-data/ckanext-excelforms.git@cmain and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckanext-excelforms.git@main#egg=ckanext-excelforms' -r 'https://raw.githubusercontent.com/open-data/ckanext-excelforms/main/requirements.txt'
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Excel Forms repository${HAIR}${Cyan} from https://github.com/ckan/ckanext-excelforms.git@cmain and installing into Python environment${NC}${SPACER}"
+    pip install -e 'git+https://github.com/ckan/ckanext-excelforms.git@main#egg=ckanext-excelforms' -r 'https://raw.githubusercontent.com/ckan/ckanext-excelforms/main/requirements.txt'
 
     # install Plotly into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Plotly repository${HAIR}${Cyan} from https://github.com/open-data/ckanext-plotly.git@canada and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/open-data/ckanext-plotly.git@canada#egg=ckanext-plotly'
 
     # install DataStore Audit into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN DS Audit repository${HAIR}${Cyan} from https://github.com/open-data/ckanext-dsaudit.git and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckanext-dsaudit.git#egg=ckanext-dsaudit'
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN DS Audit repository${HAIR}${Cyan} from https://github.com/ckan/ckanext-dsaudit.git and installing into Python environment${NC}${SPACER}"
+    pip install -e 'git+https://github.com/ckan/ckanext-dsaudit.git#egg=ckanext-dsaudit'
 
     # install flask admin
     pip install Flask-Admin==1.4.0
