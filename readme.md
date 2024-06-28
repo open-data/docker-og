@@ -225,7 +225,7 @@ _The Postgres container will automatically be brought up with the CKAN and Drupa
          1. Username: `admin_local`
          1. Password: `12345678`
 1. __Build__ the indices _(Optional)_:
-   1. __Inventory:__ `paster --plugin=ckanext-canada inventory rebuild --lenient -c $REGISTRY_CONFIG -f /srv/app/backup/inventory.csv`
+   1. __Inventory:__ `ckan inventory rebuild --lenient -c $REGISTRY_CONFIG -f /srv/app/backup/inventory.csv`
 
 #### Portal
 

@@ -58,8 +58,8 @@ if [[ $installRepos_CKAN == "true" ]]; then
     pip install -e 'git+https://github.com/ckan/ckanapi.git#egg=ckanapi' -r 'https://raw.githubusercontent.com/ckan/ckanapi/master/requirements.txt'
 
     # install ckan canada into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Canada repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-canada.git@master and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckanext-canada.git@master#egg=ckanext-canada' -r 'https://raw.githubusercontent.com/open-data/ckanext-canada/master/requirements.txt'
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Canada repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-canada.git@canada-v2.10 and installing into Python environment${NC}${SPACER}"
+    pip install -e 'git+https://github.com/open-data/ckanext-canada.git@canada-v2.10#egg=ckanext-canada' -r 'https://raw.githubusercontent.com/open-data/ckanext-canada/canada-v2.10/requirements.txt'
 
     # install ckan cloud storage into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Cloud Storage repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-cloudstorage.git@canada-v2.10 and installing into Python environment${NC}${SPACER}"
@@ -99,7 +99,7 @@ if [[ $installRepos_CKAN == "true" ]]; then
 
     # install frictionless into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}Frictionless repository${HAIR}${Cyan} from https://github.com:open-data/frictionless-py.git@canada-v2.10 and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/frictionless-py.git@canada-v2.10#egg=frictionless-py'
+    pip install -e 'git+https://github.com/open-data/frictionless-py.git@canada-v2.10#egg=frictionless'
 
     # install ckan gc notify into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN GC Notify repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-gcnotify.git@master and installing into Python environment${NC}${SPACER}"
@@ -121,38 +121,9 @@ if [[ $installRepos_CKAN == "true" ]]; then
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN DS Audit repository${HAIR}${Cyan} from https://github.com/ckan/ckanext-dsaudit.git and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/ckan/ckanext-dsaudit.git#egg=ckanext-dsaudit'
 
-    # install flask admin
-    pip install Flask-Admin==1.4.0
-
-    # install flask login
-    pip install Flask-Login==0.3.0
-
-    # install flask sql alchemy
-    pip install Flask-SQLAlchemy==2.5.1
-
-    # install correct version of sql alchemy
-    pip install sqlalchemy==1.3.5
-
-    # install correct version of slugify
-    pip install python-slugify==1.2.0
-
-    # install request with security modules
-    pip install requests[security]==2.25.1
-
-    # update vdm
-    pip install --upgrade vdm
-
-    # install uwsgi
-    pip install uwsgi
-
-    # install nltk punkt
-    if [[ -d "${APP_ROOT}/ckan/${CKAN_ROLE}/lib/python${PY_VERSION}/site-packages/nltk" ]]; then
-        printf "${SPACER}${Cyan}${INDENT}Installing nltk.punkt into ${CKAN_ROLE} environment${NC}${SPACER}"
-        mkdir -p /home/ckan/nltk_data
-        chown ckan:ckan -R /home/ckan/nltk_data
-        python3 -c "import nltk; nltk.download('punkt');"
-    fi
-
+# install Frictionless fork into the python environment
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}Frictionless fork repository${HAIR}${Cyan} from https://github.com/open-data/frictionless-py.git and installing into Python environment${NC}${SPACER}"
+    pip install -e 'git+https://github.com/open-data/frictionless-py.git@canada-v2.10#egg=frictionless-py'
     #
     # copy local ckan config files
     #
