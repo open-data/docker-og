@@ -16,7 +16,7 @@ if [[ $installInventory_CKAN == "true" ]]; then
 
     # import the inventory
     printf "${SPACER}${Cyan}${INDENT}Import Inventory${NC}${SPACER}"
-    paster --plugin=ckanext-canada inventory rebuild --lenient -c ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini -f ${APP_ROOT}/backup/inventory.csv
+    ckan inventory rebuild --lenient -c ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini -f ${APP_ROOT}/backup/inventory.csv
 
 fi
 # END
