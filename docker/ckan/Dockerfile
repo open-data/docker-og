@@ -67,7 +67,7 @@ ADD docker/config/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 ADD docker/config/supervisor/conf.d/*.conf /etc/supervisor/conf.d-available/
 
 # PIP 3.7
-RUN curl https://bootstrap.pypa.io/get-pip.py | sudo python3.7
+RUN curl https://bootstrap.pypa.io/pip/3.7/get-pip.py | sudo python3.7
 
 ADD docker/start.sh /usr/local/bin/start
 
