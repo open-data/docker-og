@@ -26,7 +26,7 @@ if [[ $installRepos_CKAN == "true" ]]; then
     fi
 
     # create virtual environment
-    virtualenv --python=python2 ${APP_ROOT}/ckan/${CKAN_ROLE}
+    python3 -m venv ${APP_ROOT}/ckan/${CKAN_ROLE}
     cd ${APP_ROOT}/ckan/${CKAN_ROLE}
 
     # set ownership
@@ -50,56 +50,46 @@ if [[ $installRepos_CKAN == "true" ]]; then
     pip install --upgrade pip==${PIP_VERSION}
     # install uwsgi
     pip install uwsgi
-    # install future
-    pip install future==0.18.2
 
     # install ckan core into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Core repository${HAIR}${Cyan} from https://github.com:open-data/ckan.git@canada-v2.9 and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckan.git@canada-v2.9#egg=ckan' -r 'https://raw.githubusercontent.com/open-data/ckan/canada-v2.9/requirements-py2.txt' -r 'https://raw.githubusercontent.com/open-data/ckan/canada-v2.9/dev-requirements.txt'
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Core repository${HAIR}${Cyan} from https://github.com:open-data/ckan.git@canada-py3 and installing into Python environment${NC}${SPACER}"
+    pip install -e 'git+https://github.com/open-data/ckan.git@canada-py3#egg=ckan' -r 'https://raw.githubusercontent.com/open-data/ckan/canada-py3/requirements.txt' -r 'https://raw.githubusercontent.com/open-data/ckan/canada-py3/dev-requirements.txt'
 
     # install ckanapi into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN API repository${HAIR}${Cyan} from https://github.com:ckan/ckanapi.git and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/ckan/ckanapi.git#egg=ckanapi' -r 'https://raw.githubusercontent.com/ckan/ckanapi/master/requirements.txt'
 
     # install ckan canada into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Canada repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-canada.git@cmaster and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckanext-canada.git@master#egg=ckanext-canada' -r 'https://raw.githubusercontent.com/open-data/ckanext-canada/master/requirements.txt'
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Canada repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-canada.git@canada-py3 and installing into Python environment${NC}${SPACER}"
+    pip install -e 'git+https://github.com/open-data/ckanext-canada.git@canada-py3#egg=ckanext-canada' -r 'https://raw.githubusercontent.com/open-data/ckanext-canada/canada-py3/requirements.txt'
 
     # install ckan cloud storage into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Cloud Storage repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-cloudstorage.git and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckanext-cloudstorage.git#egg=ckanext-cloudstorage'
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Cloud Storage repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-cloudstorage.git@canada-py3 and installing into Python environment${NC}${SPACER}"
+    pip install -e 'git+https://github.com/open-data/ckanext-cloudstorage.git@canada-py3#egg=ckanext-cloudstorage' -r 'https://raw.githubusercontent.com/open-data/ckanext-cloudstorage/canada-py3/requirements.txt'
 
     # install ckan dcat into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN DCat repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-dcat.git and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckanext-dcat.git#egg=ckanext-dcat' -r 'https://raw.githubusercontent.com/open-data/ckanext-dcat/master/requirements.txt'
-
-    # install ckan extended activity into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Extended Activity${HAIR}${Cyan} repository from https://github.com:open-data/ckanext-extendedactivity.git and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckanext-extendedactivity.git#egg=ckanext-extendedactivity'
-
-    # install ckan extractor into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Extractor repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-extractor.git and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckanext-extractor.git#egg=ckanext-extractor' -r 'https://raw.githubusercontent.com/open-data/ckanext-extractor/master/requirements.txt'
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN DCat repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-dcat.git@canada-py3 and installing into Python environment${NC}${SPACER}"
+    pip install -e 'git+https://github.com/open-data/ckanext-dcat.git@canada-py3#egg=ckanext-dcat' -r 'https://raw.githubusercontent.com/open-data/ckanext-dcat/canada-py3/requirements.txt'
 
     # install ckan fluent into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Fluent repository${HAIR}${Cyan} from https://github.com:ckan/ckanext-fluent.git and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/ckan/ckanext-fluent.git#egg=ckanext-fluent' -r 'https://raw.githubusercontent.com/ckan/ckanext-fluent/master/requirements.txt'
 
     # install ckan recombinant into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Recombinant repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-recombinant.git@canada-v2.9 and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckanext-recombinant.git@canada-v2.9#egg=ckanext-recombinant' -r 'https://raw.githubusercontent.com/open-data/ckanext-recombinant/canada-v2.9/requirements.txt'
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Recombinant repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-recombinant.git@canada-py3 and installing into Python environment${NC}${SPACER}"
+    pip install -e 'git+https://github.com/open-data/ckanext-recombinant.git@canada-py3#egg=ckanext-recombinant' -r 'https://raw.githubusercontent.com/open-data/ckanext-recombinant/canada-py3/requirements.txt'
 
     # install ckan scheming into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Scheming repository${HAIR}${Cyan} from https://github.com:ckan/ckanext-scheming.git and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/ckan/ckanext-scheming.git#egg=ckanext-scheming'
 
     # install ckan security into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Security repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-security@canada-v2.9.git and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckanext-security.git@canada-v2.9#egg=ckanext-security' -r 'https://raw.githubusercontent.com/open-data/ckanext-security/canada-v2.9/requirements-py2.txt'
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Security repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-security@canada-py3 and installing into Python environment${NC}${SPACER}"
+    pip install -e 'git+https://github.com/open-data/ckanext-security.git@canada-py3#egg=ckanext-security' -r 'https://raw.githubusercontent.com/open-data/ckanext-security/canada-py3/requirements.txt'
 
     # install ckan validation into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Validation repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-validation.git@canada and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckanext-validation.git@canada#egg=ckanext-validation' -r 'https://raw.githubusercontent.com/open-data/ckanext-validation/canada/requirements.txt' -r 'https://raw.githubusercontent.com/open-data/ckanext-validation/canada/dev-requirements.txt'
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Validation repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-validation.git@canada-py3 and installing into Python environment${NC}${SPACER}"
+    pip install -e 'git+https://github.com/open-data/ckanext-validation.git@canada-py3#egg=ckanext-validation' -r 'https://raw.githubusercontent.com/open-data/ckanext-validation/canada-py3/requirements.txt' -r 'https://raw.githubusercontent.com/open-data/ckanext-validation/canada-py3/dev-requirements.txt'
 
     # install ckan xloader into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Xloader repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-xloader.git  and installing into Python environment${NC}${SPACER}"
@@ -113,25 +103,21 @@ if [[ $installRepos_CKAN == "true" ]]; then
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}Goodtables repository${HAIR}${Cyan} from https://github.com:open-data/goodtables.git@canada and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/open-data/goodtables.git@canada#egg=goodtables' -r 'https://raw.githubusercontent.com/open-data/goodtables/canada/requirements.txt'
 
-    # install ckan wet boew into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Wet-Boew repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-wet-boew.git and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckanext-wet-boew.git#egg=ckanext-wet-boew' -r 'https://raw.githubusercontent.com/open-data/ckanext-wet-boew/master/requirements.txt'
-
     # install ckan gc notify into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN GC Notify repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-gcnotify.git@master and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/open-data/ckanext-gcnotify.git@master#egg=ckanext-gcnotify' -r 'https://raw.githubusercontent.com/open-data/ckanext-gcnotify/master/requirements.txt'
 
     # install Queensland CSRF filter into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN CSRF Filter repository${HAIR}${Cyan} from https://github.com/open-data/ckanext-csrf-filter.git@canada-v2.9 and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckanext-csrf-filter.git@canada-v2.9#egg=ckanext-csrf-filter' -r 'https://raw.githubusercontent.com/open-data/ckanext-csrf-filter/canada-v2.9/requirements.txt'
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN CSRF Filter repository${HAIR}${Cyan} from https://github.com/open-data/ckanext-csrf-filter.git@canada-py3 and installing into Python environment${NC}${SPACER}"
+    pip install -e 'git+https://github.com/open-data/ckanext-csrf-filter.git@canada-py3#egg=ckanext-csrf-filter' -r 'https://raw.githubusercontent.com/open-data/ckanext-csrf-filter/canada-py3/requirements.txt'
 
     # install Open API View into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Open API View repository${HAIR}${Cyan} from https://github.com/open-data/ckanext-openapiview.git and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/open-data/ckanext-openapiview.git#egg=ckanext-openapiview'
 
     # install Excel Forms into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Excel Forms repository${HAIR}${Cyan} from https://github.com/open-data/ckanext-excelforms.git@canada-v2.9 and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckanext-excelforms.git@canada-v2.9#egg=ckanext-excelforms'
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Excel Forms repository${HAIR}${Cyan} from https://github.com/open-data/ckanext-excelforms.git@cmain and installing into Python environment${NC}${SPACER}"
+    pip install -e 'git+https://github.com/open-data/ckanext-excelforms.git@main#egg=ckanext-excelforms' -r 'https://raw.githubusercontent.com/open-data/ckanext-excelforms/main/requirements.txt'
 
     # install Plotly into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Plotly repository${HAIR}${Cyan} from https://github.com/open-data/ckanext-plotly.git@canada and installing into Python environment${NC}${SPACER}"
@@ -150,6 +136,9 @@ if [[ $installRepos_CKAN == "true" ]]; then
     # install flask sql alchemy
     pip install Flask-SQLAlchemy==2.5.1
 
+    # install correct version of sql alchemy
+    pip install sqlalchemy==1.3.5
+
     # install correct version of slugify
     pip install python-slugify==1.2.0
 
@@ -164,7 +153,7 @@ if [[ $installRepos_CKAN == "true" ]]; then
         printf "${SPACER}${Cyan}${INDENT}Installing nltk.punkt into ${CKAN_ROLE} environment${NC}${SPACER}"
         mkdir -p /home/ckan/nltk_data
         chown ckan:ckan -R /home/ckan/nltk_data
-        python2 -c "import nltk; nltk.download('punkt');"
+        python3 -c "import nltk; nltk.download('punkt');"
     fi
 
     #
@@ -192,8 +181,16 @@ if [[ $installRepos_CKAN == "true" ]]; then
     fi
 
     # compile ckan config files
+    printf "${SPACER}${Cyan}${INDENT}Copying activation script into ${CKAN_ROLE} venv${NC}${SPACER}"
+    cp ${APP_ROOT}/docker/install/ckan/activate_this.py ${APP_ROOT}/ckan/${CKAN_ROLE}/bin/activate_this.py
+    if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Copy ${CKAN_ROLE} activation script: OK${NC}${EOL}"
+    else
+        printf "${Red}${INDENT}${INDENT}Copy ${CKAN_ROLE} activation script: FAIL${NC}${EOL}"
+    fi
+    chown ckan:ckan ${APP_ROOT}/ckan/${CKAN_ROLE}/bin/activate_this.py
     printf "${SPACER}${Cyan}${INDENT}Compiling local ${CKAN_ROLE} config files${NC}${SPACER}"
-    python ${PWD}/docker/install/ckan/compile-${CKAN_ROLE}-config.py
+    python3 ${PWD}/docker/install/ckan/compile-${CKAN_ROLE}-config.py
     if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Compile ${CKAN_ROLE} ini files: OK${NC}${EOL}"
     else
@@ -223,8 +220,8 @@ if [[ $installRepos_CKAN == "true" ]]; then
     fi
 
     # generate translation files
-    cd /srv/app/ckan/${CKAN_ROLE}/src/ckanext-canada/bin
-    . build-combined-ckan-mo.sh
+    cd /srv/app/ckan/${CKAN_ROLE}/src/ckanext-canada
+    python3 setup.py compile_catalog
 
     # decativate python environment
     deactivate

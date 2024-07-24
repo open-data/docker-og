@@ -25,13 +25,13 @@ if [[ $installFilePermissions_CKAN == "true" ]]; then
     ckan -c ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini db init
 
     # initialize validation tables
-    paster --plugin=ckanext-validation validation init-db -c ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini
+    ckan -c ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini validation init-db
 
     # set database permissions
     ckan -c ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini datastore set-permissions | psql -U homestead --set ON_ERROR_STOP=1
 
     # update triggers
-    paster --plugin=ckanext-canada canada update-triggers -c ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini
+    ckan -c ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini canada update-triggers
 
 fi
 # END
