@@ -1,4 +1,4 @@
-FROM opendatacanada/solr
+FROM opendatacanada/solr:9
 
 USER root
 
