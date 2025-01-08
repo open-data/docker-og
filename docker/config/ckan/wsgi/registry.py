@@ -1,6 +1,6 @@
 # -- coding: utf-8 --
 
-# -- CKAN 2.9 --
+# -- CKAN 2.10 --
 
 import os
 activate_this = '/srv/app/ckan/registry/bin/activate_this.py'
@@ -20,15 +20,15 @@ import configparser
 
 config = configparser.ConfigParser()
 config.read(config_filepath)
-config['DEFAULT']['project_id'] = os.getenv('PROJECT_ID')
-config['DEFAULT']['project_port'] = os.getenv('PROJECT_PORT')
+config['DEFAULT']['project_id'] = str(os.getenv('PROJECT_ID'))
+config['DEFAULT']['project_port'] = str(os.getenv('PROJECT_PORT'))
 with open(config_filepath,'w') as file:
     config.write(file)
 
 testConfig = configparser.ConfigParser()
 testConfig.read(test_config_filepath)
-testConfig['DEFAULT']['project_id'] = os.getenv('PROJECT_ID')
-config['DEFAULT']['project_port'] = os.getenv('PROJECT_PORT')
+testConfig['DEFAULT']['project_id'] = str(os.getenv('PROJECT_ID'))
+config['DEFAULT']['project_port'] = str(os.getenv('PROJECT_PORT'))
 with open(test_config_filepath,'w') as file:
     testConfig.write(file)
 
