@@ -109,21 +109,22 @@ if [[ $installRepos_CKAN == "true" ]]; then
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Open API View repository${HAIR}${Cyan} from https://github.com/open-data/ckanext-openapiview.git and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/open-data/ckanext-openapiview.git#egg=ckanext-openapiview'
 
+    # install Power BI View into the python environment
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Power BI View repository${HAIR}${Cyan} from https://github.com/open-data/ckanext-power-bi.git and installing into Python environment${NC}${SPACER}"
+    pip install -e 'git+https://github.com/open-data/ckanext-power-bi.git#egg=ckanext-power-bi' -r https://raw.githubusercontent.com/open-data/ckanext-power-bi/main/requirements.txt
+
     # install Excel Forms into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Excel Forms repository${HAIR}${Cyan} from https://github.com/ckan/ckanext-excelforms.git@cmain and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/ckan/ckanext-excelforms.git@main#egg=ckanext-excelforms' -r 'https://raw.githubusercontent.com/ckan/ckanext-excelforms/main/requirements.txt'
-
-    # install Plotly into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Plotly repository${HAIR}${Cyan} from https://github.com/open-data/ckanext-plotly.git@canada and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/open-data/ckanext-plotly.git@canada#egg=ckanext-plotly'
 
     # install DataStore Audit into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN DS Audit repository${HAIR}${Cyan} from https://github.com/ckan/ckanext-dsaudit.git and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/ckan/ckanext-dsaudit.git#egg=ckanext-dsaudit'
 
-# install Frictionless fork into the python environment
+    # install Frictionless fork into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}Frictionless fork repository${HAIR}${Cyan} from https://github.com/open-data/frictionless-py.git and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/open-data/frictionless-py.git@canada-v2.10#egg=frictionless-py'
+
     #
     # copy local ckan config files
     #
