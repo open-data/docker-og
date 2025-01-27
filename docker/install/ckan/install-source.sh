@@ -93,10 +93,6 @@ if [[ $installRepos_CKAN == "true" ]]; then
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Xloader repository${HAIR}${Cyan} from https://github.com:open-data/ckanext-xloader.git@canada-v2.10  and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/open-data/ckanext-xloader.git@canada-v2.10#egg=ckanext-xloader' -r 'https://raw.githubusercontent.com/open-data/ckanext-xloader/canada-v2.10/requirements.txt' -r 'https://raw.githubusercontent.com/open-data/ckanext-xloader/master/dev-requirements.txt'
 
-    # install ckantoolkit into the python environment
-    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN Toolkit repository${HAIR}${Cyan} from https://github.com:ckan/ckantoolkit.git and installing into Python environment${NC}${SPACER}"
-    pip install -e 'git+https://github.com/ckan/ckantoolkit.git#egg=ckantoolkit' -r 'https://raw.githubusercontent.com/ckan/ckantoolkit/master/requirements.txt'
-
     # install frictionless into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}Frictionless repository${HAIR}${Cyan} from https://github.com:open-data/frictionless-py.git@canada-v2.10 and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/open-data/frictionless-py.git@canada-v2.10#egg=frictionless'
