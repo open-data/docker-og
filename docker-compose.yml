@@ -348,24 +348,26 @@ services:
       - ./solr/ckan_portal:/var/solr/data/ckan_portal
       - ./solr/drupal_ati:/var/solr/data/drupal_ati
       - ./solr/drupal_contractsa:/var/solr/data/drupal_contractsa
-      - ./solr/drupal_hospitalityq:/var/solr/data/drupal_hospitalityq
-      - ./solr/drupal_inventory:/var/solr/data/drupal_inventory
-      - ./solr/drupal_reclassification:/var/solr/data/drupal_reclassification
-      - ./solr/drupal_wrongdoing:/var/solr/data/drupal_wrongdoing
       # Persisting Django Solr Cores
+      - ./solr/search_adminaircraft:/var/solr/data/search_adminaircraft
       - ./solr/search_ati:/var/solr/data/search_ati
       - ./solr/search_atimap:/var/solr/data/search_atimap
       - ./solr/search_briefingt:/var/solr/data/search_briefingt
       - ./solr/search_cafcip:/var/solr/data/search_cafcip
       - ./solr/search_contracts:/var/solr/data/search_contracts
+      - ./solr/search_data:/var/solr/data/search_data
+      - ./solr/search_dataprops:/var/solr/data/search_dataprops
       - ./solr/search_datastrategy:/var/solr/data/search_datastrategy
       - ./solr/search_experiment:/var/solr/data/search_experiment
       - ./solr/search_grants:/var/solr/data/search_grants
+      - ./solr/search_hospitalityq:/var/solr/data/search_hospitalityq
       - ./solr/search_nap5:/var/solr/data/search_nap5
       - ./solr/search_opencanada:/var/solr/data/search_opencanada
+      - ./solr/search_reclassification:/var/solr/data/search_reclassification
       - ./solr/search_qpnotes:/var/solr/data/search_qpnotes
       - ./solr/search_travela:/var/solr/data/search_travela
       - ./solr/search_travelq:/var/solr/data/search_travelq
+      - ./solr/search_wrongdoing:/var/solr/data/search_wrongdoing
       # Persisting Drupal Solr Cores
       - ./solr/drupal_portal:/var/solr/data/drupal_portal
       # Persisting CKAN Test Solr Cores
@@ -373,24 +375,26 @@ services:
       - ./solr/test__ckan_portal:/var/solr/data/test__ckan_portal
       - ./solr/test__drupal_ati:/var/solr/data/test__drupal_ati
       - ./solr/test__drupal_contractsa:/var/solr/data/test__drupal_contractsa
-      - ./solr/test__drupal_hospitalityq:/var/solr/data/test__drupal_hospitalityq
-      - ./solr/test__drupal_inventory:/var/solr/data/test__drupal_inventory
-      - ./solr/test__drupal_reclassification:/var/solr/data/test__drupal_reclassification
-      - ./solr/test__drupal_wrongdoing:/var/solr/data/test__drupal_wrongdoing
       # Persisting Django Test Solr Cores
+      - ./solr/test__search_adminaircraft:/var/solr/data/test__search_adminaircraft
       - ./solr/test__search_ati:/var/solr/data/test__search_ati
       - ./solr/test__search_atimap:/var/solr/data/test__search_atimap
       - ./solr/test__search_briefingt:/var/solr/data/test__search_briefingt
       - ./solr/test__search_cafcip:/var/solr/data/test__search_cafcip
       - ./solr/test__search_contracts:/var/solr/data/test__search_contracts
+      - ./solr/test__search_data:/var/solr/data/test__search_data
+      - ./solr/test__search_dataprops:/var/solr/data/test__search_dataprops
       - ./solr/test__search_datastrategy:/var/solr/data/test__search_datastrategy
       - ./solr/test__search_experiment:/var/solr/data/test__search_experiment
       - ./solr/test__search_grants:/var/solr/data/test__search_grants
+      - ./solr/test__search_hospitalityq:/var/solr/data/test__search_hospitalityq
       - ./solr/test__search_nap5:/var/solr/data/test__search_nap5
       - ./solr/test__search_opencanada:/var/solr/data/test__search_opencanada
+      - ./solr/test__search_reclassification:/var/solr/data/test__search_reclassification
       - ./solr/test__search_qpnotes:/var/solr/data/test__search_qpnotes
       - ./solr/test__search_travela:/var/solr/data/test__search_travela
       - ./solr/test__search_travelq:/var/solr/data/test__search_travelq
+      - ./solr/test__search_wrongdoing:/var/solr/data/test__search_wrongdoing
       # Persisting Drupal Test Solr Cores
       - ./solr/test__drupal_portal:/var/solr/data/test__drupal_portal
     environment:
@@ -480,6 +484,8 @@ services:
         condition: service_started
       solr:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     links:
       - proxy
       - postgres
@@ -495,7 +501,7 @@ services:
       SSH_AUTH_SOCK: /ssh-agent
       PATH: '$PATH:/usr/local/lib'
       APP_ROOT: /var/ocs
-      PY_VERSION: 3.7
+      PY_VERSION: 3.9
       WET_VERSION: v4.0.63
       CDTS_VERSION: v4_0_28
       CDTS_GCWEB_VERSION: v4_0_31
@@ -512,7 +518,7 @@ services:
       - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
     expose:
-      - 8080
+      - 8000
 # END
 # Django
 # END

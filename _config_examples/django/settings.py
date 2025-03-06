@@ -31,6 +31,10 @@ DEBUG = True
 
 ADMIN_ENABLED = True
 
+DEFAULT_SEARCH_TYPE = 'data'
+
+INTERNAL_IPS = ['127.0.0.1']
+
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'search.open.local', "search.open.local:" + PROJECT_PORT]
 
 # Application definition
@@ -63,7 +67,6 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    "corsheaders.middleware.CorsPostCsrfMiddleware",
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -75,11 +78,14 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_REPLACE_HTTPS_REFERER = True
+CSRF_TRUSTED_ORIGINS = ['https://*.open.canada.ca', 'https://*.ouvert.canada.ca', 'https://open.canada.ca', 'https://ouvert.canada.ca',
+                        'http://*.open.local', 'http://open.local']
 
 ROOT_URLCONF = 'oc_search.urls'
 
 STATIC_ROOT = '/var/ocs/django/static'
+
+NLTK_DATADIR = '/var/ocs/django/src/oc_search/nltk'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -88,16 +94,16 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     ('cdts', '/var/ocs/django/static/cdts'),
-    ('search_snippets', '/var/ocs/django/src/oc-search/search/templates/snippets'),
-    ('ramp', '/var/ocs/django/src/oc-search/ramp/viewer'),
+    ('search_snippets', '/var/ocs/django/src/oc_search/search/templates/snippets'),
+    ('ramp', '/var/ocs/django/src/oc_search/ramp/viewer'),
 ]
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': ['/var/ocs/django/static',
-                 '/var/ocs/django/src/oc-search/search/templates',
-                 '/var/ocs/django/src/oc-search/ramp/templates'],
+                 '/var/ocs/django/src/oc_search/search/templates',
+                 '/var/ocs/django/src/oc_search/ramp/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -219,10 +225,14 @@ LOGGING = {
 
 MARKDOWN_FILTER_WHITELIST_TAGS = [
     'a',
+    'b',
+    'blockquote',
     'p',
     'code',
+    'div',
     'em',
     'h1', 'h2', 'h3', 'h4',
+    'i',
     'ul',
     'ol',
     'li',
@@ -235,7 +245,7 @@ MARKDOWN_FILTER_WHITELIST_TAGS = [
 ]
 MARKDOWN_FILTER_EXTRAS = ["tables", "break-on-newline"]
 # These are IN ADDITION to the attributes defined in leach.sanitizer.ALLOWED_ATTRIBUTES
-MARKDOWN_FILTER_ALLOWED_ATTRIBUTES = {'span': ['title', 'class'], "a": ["href", "title", "rel"]}
+MARKDOWN_FILTER_ALLOWED_ATTRIBUTES = {'span': ['title', 'class'], "a": ["href", "title", "rel", "target"], 'div': ['class']}
 
 CACHES = {
     'default': {
@@ -249,9 +259,19 @@ CACHES = {
 # Object in the local cache expire after this many seconds. Not recommended to be less than 60 seconds.
 CACHE_LOCAL_TIMEOUT = 60 * 5
 
-SESSION_ENGINE="django.contrib.sessions.backends.file"
-SESSION_FILE_PATH = os.path.join(BASE_DIR, 'session')
+# SESSION_FILE_PATH = os.path.join(BASE_DIR, 'session')
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_ENGINE = "redis_sessions.session"
+SESSION_REDIS = {
+    'host': 'redis',
+    'port': 6379,
+    'db': 0,
+    'password': None,
+    'unix_domain_socket_path': None,
+    'prefix': 'oc_session',
+    'socket_timeout': 2,
+    'retry_on_timeout': True
+}
 
 ADOBE_ANALYTICS_URL = ''
 GOOGLE_ANALYTICS_GTM_ID = ''
@@ -263,12 +283,12 @@ IMPORT_EXPORT_USE_TRANSACTIONS = False
 # RAMP Viewer Settings
 OPEN_DATA_SOLR_SERVER_URL = "http://solr:8983/solr"
 OPEN_DATA_CORE = "search_opendata"
-OPEN_DATA_BASE_URL_EN = "https://open.local:" + PROJECT_PORT + "/data/en/dataset/"
-OPEN_DATA_BASE_URL_FR = "https://open.local:" + PROJECT_PORT + "/data/fr/dataset/"
-OPEN_DATA_EN_FGP_BASE = "https://search.open.local:" + PROJECT_PORT + "/openmap/"
-OPEN_DATA_FR_FGP_BASE = "https://search.open.local:" + PROJECT_PORT + "/carteouverte/"
-OPEN_DATA_HOST_EN = "https://open.local:" + PROJECT_PORT + ""
-OPEN_DATA_HOST_FR = "https://open.local:" + PROJECT_PORT + ""
+OPEN_DATA_BASE_URL_EN = "http://open.local:" + PROJECT_PORT + "/data/en/dataset/"
+OPEN_DATA_BASE_URL_FR = "http://open.local:" + PROJECT_PORT + "/data/fr/dataset/"
+OPEN_DATA_EN_FGP_BASE = "http://search.open.local:" + PROJECT_PORT + "/openmap/"
+OPEN_DATA_FR_FGP_BASE = "http://search.open.local:" + PROJECT_PORT + "/carteouverte/"
+OPEN_DATA_HOST_EN = "http://open.local:" + PROJECT_PORT + ""
+OPEN_DATA_HOST_FR = "http://open.local:" + PROJECT_PORT + ""
 
 RAMP_SHOW_ALERT_INFO = False
 RAMP_RANGE_SLIDER_CSS_URL = 'https://viewer-visualiseur.services.geo.ca/apps/RAMP/contributed-plugins/range-slider/range-slider.css'
