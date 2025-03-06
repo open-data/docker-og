@@ -117,6 +117,10 @@ if [[ $installRepos_CKAN == "true" ]]; then
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN DS Audit repository${HAIR}${Cyan} from https://github.com/ckan/ckanext-dsaudit.git and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/ckan/ckanext-dsaudit.git#egg=ckanext-dsaudit'
 
+    # install CiteProc into the python environment
+    printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}CKAN CiteProc repository${HAIR}${Cyan} from https://github.com/open-data/ckanext-citeproc.git and installing into Python environment${NC}${SPACER}"
+    pip install -e 'git+https://github.com/open-data/ckanext-citeproc.git#egg=ckanext-citeproc' -r https://raw.githubusercontent.com/open-data/ckanext-citeproc/main/requirements.txt
+
     # install Frictionless fork into the python environment
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}Frictionless fork repository${HAIR}${Cyan} from https://github.com/open-data/frictionless-py.git and installing into Python environment${NC}${SPACER}"
     pip install -e 'git+https://github.com/open-data/frictionless-py.git@canada-v2.10#egg=frictionless-py'
