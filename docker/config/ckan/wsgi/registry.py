@@ -3,14 +3,14 @@
 # -- CKAN 2.10 --
 
 import os
-activate_this = '/srv/app/ckan/registry/bin/activate_this.py'
+activate_this = '/srv/app/ckan/bin/activate_this.py'
 exec(open(activate_this).read(), {'__file__': activate_this})
 from ckan.config.middleware import make_app
 from ckan.cli import CKANConfigLoader
 from logging.config import fileConfig as loggingFileConfig
 
-config_filepath = os.path.join('/srv/app/ckan/registry/registry.ini')
-test_config_filepath = os.path.join('/srv/app/ckan/registry/test.ini')
+config_filepath = os.path.join('/srv/app/ckan/registry.ini')
+test_config_filepath = os.path.join('/srv/app/ckan/test.ini')
 
 abspath = os.path.join(os.path.dirname(os.path.abspath(__file__)))
 

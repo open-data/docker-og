@@ -23,12 +23,14 @@ if [[ $installFilePermissions_CKAN == "true" ]]; then
 
     # initialize databases
     ckan -c ${APP_ROOT}/ckan/registry.ini db init
+    ckan -c ${APP_ROOT}/ckan/portal.ini db init
 
     # initialize validation tables
     ckan -c ${APP_ROOT}/ckan/registry.ini validation init-db
 
     # set database permissions
     ckan -c ${APP_ROOT}/ckan/registry.ini datastore set-permissions | psql -U homestead --set ON_ERROR_STOP=1
+    ckan -c ${APP_ROOT}/ckan/portal.ini datastore set-permissions | psql -U homestead --set ON_ERROR_STOP=1
 
     # update triggers
     ckan -c ${APP_ROOT}/ckan/registry.ini canada update-triggers

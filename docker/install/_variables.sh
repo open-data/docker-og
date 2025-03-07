@@ -32,10 +32,8 @@ installFilePermissions_Drupal='false'
 installLocalUser_Drupal='false'
 
 # ckan flags
-installDB_Portal_CKAN='false'
-installDB_Portal_DS_CKAN='false'
-installDB_Registry_CKAN='false'
-installDB_Registry_DS_CKAN='false'
+installDB_CKAN='false'
+installDB_DS_CKAN='false'
 installRepos_CKAN='false'
 installTheme_CKAN='false'
 installFilePermissions_CKAN='false'

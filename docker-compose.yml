@@ -111,7 +111,6 @@ services:
 #
 # CKAN Registry & Portal
 #
-# TODO: merge Portal into same container...shell scripts...supervisord etc.
   ckan:
     container_name: og-ckan--${PROJECT_ID}
     image: og-ckan--${PROJECT_ID}
@@ -166,7 +165,7 @@ services:
       PYTHONDONTWRITEBYTECODE: 1
       SSL_VERIFY: 0
       WERKZEUG_DEBUG_PIN: "off"
-      PORTAL_CONFIG: /srv/app/ckan/portal/portal.ini
+      PORTAL_CONFIG: /srv/app/ckan/portal.ini
       REGISTRY_CONFIG: /srv/app/ckan/registry.ini
       CKAN_INI: /srv/app/ckan/registry.ini
       TEST_INI: /srv/app/ckan/test.ini

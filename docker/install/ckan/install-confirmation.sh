@@ -1,85 +1,41 @@
 #!/bin/bash
 
 #
-# Confirm CKAN Portal database destruction
+# Confirm CKAN Registry and Portal database destruction
 #
-if [[ $installDB_Portal_CKAN == "true" ]]; then
+if [[ $installDB_CKAN == "true" ]]; then
 
-    read -r -p $'\n\n\033[0;31m    Are you sure you want delete the\033[1m existing CKAN Portal database\033[0m\033[0;31m and import a fresh copy? [y/N]:\033[0;0m    ' response
+    read -r -p $'\n\n\033[0;31m    Are you sure you want delete the\033[1m existing CKAN Registry and Portal databases\033[0m\033[0;31m and import a fresh copy? [y/N]:\033[0;0m    ' response
 
     if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
 
-        installDB_Portal_CKAN='true'
+        installDB_CKAN='true'
 
     else
 
-        installDB_Portal_CKAN='false'
+        installDB_CKAN='false'
 
     fi
 
 fi
 # END
-# Confirm CKAN Portal database destruction
+# Confirm CKAN Registry and Portal database destruction
 # END
 
 #
-# Confirm CKAN Portal Datastore database destruction
+# Confirm CKAN Registry and Portal Datastore database destruction
 #
-if [[ $installDB_Portal_DS_CKAN == "true" ]]; then
+if [[ $installDB_DS_CKAN == "true" ]]; then
 
-    read -r -p $'\n\n\033[0;31m    Are you sure you want delete the\033[1m existing CKAN Portal Datastore database\033[0m\033[0;31m and import a fresh copy? [y/N]:\033[0;0m    ' response
+    read -r -p $'\n\n\033[0;31m    Are you sure you want delete the\033[1m existing CKAN Registry and Portal Datastore database\033[0m\033[0;31m and import a fresh copy? [y/N]:\033[0;0m    ' response
 
     if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
 
-        installDB_Portal_DS_CKAN='true'
+        installDB_DS_CKAN='true'
 
     else
 
-        installDB_Portal_DS_CKAN='false'
-
-    fi
-
-fi
-# END
-# Confirm CKAN Portal Datastore database destruction
-# END
-
-#
-# Confirm CKAN Registry database destruction
-#
-if [[ $installDB_Registry_CKAN == "true" ]]; then
-
-    read -r -p $'\n\n\033[0;31m    Are you sure you want delete the\033[1m existing CKAN Registry database\033[0m\033[0;31m and import a fresh copy? [y/N]:\033[0;0m    ' response
-
-    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-
-        installDB_Registry_CKAN='true'
-
-    else
-
-        installDB_Registry_CKAN='false'
-
-    fi
-
-fi
-# END
-# Confirm CKAN Registry database destruction
-# END
-
-#
-# Confirm CKAN Registry Datastore database destruction
-#
-if [[ $installDB_Registry_DS_CKAN == "true" ]]; then
-
-    read -r -p $'\n\n\033[0;31m    Are you sure you want delete the\033[1m existing CKAN Registry Datastore database\033[0m\033[0;31m and import a fresh copy? [y/N]:\033[0;0m    ' response
-
-    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-
-        installDB_Registry_DS_CKAN='true'
-
-    else
-
-        installDB_Registry_DS_CKAN='false'
+        installDB_DS_CKAN='false'
 
     fi
 
