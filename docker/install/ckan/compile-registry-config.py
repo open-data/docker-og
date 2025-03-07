@@ -1,11 +1,11 @@
 # -- CKAN 2.9 --
 
 import os
-activate_this = '/srv/app/ckan/registry/bin/activate_this.py'
+activate_this = '/srv/app/ckan/bin/activate_this.py'
 exec(open(activate_this).read(), {'__file__': activate_this})
 
-config_filepath = os.path.join('/srv/app/ckan/registry/registry.ini')
-test_config_filepath = os.path.join('/srv/app/ckan/registry/test.ini')
+config_filepath = os.path.join('/srv/app/ckan/registry.ini')
+test_config_filepath = os.path.join('/srv/app/ckan/test.ini')
 
 import configparser
 

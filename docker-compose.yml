@@ -109,11 +109,12 @@ services:
 # Drupal
 # END
 #
-# CKAN Registry
+# CKAN Registry & Portal
 #
+# TODO: merge Portal into same container...shell scripts...supervisord etc.
   ckan:
-    container_name: og-ckan-registry--${PROJECT_ID}
-    image: og-ckan-registry--${PROJECT_ID}
+    container_name: og-ckan--${PROJECT_ID}
+    image: og-ckan--${PROJECT_ID}
     build:
       context: .
       dockerfile: docker/ckan/Dockerfile
@@ -123,7 +124,7 @@ services:
       labels:
         projectID: ${PROJECT_ID}
     healthcheck:
-      test: /srv/app/ckan/registry/bin/uwsgi --connect-and-read 127.0.0.1:1717 || exit 1
+      test: /srv/app/ckan/bin/uwsgi --connect-and-read 127.0.0.1:1717 || exit 1
       interval: 10s
       timeout: 5s
       retries: 6
@@ -149,14 +150,13 @@ services:
       - _config/docker/.docker.env
     environment:
       CONTAINER_ROLE: ckan
-      CKAN_ROLE: registry
       PGHOST: postgres
       PGDATABASE: postgres
       PGUSER: homestead
       PGPASSWORD: secret
       SSH_AUTH_SOCK: /ssh-agent
       APP_ROOT: /srv/app
-      PATH: '$PATH:/srv/app/ckan/registry/bin'
+      PATH: '$PATH:/srv/app/ckan/bin'
       PY_VERSION: 3.7
       PIP_VERSION: 23.2.1
       SETUP_TOOLS_VERSION: 44.1.0
@@ -167,9 +167,9 @@ services:
       SSL_VERIFY: 0
       WERKZEUG_DEBUG_PIN: "off"
       PORTAL_CONFIG: /srv/app/ckan/portal/portal.ini
-      REGISTRY_CONFIG: /srv/app/ckan/registry/registry.ini
-      CKAN_INI: /srv/app/ckan/registry/registry.ini
-      TEST_INI: /srv/app/ckan/registry/test.ini
+      REGISTRY_CONFIG: /srv/app/ckan/registry.ini
+      CKAN_INI: /srv/app/ckan/registry.ini
+      TEST_INI: /srv/app/ckan/test.ini
       DATA_URI: https://open.canada.ca/data
       PROJECT_ID: ${PROJECT_ID}
       PROJECT_PORT: ${PORT}
@@ -179,93 +179,15 @@ services:
       - ${PWD}/:/srv/app
       - ./docker/config/ckan:/docker-entrypoint.d
       - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./docker/config/ckan/wsgi:/etc/ckan/registry
+      - ./docker/config/ckan/wsgi:/etc/ckan
       - ~/.gitconfig:/etc/gitconfig:ro
       - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
     user: "${USER_ID:-0}:${GROUP_ID:-0}"
     expose:
       - 5001
-# END
-# CKAN Registry
-# END
-#
-# CKAN Portal
-#
-  ckanapi:
-    container_name: og-ckan-portal--${PROJECT_ID}
-    image: og-ckan-portal--${PROJECT_ID}
-    build:
-      context: .
-      dockerfile: docker/ckan/Dockerfile
-      args:
-        USER_ID: ${USER_ID:-0}
-        GROUP_ID: ${GROUP_ID:-0}
-      labels:
-        projectID: ${PROJECT_ID}
-    healthcheck:
-      test: /srv/app/ckan/portal/bin/uwsgi --connect-and-read 127.0.0.1:1717 || exit 1
-      interval: 10s
-      timeout: 5s
-      retries: 6
-      start_period: 90s
-    working_dir: /srv/app
-    networks:
-      og-local-network:
-        ipv4_address: 172.25.${OCTET}.8
-    depends_on:
-      proxy:
-        condition: service_healthy
-      postgres:
-        condition: service_started
-      solr:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    links:
-      - proxy
-      - postgres
-      - solr
-    env_file:
-      - _config/docker/.docker.env
-    environment:
-      CONTAINER_ROLE: ckan
-      CKAN_ROLE: portal
-      PGHOST: postgres
-      PGDATABASE: postgres
-      PGUSER: homestead
-      PGPASSWORD: secret
-      SSH_AUTH_SOCK: /ssh-agent
-      APP_ROOT: /srv/app
-      PATH: '$PATH:/srv/app/ckan/portal/bin'
-      PY_VERSION: 3.7
-      PIP_VERSION: 23.2.1
-      SETUP_TOOLS_VERSION: 44.1.0
-      WET_VERSION: v4.0.63
-      GCWEB_VERSION: v13.3.0
-      PYTHONHTTPSVERIFY: 0
-      PYTHONDONTWRITEBYTECODE: 1
-      SSL_VERIFY: 0
-      WERKZEUG_DEBUG_PIN: "off"
-      PORTAL_CONFIG: /srv/app/ckan/portal/portal.ini
-      REGISTRY_CONFIG: /srv/app/ckan/registry/registry.ini
-      CKAN_INI: /srv/app/ckan/portal/portal.ini
-      TEST_INI: /srv/app/ckan/portal/test.ini
-      DATA_URI: https://open.canada.ca/data
-      PROJECT_ID: ${PROJECT_ID}
-      PROJECT_PORT: ${PORT}
-      ROOT_PASS: Docker!
-    volumes:
-      - ${PWD}/:/srv/app
-      - ./docker/config/ckan:/docker-entrypoint.d
-      - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./docker/config/ckan/wsgi:/etc/ckan/portal
-      - ~/.gitconfig:/etc/gitconfig:ro
-      - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
-    user: "${USER_ID:-0}:${GROUP_ID:-0}"
-    expose:
       - 5002
 # END
-# CKAN Portal
+# CKAN Registry & Portal
 # END
 #
 # Postgres
@@ -349,6 +271,7 @@ services:
       - ./solr/drupal_ati:/var/solr/data/drupal_ati
       - ./solr/drupal_contractsa:/var/solr/data/drupal_contractsa
       # Persisting Django Solr Cores
+      # FIXME: search core managed-schemas not persisting
       - ./solr/search_adminaircraft:/var/solr/data/search_adminaircraft
       - ./solr/search_ati:/var/solr/data/search_ati
       - ./solr/search_atimap:/var/solr/data/search_atimap

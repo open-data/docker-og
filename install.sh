@@ -102,7 +102,7 @@ elif [[ ${CONTAINER_ROLE} == "ckan" ]]; then
 
   # Options for the user to select from
   options=(
-    "CKAN (${CKAN_ROLE})"
+    "CKAN"
     "Databases (fixes missing databases, privileges, and users)"
     "Test Databases (clones existing databases into empty ones)"
     "Postgres Upgrade (dump and load existing databases for psql version upgrade)"

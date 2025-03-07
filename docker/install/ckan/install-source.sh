@@ -5,40 +5,40 @@
 #
 if [[ $installRepos_CKAN == "true" ]]; then
 
-    mkdir -p ${APP_ROOT}/ckan/${CKAN_ROLE}
+    mkdir -p ${APP_ROOT}/ckan
 
     # nuke the entire folder
-    printf "${SPACER}${Cyan}${INDENT}Pre-nuke the existing CKAN (${CKAN_ROLE}) install${NC}${SPACER}"
+    printf "${SPACER}${Cyan}${INDENT}Pre-nuke the existing CKAN install${NC}${SPACER}"
     # destroy all files
-    cd ${APP_ROOT}/ckan/${CKAN_ROLE}
+    cd ${APP_ROOT}/ckan
     rm -rf ./*
     if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Remove all files in ckan/${CKAN_ROLE}: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Remove all files in ckan: OK${NC}${EOL}"
     else
-        printf "${Red}${INDENT}${INDENT}Remove all files in ckan/${CKAN_ROLE}: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Remove all files in ckan: FAIL${NC}${EOL}"
     fi
-    cd ${APP_ROOT}/ckan/${CKAN_ROLE}
+    cd ${APP_ROOT}/ckan
     rm -rf ./.??*
     if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Remove all hidden files in ckan/${CKAN_ROLE}: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Remove all hidden files in ckan: OK${NC}${EOL}"
     else
-        printf "${Red}${INDENT}${INDENT}Remove all hidden files in ckan/${CKAN_ROLE}: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Remove all hidden files in ckan: FAIL${NC}${EOL}"
     fi
 
     # create virtual environment
-    python3 -m venv ${APP_ROOT}/ckan/${CKAN_ROLE}
-    cd ${APP_ROOT}/ckan/${CKAN_ROLE}
+    python3 -m venv ${APP_ROOT}/ckan
+    cd ${APP_ROOT}/ckan
 
     # set ownership
-    chown ckan:ckan -R ${APP_ROOT}/ckan/${CKAN_ROLE}
+    chown ckan:ckan -R ${APP_ROOT}/ckan
     if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Set ckan/${CKAN_ROLE} ownership to ckan:ckan: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Set ckan ownership to ckan:ckan: OK${NC}${EOL}"
     else
-        printf "${Red}${INDENT}${INDENT}Set ckan/${CKAN_ROLE} ownership to ckan:ckan: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Set ckan ownership to ckan:ckan: FAIL${NC}${EOL}"
     fi
 
     # activate python environment
-    . ${APP_ROOT}/ckan/${CKAN_ROLE}/bin/activate
+    . ${APP_ROOT}/ckan/bin/activate
     if [[ $? -eq 0 ]]; then
         printf "${Green}${INDENT}${INDENT}Activate Python environment: OK${NC}${EOL}"
     else
@@ -130,70 +130,83 @@ if [[ $installRepos_CKAN == "true" ]]; then
     #
     cd ${APP_ROOT}
 
-    # copy local ckan config file
-    cp ${APP_ROOT}/_config/ckan/${CKAN_ROLE}.ini ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini
-    printf "${SPACER}${Cyan}${INDENT}Copying local ${CKAN_ROLE} config file to into Python environment${NC}${SPACER}"
+    # copy local ckan config files
+    cp ${APP_ROOT}/_config/ckan/registry.ini ${APP_ROOT}/ckan/registry.ini
+    printf "${SPACER}${Cyan}${INDENT}Copying local registry config file to into Python environment${NC}${SPACER}"
     if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Copy ${CKAN_ROLE}.ini to ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Copy registry.ini to ckan/registry.ini: OK${NC}${EOL}"
     else
-        printf "${Red}${INDENT}${INDENT}Copy ${CKAN_ROLE}.ini to ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Copy registry.ini to ckan/registry.ini: FAIL${NC}${EOL}"
+    fi
+    cp ${APP_ROOT}/_config/ckan/portal.ini ${APP_ROOT}/ckan/portal.ini
+    printf "${SPACER}${Cyan}${INDENT}Copying local portal config file to into Python environment${NC}${SPACER}"
+    if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Copy portal.ini to ckan/portal.ini: OK${NC}${EOL}"
+    else
+        printf "${Red}${INDENT}${INDENT}Copy portal.ini to ckan/portal.ini: FAIL${NC}${EOL}"
     fi
 
 
-    # copy local ckan test config file
-    cp ${APP_ROOT}/_config/ckan/${CKAN_ROLE}-test.ini ${APP_ROOT}/ckan/${CKAN_ROLE}/test.ini
-    printf "${SPACER}${Cyan}${INDENT}Copying local ${CKAN_ROLE} test config file to into Python environment${NC}${SPACER}"
+    # copy local ckan test config files=
+    cp ${APP_ROOT}/_config/ckan/test.ini ${APP_ROOT}/ckan/test.ini
+    printf "${SPACER}${Cyan}${INDENT}Copying local test config file to into Python environment${NC}${SPACER}"
     if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Copy ${CKAN_ROLE}-test.ini to ckan/${CKAN_ROLE}/test.ini: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Copy test.ini to ckan/test.ini: OK${NC}${EOL}"
     else
-        printf "${Red}${INDENT}${INDENT}Copy ${CKAN_ROLE}-test.ini to ckan/${CKAN_ROLE}/test.ini: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Copy test.ini to ckan/test.ini: FAIL${NC}${EOL}"
     fi
 
     # compile ckan config files
-    printf "${SPACER}${Cyan}${INDENT}Copying activation script into ${CKAN_ROLE} venv${NC}${SPACER}"
-    cp ${APP_ROOT}/docker/install/ckan/activate_this.py ${APP_ROOT}/ckan/${CKAN_ROLE}/bin/activate_this.py
+    printf "${SPACER}${Cyan}${INDENT}Copying activation script into ckan venv${NC}${SPACER}"
+    cp ${APP_ROOT}/docker/install/ckan/activate_this.py ${APP_ROOT}/ckan/bin/activate_this.py
     if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Copy ${CKAN_ROLE} activation script: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Copy activation script: OK${NC}${EOL}"
     else
-        printf "${Red}${INDENT}${INDENT}Copy ${CKAN_ROLE} activation script: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Copy activation script: FAIL${NC}${EOL}"
     fi
-    chown ckan:ckan ${APP_ROOT}/ckan/${CKAN_ROLE}/bin/activate_this.py
-    printf "${SPACER}${Cyan}${INDENT}Compiling local ${CKAN_ROLE} config files${NC}${SPACER}"
-    python3 ${PWD}/docker/install/ckan/compile-${CKAN_ROLE}-config.py
+    chown ckan:ckan ${APP_ROOT}/ckan/bin/activate_this.py
+    printf "${SPACER}${Cyan}${INDENT}Compiling local config files${NC}${SPACER}"
+    python3 ${PWD}/docker/install/ckan/compile-registry-config.py
     if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Compile ${CKAN_ROLE} ini files: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Compile registry ini files: OK${NC}${EOL}"
     else
-        printf "${Red}${INDENT}${INDENT}Compile ${CKAN_ROLE} ini files: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Compile registry ini files: FAIL${NC}${EOL}"
+    fi
+    python3 ${PWD}/docker/install/ckan/compile-portal-config.py
+    if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Compile portal ini files: OK${NC}${EOL}"
+    else
+        printf "${Red}${INDENT}${INDENT}Compile portal ini files: FAIL${NC}${EOL}"
     fi
 
-    cd ${APP_ROOT}/ckan/${CKAN_ROLE}
+    cd ${APP_ROOT}/ckan
     # END
     # copy local ckan config files
     # END
 
     # copy who config file
-    cp ${APP_ROOT}/_config/ckan/who.ini ${APP_ROOT}/ckan/${CKAN_ROLE}/who.ini
+    cp ${APP_ROOT}/_config/ckan/who.ini ${APP_ROOT}/ckan/who.ini
     printf "${SPACER}${Cyan}${INDENT}Copying CKAN who config file to into root Python environment${NC}${SPACER}"
     if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Copy _config/who.ini to ckan/${CKAN_ROLE}/who.ini: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Copy _config/who.ini to ckan/who.ini: OK${NC}${EOL}"
     else
-        printf "${Red}${INDENT}${INDENT}Copy _config/who.ini to ckan/${CKAN_ROLE}/who.ini: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Copy _config/who.ini to ckan/who.ini: FAIL${NC}${EOL}"
     fi
 
     # create i18n directory
-    mkdir -p /srv/app/ckan/${CKAN_ROLE}/src/ckanext-canada/build
+    mkdir -p /srv/app/ckan/src/ckanext-canada/build
     if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Create /srv/app/ckan/${CKAN_ROLE}/src/ckanext-canada/build: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Create /srv/app/ckan/src/ckanext-canada/build: OK${NC}${EOL}"
     else
-        printf "${Red}${INDENT}${INDENT}Create /srv/app/ckan/${CKAN_ROLE}/src/ckanext-canada/build: FAIL (directory may already exist)${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Create /srv/app/ckan/src/ckanext-canada/build: FAIL (directory may already exist)${NC}${EOL}"
     fi
 
     # generate ckan command
-    cd /srv/app/ckan/${CKAN_ROLE}/src/ckan
+    cd /srv/app/ckan/src/ckan
     python3 setup.py develop
 
     # generate translation files
-    cd /srv/app/ckan/${CKAN_ROLE}/src/ckanext-canada
+    cd /srv/app/ckan/src/ckanext-canada
     python3 setup.py compile_catalog
 
     # decativate python environment
@@ -206,50 +219,56 @@ if [[ $installRepos_CKAN == "true" ]]; then
 
     # create storage path
     printf "${SPACER}${Cyan}${INDENT}Create storage path${NC}${SPACER}"
-    mkdir -p ${APP_ROOT}/ckan/${CKAN_ROLE}/storage
+    mkdir -p ${APP_ROOT}/ckan/storage
     if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Create ckan/${CKAN_ROLE}/storage: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Create ckan/storage: OK${NC}${EOL}"
     else
-        printf "${Red}${INDENT}${INDENT}Create ckan/${CKAN_ROLE}/storage: FAIL (directory may already exist)${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Create ckan/storage: FAIL (directory may already exist)${NC}${EOL}"
     fi
 
     # copy ckanext-canada static files to static_files
     printf "${SPACER}${Cyan}${INDENT}Copy CKAN Canada static files${NC}${SPACER}"
-    cp -R ${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/static ${APP_ROOT}/ckan/static_files/
+    cp -R ${APP_ROOT}/ckan/src/ckanext-canada/ckanext/canada/public/static ${APP_ROOT}/ckan/static_files/
     if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/static to ${APP_ROOT}/ckan/static_files/static: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}${APP_ROOT}/ckan/src/ckanext-canada/ckanext/canada/public/static to ${APP_ROOT}/ckan/static_files/static: OK${NC}${EOL}"
     else
-        printf "${Red}${INDENT}${INDENT}${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/static to ${APP_ROOT}/ckan/static_files/static: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}${APP_ROOT}/ckan/src/ckanext-canada/ckanext/canada/public/static to ${APP_ROOT}/ckan/static_files/static: FAIL${NC}${EOL}"
     fi
     chown -R ckan:ckan ${APP_ROOT}/ckan/static_files/static
 
     # copy ckanext-canada data files to static_files
-    if [[ -d "${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/data" ]]; then
+    if [[ -d "${APP_ROOT}/ckan/src/ckanext-canada/ckanext/canada/public/data" ]]; then
         printf "${SPACER}${Cyan}${INDENT}Copy CKAN Canada data files${NC}${SPACER}"
-        cp -R ${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/data ${APP_ROOT}/ckan/static_files/
+        cp -R ${APP_ROOT}/ckan/src/ckanext-canada/ckanext/canada/public/data ${APP_ROOT}/ckan/static_files/
         if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/data to ${APP_ROOT}/ckan/static_files/data: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}${APP_ROOT}/ckan/src/ckanext-canada/ckanext/canada/public/data to ${APP_ROOT}/ckan/static_files/data: OK${NC}${EOL}"
         else
-        printf "${Red}${INDENT}${INDENT}${APP_ROOT}/ckan/${CKAN_ROLE}/src/ckanext-canada/ckanext/canada/public/data to ${APP_ROOT}/ckan/static_files/data: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}${APP_ROOT}/ckan/src/ckanext-canada/ckanext/canada/public/data to ${APP_ROOT}/ckan/static_files/data: FAIL${NC}${EOL}"
         fi
     fi;
     chown -R ckan:ckan ${APP_ROOT}/ckan/static_files/data
 
     # copy wsgi files
-    printf "${SPACER}${Cyan}${INDENT}Copy ${CKAN_ROLE} wsgi config file to virtual environment${NC}${SPACER}"
-    cp ${APP_ROOT}/docker/config/ckan/wsgi/${CKAN_ROLE}.py ${APP_ROOT}/ckan/${CKAN_ROLE}/wsgi.py
+    printf "${SPACER}${Cyan}${INDENT}Copy wsgi config files to virtual environment${NC}${SPACER}"
+    cp ${APP_ROOT}/docker/config/ckan/wsgi/registry.py ${APP_ROOT}/ckan/registry-wsgi.py
     if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Copy ${APP_ROOT}/docker/config/ckan/wsgi/${CKAN_ROLE}.py to ${APP_ROOT}/ckan/${CKAN_ROLE}/wsgi.py: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Copy ${APP_ROOT}/docker/config/ckan/wsgi/registry.py to ${APP_ROOT}/ckan/registry-wsgi.py: OK${NC}${EOL}"
     else
-        printf "${Red}${INDENT}${INDENT}Copy ${APP_ROOT}/docker/config/ckan/wsgi/${CKAN_ROLE}.py to ${APP_ROOT}/ckan/${CKAN_ROLE}/wsgi.py: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Copy ${APP_ROOT}/docker/config/ckan/wsgi/registry.py to ${APP_ROOT}/ckan/registry-wsgi.py: FAIL${NC}${EOL}"
+    fi
+    cp ${APP_ROOT}/docker/config/ckan/wsgi/portal.py ${APP_ROOT}/ckan/portal-wsgi.py
+    if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Copy ${APP_ROOT}/docker/config/ckan/wsgi/portal.py to ${APP_ROOT}/ckan/portal-wsgi.py: OK${NC}${EOL}"
+    else
+        printf "${Red}${INDENT}${INDENT}Copy ${APP_ROOT}/docker/config/ckan/wsgi/portal.py to ${APP_ROOT}/ckan/portal-wsgi.py: FAIL${NC}${EOL}"
     fi
 
     # set ownership
-    chown ckan:ckan -R ${APP_ROOT}/ckan/${CKAN_ROLE}
+    chown ckan:ckan -R ${APP_ROOT}/ckan
     if [[ $? -eq 0 ]]; then
-        printf "${Green}${INDENT}${INDENT}Set ckan/${CKAN_ROLE} ownership to ckan:ckan: OK${NC}${EOL}"
+        printf "${Green}${INDENT}${INDENT}Set ckan ownership to ckan:ckan: OK${NC}${EOL}"
     else
-        printf "${Red}${INDENT}${INDENT}Set ckan/${CKAN_ROLE} ownership to ckan:ckan: FAIL${NC}${EOL}"
+        printf "${Red}${INDENT}${INDENT}Set ckan ownership to ckan:ckan: FAIL${NC}${EOL}"
     fi
 
 fi

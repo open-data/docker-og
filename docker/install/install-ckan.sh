@@ -2,41 +2,20 @@
 
 printf "${SPACER}${Cyan}${INDENT}Select what to install for ${BOLD}CKAN:${HAIR}${NC}${SPACER}"
 
-if [[ $CKAN_ROLE == 'registry' ]]; then
-
-  # Options for the user to select from
-  options=(
-    "Registry Database" 
-    "Registry Datastore Database" 
-    "Repositories (Installs them into Python venv ckan/${CKAN_ROLE})" 
-    "Download Wet-Boew Files" 
-    "Set File Permissions" 
-    "Create Local User" 
-    "Import Organizations" 
-    "Import Datasets" 
-    "Build Inventory Index" 
-    "All" 
-    "Exit"
-  )
-
-elif [[ $CKAN_ROLE == 'portal' ]]; then
-
-  # Options for the user to select from
-  options=(
-    "Portal Database" 
-    "Portal Datastore Database" 
-    "Repositories (Installs them into Python venv ckan/${CKAN_ROLE})" 
-    "Download Wet-Boew Files" 
-    "Set File Permissions" 
-    "Create Local User" 
-    "Import Organizations" 
-    "Import Datasets" 
-    "Build Inventory Index" 
-    "All" 
-    "Exit"
-  )
-
-fi
+# Options for the user to select from
+options=(
+  "Registry Database"
+  "Registry Datastore Database"
+  "Repositories (Installs them into Python venv ckan"
+  "Download Wet-Boew Files"
+  "Set File Permissions"
+  "Create Local User"
+  "Import Organizations"
+  "Import Datasets"
+  "Build Inventory Index"
+  "All"
+  "Exit"
+)
 
 # IMPORTANT: select_option will return the index of the options and not the value.
 select_option "${options[@]}"
@@ -45,31 +24,19 @@ opt=$?
 case $opt in
 
   # "Registry Database / Portal Database"
-  (0) 
+  (0)
     exitScript='false'
-    if [[ $CKAN_ROLE == 'registry' ]]; then
-      installDB_Registry_CKAN='true'
-      installDB_Portal_CKAN='false'
-    elif [[ $CKAN_ROLE == 'portal' ]]; then
-      installDB_Portal_CKAN='true'
-      installDB_Registry_CKAN='false'
-    fi
+    installDB_CKAN='true'
     ;;
 
   # "Registry Datastore Database / Portal Datastore Database"
-  (1) 
+  (1)
     exitScript='false'
-    if [[ $CKAN_ROLE == 'registry' ]]; then
-      installDB_Registry_DS_CKAN='true'
-      installDB_Portal_DS_CKAN='false'
-    elif [[ $CKAN_ROLE == 'portal' ]]; then
-      installDB_Portal_DS_CKAN='true'
-      installDB_Registry_DS_CKAN='false'
-    fi
+    installDB_DS_CKAN='true'
     ;;
 
   # "Repositories (Installs them into Python venv)"
-  (2) 
+  (2)
     exitScript='false'
     installRepos_CKAN='true'
     ;;
@@ -112,19 +79,10 @@ case $opt in
     ;;
 
   # "All"
-  (9) 
+  (9)
     exitScript='false'
-    if [[ $CKAN_ROLE == 'registry' ]]; then
-      installDB_Registry_CKAN='true'
-      installDB_Registry_DS_CKAN='true'
-      installDB_Portal_CKAN='false'
-      installDB_Portal_DS_CKAN='false'
-    elif [[ $CKAN_ROLE == 'portal' ]]; then
-      installDB_Portal_CKAN='true'
-      installDB_Portal_DS_CKAN='true'
-      installDB_Registry_CKAN='false'
-      installDB_Registry_DS_CKAN='false'
-    fi
+    installDB_CKAN='true'
+    installDB_DS_CKAN='true'
     installRepos_CKAN='true'
     installFilePermissions_CKAN='true'
     installLocalUser_CKAN='true'

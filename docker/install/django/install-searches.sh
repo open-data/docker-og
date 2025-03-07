@@ -5,30 +5,7 @@
 #
 if [[ $installSearches_Django == "true" ]]; then
 
-  # clear yaml config directory
-  printf "${SPACER}"
-  if [[ -d "${APP_ROOT}/django/ckan_config_files" ]]; then
-
-    printf "${Cyan}${INDENT}Destroying old ckan_config_files directory...${NC}${EOL}"
-    rm -rf ${APP_ROOT}/django/ckan_config_files
-
-  fi
-  printf "${Cyan}${INDENT}Creating ckan_config_files directory...${NC}${EOL}"
-  mkdir -p ${APP_ROOT}/django/ckan_config_files
-
-  search_types="adminaircraft ati atimap briefingt cafcip contracts data dataprops datastrategy experiment grants hospitalityq nap5 qpnotes reclassification travela travelq wrongdoing"
-
-  # download yaml config files
-  printf "${SPACER}${Cyan}${INDENT}Download CKAN config files${NC}${EOL}"
-  mkdir -p ${APP_ROOT}/django/ckan_config_files
-  cd ${APP_ROOT}/django/ckan_config_files
-  wget https://raw.githubusercontent.com/open-data/ckanext-canada/master/ckanext/canada/schemas/presets.yaml
-  wget https://raw.githubusercontent.com/open-data/ckanext-canada/master/ckanext/canada/schemas/prop.yaml
-  wget https://raw.githubusercontent.com/open-data/ckanext-canada/master/ckanext/canada/tables/choices/minister.json
-  for type in $search_types; do
-    wget https://raw.githubusercontent.com/open-data/ckanext-canada/master/ckanext/canada/tables/${type}.yaml
-  done
-  cd ${APP_ROOT}
+  search_types="adminaircraft atimap briefingt contracts data grants hospitalityq nap5 qpnotes reclassification travela travelq wrongdoing"
 
   # drop database and re-create
   printf "${SPACER}${Cyan}${INDENT}Remaking fresh database...${NC}${EOL}"
@@ -73,11 +50,11 @@ EOSQL
   cd ${APP_ROOT}
 
   # create a super user
-  DJANGO_SUPERUSER_USERNAME='admin_local'
-  DJANGO_SUPERUSER_PASSWORD='12345678'
-  DJANGO_SUPERUSER_EMAIL='temp@tbs-sct.gc.ca'
   cd ${APP_ROOT}/django/src/oc_search
-  python manage.py createsuperuser --noinput --username ${DJANGO_SUPERUSER_USERNAME} --email ${DJANGO_SUPERUSER_EMAIL}
+  export DJANGO_SUPERUSER_USERNAME='admin_local'
+  export DJANGO_SUPERUSER_PASSWORD='12345678!'
+  export DJANGO_SUPERUSER_EMAIL='temp@tbs-sct.gc.ca'
+  python manage.py createsuperuser --noinput
 
   # download nltk stuff
   cd ${APP_ROOT}/django/src/oc_search

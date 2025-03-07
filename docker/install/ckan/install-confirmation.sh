@@ -93,15 +93,8 @@ fi
 #
 if [[ $installRepos_CKAN == "true" ]]; then
 
-    if [[ $CKAN_ROLE == 'registry' ]]; then
-        
-        read -r -p $'\n\n\033[0;31m    Are you sure you want delete the\033[1m existing CKAN Registry directory (ckan/registry)\033[0m\033[0;31m and pull fast-forwarded repositories and install them into the Python environment? [y/N]:\033[0;0m    ' response
+    read -r -p $'\n\n\033[0;31m    Are you sure you want delete the\033[1m existing CKAN Registry & Portal directory (ckan)\033[0m\033[0;31m and pull fast-forwarded repositories and install them into the Python environment? [y/N]:\033[0;0m    ' response
 
-    elif [[ $CKAN_ROLE == 'portal' ]]; then
-        
-        read -r -p $'\n\n\033[0;31m    Are you sure you want delete the\033[1m existing CKAN Portaly directory (ckan/portal)\033[0m\033[0;31m and pull fast-forwarded repositories and install them into the Python environment? [y/N]:\033[0;0m    ' response
-        
-    fi
 
     if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
 

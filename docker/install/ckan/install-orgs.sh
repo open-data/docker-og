@@ -16,7 +16,7 @@ if [[ $installOrgs_CKAN == "true" ]]; then
 
     # import the orgs
     printf "${SPACER}${Cyan}${INDENT}Import Organizations${NC}${SPACER}"
-    ckanapi load organizations -I ${APP_ROOT}/backup/orgs.jsonl -c ${APP_ROOT}/ckan/${CKAN_ROLE}/${CKAN_ROLE}.ini
+    ckanapi load organizations -I ${APP_ROOT}/backup/orgs.jsonl -c ${APP_ROOT}/ckan/registry.ini
 
 fi
 # END
