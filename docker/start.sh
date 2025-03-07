@@ -159,12 +159,30 @@ elif [[ "$role" = "search" ]]; then
 
     # change volume ownerships
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown django:django -R ${APP_ROOT}"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /home/django && chown django:django -R /home/django"
 
     # create directory for python venv
     mkdir -p ${APP_ROOT}/${djangoPath}
 
     # create directory for django static files
     mkdir -p ${APP_ROOT}/${djangoPath}/static
+
+    # create directory for supervisord chdir
+    mkdir -p ${APP_ROOT}/${djangoPath}/src/oc_search
+
+    # create fresh pid directory
+    if [[ -d "${APP_ROOT}/${djangoPath}/run" ]]; then
+      rm -rf ${APP_ROOT}/${djangoPath}/run
+    fi;
+    mkdir -p ${APP_ROOT}/${djangoPath}/run
+
+    # create directories for log outputs
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /dev"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown -R django:django /dev"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /var/log/django"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /var/log/celery"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown -R django:django /var/log/django"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown -R django:django /var/log/celery"
 
     # copy the django settings file
     if [[ -d "${APP_ROOT}/${djangoPath}/src/oc_search/oc_search" ]]; then
@@ -193,7 +211,7 @@ elif [[ "$role" = "search" ]]; then
 
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown django:django -R /var/ocs"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown django:django -R ${APP_ROOT}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /home/django && chown django:django -R /home/django"
 
     # start supervisord service
@@ -214,6 +232,7 @@ elif [[ "$role" = "ckan" ]]; then
 
     # change volume ownerships
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown ckan:ckan -R ${APP_ROOT}"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /home/ckan && chown ckan:ckan -R /home/ckan"
 
     # create directory for python venv
     mkdir -p ${APP_ROOT}/${ckanPath}
@@ -221,7 +240,7 @@ elif [[ "$role" = "ckan" ]]; then
     # create directory for ckan static files
     mkdir -p ${APP_ROOT}/${ckanPath}/static_files
 
-    # create directories for uwsgi outputs
+    # create directories for log outputs
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /dev"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown -R ckan:ckan /dev"
 

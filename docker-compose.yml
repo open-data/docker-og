@@ -270,7 +270,6 @@ services:
       - ./solr/drupal_ati:/var/solr/data/drupal_ati
       - ./solr/drupal_contractsa:/var/solr/data/drupal_contractsa
       # Persisting Django Solr Cores
-      # FIXME: search core managed-schemas not persisting
       - ./solr/search_adminaircraft:/var/solr/data/search_adminaircraft
       - ./solr/search_ati:/var/solr/data/search_ati
       - ./solr/search_atimap:/var/solr/data/search_atimap

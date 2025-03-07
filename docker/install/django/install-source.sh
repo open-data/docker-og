@@ -62,8 +62,12 @@ if [[ $installApp_Django == "true" ]]; then
 
     # pull oc search
     cd ${APP_ROOT}/django/src
+     mkdir -p ${APP_ROOT}/django/src/oc_search
+    mkdir -p ${APP_ROOT}/django/src/_tmp
     printf "${SPACER}${Cyan}${INDENT}Pulling ${BOLD}OC Search repository${HAIR}${Cyan} from https://github.com:open-data/oc_search.git and installing requirements into Python environment${NC}${SPACER}"
-    git clone https://github.com/open-data/oc_search.git
+    git clone https://github.com/open-data/oc_search.git ${APP_ROOT}/django/src/_tmp
+    cp -r ${APP_ROOT}/django/src/_tmp/* ${APP_ROOT}/django/src/oc_search/
+    rm -rf ${APP_ROOT}/django/src/_tmp
     cd ${APP_ROOT}/django/src/oc_search
     pip install -r requirements-test.txt
 
@@ -96,6 +100,8 @@ if [[ $installApp_Django == "true" ]]; then
     else
         printf "${Red}${INDENT}${INDENT}Copy ${APP_ROOT}/_config/django/settings.py to ${APP_ROOT}/django/src/oc_search/oc_search/settings.py: FAIL${NC}${EOL}"
     fi
+
+    mkdir -p ${APP_ROOT}/django/run
 
     # set ownership
     cd ${APP_ROOT}/django
