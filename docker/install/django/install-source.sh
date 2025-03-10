@@ -101,8 +101,6 @@ if [[ $installApp_Django == "true" ]]; then
         printf "${Red}${INDENT}${INDENT}Copy ${APP_ROOT}/_config/django/settings.py to ${APP_ROOT}/django/src/oc_search/oc_search/settings.py: FAIL${NC}${EOL}"
     fi
 
-    mkdir -p ${APP_ROOT}/django/run
-
     # set ownership
     cd ${APP_ROOT}/django
     chown django:django -R ${APP_ROOT}/django

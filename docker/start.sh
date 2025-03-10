@@ -171,10 +171,11 @@ elif [[ "$role" = "search" ]]; then
     mkdir -p ${APP_ROOT}/${djangoPath}/src/oc_search
 
     # create fresh pid directory
-    if [[ -d "${APP_ROOT}/${djangoPath}/run" ]]; then
-      rm -rf ${APP_ROOT}/${djangoPath}/run
+    if [[ -d "/usr/local/var/run/django" ]]; then
+      echo ${ROOT_PASS} | sudo -S /bin/bash -c "rm -rf /usr/local/var/run/django"
     fi;
-    mkdir -p ${APP_ROOT}/${djangoPath}/run
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /usr/local/var/run/django"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown django:django -R /usr/local/var/run/django"
 
     # create directories for log outputs
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /dev"
