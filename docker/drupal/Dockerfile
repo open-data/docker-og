@@ -1,4 +1,4 @@
-FROM php:7.4-fpm
+FROM php:8.4-fpm
 
 USER root
 
@@ -42,7 +42,7 @@ RUN apt-get update -yqq \
         sudo \
         systemd \
         sysvinit-utils \
-    && pecl install xdebug-2.9.0 \
+    && pecl install xdebug \
     && pecl install redis \
     && pecl install memcached \
     && docker-php-ext-configure intl \
