@@ -279,7 +279,8 @@ elif [[ "$role" = "ckan" ]]; then
       echo ${ROOT_PASS} | sudo -S /bin/bash -c "pip install supervisor==4.2.2"
     fi;
 
-    # ckan instillations inside venv
+    ## NOTE: uncomment if needed
+    ## ckan instillations inside venv
     # if [[ -d "${APP_ROOT}/${ckanPath}/bin" && -d "${APP_ROOT}/${ckanPath}/src/ckan" ]]; then
     #   printf "${Green}Installing ckan venv dependencies...${NC}${EOL}"
     #   source ${APP_ROOT}/${ckanPath}/bin/activate
@@ -317,28 +318,30 @@ elif [[ "$role" = "ckan" ]]; then
         else
             printf "${Red}FAILED to compile portal ini file${NC}${EOL}";
         fi
-        # run ckan setup
-        if [[ -d "${APP_ROOT}/${ckanPath}/src/ckan" ]]; then
-            cd ${APP_ROOT}/${ckanPath}/src/ckan;
-            ${APP_ROOT}/${ckanPath}/bin/python3 setup.py develop;
-            if [[ $? -eq 0 ]]; then
-                printf "${Green}Ran ckan setup${NC}${EOL}";
-            else
-                printf "${Red}FAILED to run ckan setup${NC}${EOL}";
-            fi;
-            cd ${APP_ROOT};
-        fi;
-        # run ckanext-canada setup
-        if [[ -d "${APP_ROOT}/${ckanPath}/src/ckanext-canada" ]]; then
-            cd ${APP_ROOT}/${ckanPath}/src/ckanext-canada;
-            ${APP_ROOT}/${ckanPath}/bin/python3 setup.py develop;
-            if [[ $? -eq 0 ]]; then
-                printf "${Green}Ran ckanext-canada setup${NC}${EOL}";
-            else
-                printf "${Red}FAILED to run ckanext-canada setup${NC}${EOL}";
-            fi;
-            cd ${APP_ROOT};
-        fi;
+        ## NOTE: uncomment if needed
+        ## run ckan setup
+        # if [[ -d "${APP_ROOT}/${ckanPath}/src/ckan" ]]; then
+        #     cd ${APP_ROOT}/${ckanPath}/src/ckan;
+        #     ${APP_ROOT}/${ckanPath}/bin/python3 setup.py develop;
+        #     if [[ $? -eq 0 ]]; then
+        #         printf "${Green}Ran ckan setup${NC}${EOL}";
+        #     else
+        #         printf "${Red}FAILED to run ckan setup${NC}${EOL}";
+        #     fi;
+        #     cd ${APP_ROOT};
+        # fi;
+        ## NOTE: uncomment if needed
+        ## run ckanext-canada setup
+        # if [[ -d "${APP_ROOT}/${ckanPath}/src/ckanext-canada" ]]; then
+        #     cd ${APP_ROOT}/${ckanPath}/src/ckanext-canada;
+        #     ${APP_ROOT}/${ckanPath}/bin/python3 setup.py develop;
+        #     if [[ $? -eq 0 ]]; then
+        #         printf "${Green}Ran ckanext-canada setup${NC}${EOL}";
+        #     else
+        #         printf "${Red}FAILED to run ckanext-canada setup${NC}${EOL}";
+        #     fi;
+        #     cd ${APP_ROOT};
+        # fi;
     fi;
 
     # copy the wsgi.py files
@@ -369,18 +372,19 @@ elif [[ "$role" = "ckan" ]]; then
         chown -R ckan:ckan ${APP_ROOT}/${ckanPath}/static_files
     fi;
 
-    # run any database migrations
-    if [[ -f "${APP_ROOT}/${ckanPath}/bin/ckan" ]]; then
-        printf "${Green}Running database migrations...${NC}${EOL}"
-        ${APP_ROOT}/${ckanPath}/bin/ckan -c ${APP_ROOT}/${ckanPath}/registry.ini db upgrade
-        ${APP_ROOT}/${ckanPath}/bin/ckan -c ${APP_ROOT}/${ckanPath}/registry.ini db upgrade --plugin=canada_public
-        ${APP_ROOT}/${ckanPath}/bin/ckan -c ${APP_ROOT}/${ckanPath}/registry.ini db pending-migrations --apply
-        ${APP_ROOT}/${ckanPath}/bin/ckan -c ${APP_ROOT}/${ckanPath}/registry.ini db pending-migrations --apply
-        ${APP_ROOT}/${ckanPath}/bin/ckan -c ${APP_ROOT}/${ckanPath}/portal.ini db upgrade
-        ${APP_ROOT}/${ckanPath}/bin/ckan -c ${APP_ROOT}/${ckanPath}/portal.ini db upgrade --plugin=canada_public
-        ${APP_ROOT}/${ckanPath}/bin/ckan -c ${APP_ROOT}/${ckanPath}/portal.ini db pending-migrations --apply
-        ${APP_ROOT}/${ckanPath}/bin/ckan -c ${APP_ROOT}/${ckanPath}/portal.ini db pending-migrations --apply
-    fi;
+    ## NOTE: uncomment if needed
+    ## run any database migrations
+    # if [[ -f "${APP_ROOT}/${ckanPath}/bin/ckan" ]]; then
+    #     printf "${Green}Running database migrations...${NC}${EOL}"
+    #     ${APP_ROOT}/${ckanPath}/bin/ckan -c ${APP_ROOT}/${ckanPath}/registry.ini db upgrade
+    #     ${APP_ROOT}/${ckanPath}/bin/ckan -c ${APP_ROOT}/${ckanPath}/registry.ini db upgrade --plugin=canada_public
+    #     ${APP_ROOT}/${ckanPath}/bin/ckan -c ${APP_ROOT}/${ckanPath}/registry.ini db pending-migrations --apply
+    #     ${APP_ROOT}/${ckanPath}/bin/ckan -c ${APP_ROOT}/${ckanPath}/registry.ini db pending-migrations --apply
+    #     ${APP_ROOT}/${ckanPath}/bin/ckan -c ${APP_ROOT}/${ckanPath}/portal.ini db upgrade
+    #     ${APP_ROOT}/${ckanPath}/bin/ckan -c ${APP_ROOT}/${ckanPath}/portal.ini db upgrade --plugin=canada_public
+    #     ${APP_ROOT}/${ckanPath}/bin/ckan -c ${APP_ROOT}/${ckanPath}/portal.ini db pending-migrations --apply
+    #     ${APP_ROOT}/${ckanPath}/bin/ckan -c ${APP_ROOT}/${ckanPath}/portal.ini db pending-migrations --apply
+    # fi;
 
     # change volume ownerships
     printf "${Green}Setting volume ownership${NC}${EOL}"
