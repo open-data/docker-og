@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.0/howto/deployment/wsgi/
 import os
 import sys
 
-activate_this = os.path.join('/var/ocs/django/bin/activate_this.py')
+activate_this = os.path.join('/srv/app/django/bin/activate_this.py')
 exec(compile(open(activate_this, "rb").read(), 'activate_this.py', 'exec'))
 
 from django.core.wsgi import get_wsgi_application

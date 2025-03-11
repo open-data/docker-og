@@ -155,7 +155,7 @@ services:
       PGPASSWORD: secret
       SSH_AUTH_SOCK: /ssh-agent
       APP_ROOT: /srv/app
-      PATH: '$PATH:/srv/app/ckan/bin'
+      PATH: '$PATH:/usr/local/lib'
       PY_VERSION: 3.7
       PIP_VERSION: 23.2.1
       SETUP_TOOLS_VERSION: 44.1.0
@@ -187,6 +187,7 @@ services:
       PD_BACKUP_DIRECTORY: /srv/app/backup/pd
       REGISTRY_STATIC_SMB_DIRECTORY: /srv/app/backup/smb
       PORTAL_STATIC_SMB_DIRECTORY: /srv/app/backup/smb
+      PD_TMP_DIRECTORY: /tmp
     volumes:
       - ${PWD}/:/srv/app
       - ./docker/config/ckan:/docker-entrypoint.d
@@ -402,12 +403,12 @@ services:
       labels:
         projectID: ${PROJECT_ID}
     healthcheck:
-      test: /var/ocs/django/bin/uwsgi --connect-and-read 127.0.0.1:1717 || exit 1
+      test: /srv/app/django/bin/uwsgi --connect-and-read 127.0.0.1:1717 || exit 1
       interval: 10s
       timeout: 5s
       retries: 6
       start_period: 90s
-    working_dir: /var/ocs
+    working_dir: /srv/app
     networks:
       og-local-network:
         ipv4_address: 172.25.${OCTET}.12
@@ -434,7 +435,7 @@ services:
       PGPASSWORD: secret
       SSH_AUTH_SOCK: /ssh-agent
       PATH: '$PATH:/usr/local/lib'
-      APP_ROOT: /var/ocs
+      APP_ROOT: /srv/app
       PY_VERSION: 3.9
       WET_VERSION: v4.0.63
       CDTS_VERSION: v4_0_28
@@ -447,7 +448,7 @@ services:
       PROJECT_PORT: ${PORT}
       ROOT_PASS: Docker!
     volumes:
-      - ${PWD}/:/var/ocs
+      - ${PWD}/:/srv/app
       - ~/.gitconfig:/etc/gitconfig:ro
       - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
     user: "${USER_ID:-0}:${GROUP_ID:-0}"

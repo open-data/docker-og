@@ -46,8 +46,8 @@ RUN useradd homestead \
     && useradd django
 
 # Create root directory
-RUN mkdir -p /var/ocs
-RUN chown -R django:django /var/ocs \
+RUN mkdir -p /srv/app
+RUN chown -R django:django /srv/app \
     && chmod 777 /usr/local/bin/start
 
 ARG USER_ID
@@ -83,7 +83,7 @@ RUN if $(id -un ${USER_ID} >/dev/null 2>&1); then \
         fi \
     fi \
     && \
-    chown django:django -R /var/ocs \
+    chown django:django -R /srv/app \
     && \
     chown django:django -R /etc/supervisor
 

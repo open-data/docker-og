@@ -83,9 +83,9 @@ CSRF_TRUSTED_ORIGINS = ['https://*.open.canada.ca', 'https://*.ouvert.canada.ca'
 
 ROOT_URLCONF = 'oc_search.urls'
 
-STATIC_ROOT = '/var/ocs/django/static'
+STATIC_ROOT = '/srv/app/django/static'
 
-NLTK_DATADIR = '/var/ocs/django/src/oc_search/nltk'
+NLTK_DATADIR = '/srv/app/django/src/oc_search/nltk'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -93,17 +93,17 @@ NLTK_DATADIR = '/var/ocs/django/src/oc_search/nltk'
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    ('cdts', '/var/ocs/django/static/cdts'),
-    ('search_snippets', '/var/ocs/django/src/oc_search/search/templates/snippets'),
-    ('ramp', '/var/ocs/django/src/oc_search/ramp/viewer'),
+    ('cdts', '/srv/app/django/static/cdts'),
+    ('search_snippets', '/srv/app/django/src/oc_search/search/templates/snippets'),
+    ('ramp', '/srv/app/django/src/oc_search/ramp/viewer'),
 ]
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['/var/ocs/django/static',
-                 '/var/ocs/django/src/oc_search/search/templates',
-                 '/var/ocs/django/src/oc_search/ramp/templates'],
+        'DIRS': ['/srv/app/django/static',
+                 '/srv/app/django/src/oc_search/search/templates',
+                 '/srv/app/django/src/oc_search/ramp/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -185,7 +185,7 @@ LOCALE_PATHS = [
 # File cache directory used by the export search results feature. If files are served by a web server like Nginx
 # or Apache, set the FILE_CACHE_URL
 
-EXPORT_FILE_CACHE_DIR = os.path.join(BASE_DIR, 'cache')
+EXPORT_FILE_CACHE_DIR = '/srv/app/django/static/cache'
 EXPORT_FILE_CACHE_URL = "http://search.open.local:" + PROJECT_PORT + "/static/cache"
 
 # Solr Search Configuration
@@ -321,3 +321,7 @@ SD_COMMENTS_BASE_EN = "http://search.open.local:" + PROJECT_PORT + "/static/sd/"
 SD_COMMENTS_BASE_FR = "http://search.open.local:" + PROJECT_PORT + "/static/sd/"
 SD_VOTES_BASE_EN = "http://search.open.local:" + PROJECT_PORT + "/static/sd/"
 SD_VOTES_BASE_FR = "http://search.open.local:" + PROJECT_PORT + "/static/sd/"
+
+IMPORT_DATA_CSV_DEFAULT_DEBUG = True
+IMPORT_DATA_CSV_SOLR_INDEX_GROUP_SIZE = 1000
+IMPORT_DATA_CSV_BAD_DATA_DIR = '/srv/app/backup/pd_bad'

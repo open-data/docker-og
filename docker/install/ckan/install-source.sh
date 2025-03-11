@@ -263,6 +263,21 @@ if [[ $installRepos_CKAN == "true" ]]; then
         printf "${Red}${INDENT}${INDENT}Copy ${APP_ROOT}/docker/config/ckan/wsgi/portal.py to ${APP_ROOT}/ckan/portal-wsgi.py: FAIL${NC}${EOL}"
     fi
 
+    # copy custom util scripts
+    printf "${SPACER}${Cyan}${INDENT}Copy utility scripts to virtual environment${NC}${SPACER}"
+    cp ${APP_ROOT}/docker/config/ckan/install-sources.sh ${APP_ROOT}/ckan/install-sources.sh
+    if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Copy ${APP_ROOT}/docker/config/ckan/install-sources.sh to ${APP_ROOT}/ckan/install-sources.sh: OK${NC}${EOL}"
+    else
+        printf "${Red}${INDENT}${INDENT}Copy ${APP_ROOT}/docker/config/ckan/install-sources.sh to ${APP_ROOT}/ckan/install-sources.sh: FAIL${NC}${EOL}"
+    fi
+    cp ${APP_ROOT}/docker/config/ckan/create_pd_combined_resources.py ${APP_ROOT}/ckan/create_pd_combined_resources.py
+    if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Copy ${APP_ROOT}/docker/config/ckan/create_pd_combined_resources.py to ${APP_ROOT}/ckan/create_pd_combined_resources.py: OK${NC}${EOL}"
+    else
+        printf "${Red}${INDENT}${INDENT}Copy ${APP_ROOT}/docker/config/ckan/create_pd_combined_resources.py to ${APP_ROOT}/ckan/create_pd_combined_resources.py: FAIL${NC}${EOL}"
+    fi
+
     # set ownership
     chown ckan:ckan -R ${APP_ROOT}/ckan
     if [[ $? -eq 0 ]]; then
