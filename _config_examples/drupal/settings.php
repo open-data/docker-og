@@ -305,3 +305,23 @@ $settings['ati_email'] = 'open-ouvert@tbs-sct.gc.ca';
 # custom queue class
 $settings['queue_service_ogp_queue'] = 'og_ext_cron.queue';
 $settings['queue_reliable_service_ogp_queue'] = 'og_ext_cron.queue';
+
+# GC Notify settings
+$settings['gcnotify'] = [
+  'base_uri' => 'UPDATE ME',
+  'authorization' => 'ApiKey-v1 UPDATE ME',
+  'template_id' => [
+        'ati_records' => [
+          'en' => 'UPDATE ME',
+          'fr' => 'UPDATE ME',
+          ],
+        'feedback' => [
+          'en' => 'UPDATE ME',
+          'fr' => 'UPDATE ME',
+          ],
+        ],
+  'bearer_token' => 'UPDATE ME',
+];
+
+# hide comments on external entities
+$settings['external_comment']['exclude'] = [];
