@@ -14,7 +14,7 @@ if [[ $installFilePermissions_Drupal == "true" ]]; then
     else
         printf "${Red}${INDENT}${INDENT}Removed sites/default.settings.php: FAIL (file may not exist)${NC}${EOL}"
     fi
-    wget https://raw.githubusercontent.com/drupal/drupal/8.8.x/sites/default/default.settings.php
+    wget https://raw.githubusercontent.com/drupal/drupal/10.4.x/sites/default/default.settings.php
     mkdir -p ${APP_ROOT}/drupal/html/sites/default
     cd ${APP_ROOT}/drupal/html/sites/default
     # remove old settings file
@@ -24,7 +24,7 @@ if [[ $installFilePermissions_Drupal == "true" ]]; then
     else
         printf "${Red}${INDENT}${INDENT}Removed sites/default/default.settings.php: FAIL (file may not exist)${NC}${EOL}"
     fi
-    wget https://raw.githubusercontent.com/drupal/drupal/8.8.x/sites/default/default.settings.php
+    wget https://raw.githubusercontent.com/drupal/drupal/10.4.x/sites/default/default.settings.php
 
     printf "${SPACER}${Cyan}${INDENT}Copy Drupal settings file${NC}${SPACER}"
     # copy docker config settings.php to drupal directory
@@ -179,6 +179,32 @@ if [[ $installFilePermissions_Drupal == "true" ]]; then
         printf "${Green}${INDENT}${INDENT}Set file system ownership to www-data: OK${NC}${EOL}"
     else
         printf "${Red}${INDENT}${INDENT}Set file system ownership to www-data: FAIL${NC}${EOL}"
+    fi
+
+    printf "${SPACER}${Cyan}${INDENT}Replace URIs in database tables${NC}${SPACER}"
+    psql -eb --dbname=og_drupal_local --username=$PGUSER --command="UPDATE block_content__body SET body_value = replace(body_value, 'https://search.open.canada.ca', 'http://search.open.local:${PROJECT_PORT}/search/en');"
+    if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Replace in table block_content__body https://search.open.canada.ca with http://search.open.local:${PROJECT_PORT}/search/en: OK${NC}${EOL}"
+    else
+        printf "${Red}${INDENT}${INDENT}Replace in table block_content__body https://search.open.canada.ca with http://search.open.local:${PROJECT_PORT}/search/en: FAIL${NC}${EOL}"
+    fi
+    psql -eb --dbname=og_drupal_local --username=$PGUSER --command="UPDATE block_content__body SET body_value = replace(body_value, 'https://rechercher.ouvert.canada.ca', 'http://search.open.local:${PROJECT_PORT}/search/fr');"
+    if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Replace in table block_content__body https://rechercher.ouvert.canada.ca with http://search.open.local:${PROJECT_PORT}/search/fr: OK${NC}${EOL}"
+    else
+        printf "${Red}${INDENT}${INDENT}Replace in table block_content__body https://rechercher.ouvert.canada.ca with http://search.open.local:${PROJECT_PORT}/search/fr: FAIL${NC}${EOL}"
+    fi
+    psql -eb --dbname=og_drupal_local --username=$PGUSER --command="UPDATE node__body SET body_value = replace(body_value, 'https://search.open.canada.ca', 'http://search.open.local:${PROJECT_PORT}/search/en');"
+    if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Replace in table node__body https://search.open.canada.ca with http://search.open.local:${PROJECT_PORT}/search/en: OK${NC}${EOL}"
+    else
+        printf "${Red}${INDENT}${INDENT}Replace in table node__body https://search.open.canada.ca with http://search.open.local:${PROJECT_PORT}/search/en: FAIL${NC}${EOL}"
+    fi
+    psql -eb --dbname=og_drupal_local --username=$PGUSER --command="UPDATE node__body SET body_value = replace(body_value, 'https://rechercher.ouvert.canada.ca', 'http://search.open.local:${PROJECT_PORT}/search/fr');"
+    if [[ $? -eq 0 ]]; then
+        printf "${Green}${INDENT}${INDENT}Replace in table node__body https://rechercher.ouvert.canada.ca with http://search.open.local:${PROJECT_PORT}/search/fr: OK${NC}${EOL}"
+    else
+        printf "${Red}${INDENT}${INDENT}Replace in table node__body https://rechercher.ouvert.canada.ca with http://search.open.local:${PROJECT_PORT}/search/fr: FAIL${NC}${EOL}"
     fi
 
 fi
