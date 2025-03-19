@@ -4,9 +4,9 @@ printf "${SPACER}${Cyan}${INDENT}Select what to install for ${BOLD}CKAN:${HAIR}$
 
 # Options for the user to select from
 options=(
-  "Registry Database"
-  "Registry Datastore Database"
-  "Repositories (Installs them into Python venv ckan"
+  "Registry & Portal Databases"
+  "Registry & Portal Datastore Databases"
+  "Repositories (Installs them into Python venv ckan)"
   "Download Wet-Boew Files"
   "Set File Permissions"
   "Create Local User"
