@@ -247,7 +247,7 @@ elif [[ "$role" = "ckan" ]]; then
 
     # create python3 symlink for django container
     printf "${Cyan}Trying to symlink python3 /usr/local/bin/python3 to /usr/bin/python3${NC}${EOL}"
-    echo ${ROOT_PASS} | sudo -S /bin/bash -c "ln -s /usr/bin/python3 /usr/local/bin/python3"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "if [[ ! -L /usr/local/bin/python3 && ! -f /usr/local/bin/python3 ]]; then ln -s /usr/bin/python3 /usr/local/bin/python3 || true; fi;"
 
     # create i18n paths
     if [[ -d "${APP_ROOT}/${ckanPath}/src/ckanext-canada" ]]; then
