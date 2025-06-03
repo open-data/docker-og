@@ -55,6 +55,7 @@ if [[ "$role" = "proxy" ]]; then
     ln -sf /etc/nginx/sites-available/open.local /etc/nginx/sites-enabled/open.local
     ln -sf /etc/nginx/sites-available/portal.open.local /etc/nginx/sites-enabled/portal.open.local
     ln -sf /etc/nginx/sites-available/registry.open.local /etc/nginx/sites-enabled/registry.open.local
+    ln -sf /etc/nginx/sites-available/registre.ouvert.local /etc/nginx/sites-enabled/registre.ouvert.local
     ln -sf /etc/nginx/sites-available/search.open.local /etc/nginx/sites-enabled/search.open.local
     ln -sf /etc/nginx/sites-available/solr.open.local /etc/nginx/sites-enabled/solr.open.local
 

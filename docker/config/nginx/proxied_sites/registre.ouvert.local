@@ -1,12 +1,12 @@
 #
-# CKAN Registry English
-# registry.open.local
+# CKAN Registry French
+# registre.ouvert.local
 #
 server {
 
     include conf/.env.conf;
 
-    server_name registry.open.local;
+    server_name registre.ouvert.local;
 
     listen 80;
 
@@ -64,5 +64,5 @@ server {
 
 }
 # END
-# CKAN Registry English
+# CKAN Registry French
 # END

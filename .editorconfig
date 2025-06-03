@@ -15,9 +15,11 @@ trim_trailing_whitespace = true
 # Python Code Style
 [*.py]
 indent_size = 4
+insert_final_newline = true
 
 [__init__.py]
 indent_size = 4
+insert_final_newline = true
 
 [Makefile]
 indent_size = 4
