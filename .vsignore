@@ -1,0 +1,1 @@
+*.js, *.css, **/tests/**, *.ini, *.po, *.mo, *.md, *.pot, *.yaml, *.yml, *.json, *.jsonl, *.xml, *.csv, *.js.map, *.less, *.scss, *.rst, *.min.js

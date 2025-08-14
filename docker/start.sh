@@ -373,6 +373,17 @@ elif [[ "$role" = "ckan" ]]; then
         chown -R ckan:ckan ${APP_ROOT}/${ckanPath}/static_files
     fi;
 
+    # force JS i18n regen
+    if [[ -d "${APP_ROOT}/${ckanPath}/src/ckan/ckan/public/base/i18n" ]]; then
+      printf "${Green}Removing JS i18n files to force regeneration...${NC}${EOL}"
+      rm -f ${APP_ROOT}/${ckanPath}/src/ckan/ckan/public/base/i18n/*.js;
+      if [[ $? -eq 0 ]]; then
+            printf "${Green}Cleared JS files from ${APP_ROOT}/${ckanPath}/src/ckan/ckan/public/base/i18n${NC}${EOL}";
+        else
+            printf "${Red}FAILED to cleared JS files from ${APP_ROOT}/${ckanPath}/src/ckan/ckan/public/base/i18n${NC}${EOL}";
+        fi;
+    fi;
+
     ## NOTE: uncomment if needed
     ## run any database migrations
     # if [[ -f "${APP_ROOT}/${ckanPath}/bin/ckan" ]]; then
