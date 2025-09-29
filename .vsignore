@@ -1,1 +1,1 @@
-*.js, *.css, **/tests/**, *.ini, *.po, *.mo, *.md, *.pot, *.yaml, *.yml, *.json, *.jsonl, *.xml, *.csv, *.js.map, *.less, *.scss, *.rst, *.min.js
+*.css, *.js, **/tests/**, **/vendor/**, **/node_modules/**,  *.svg, *.cfg, **/migration/**,  *.mako, LICENSE, *.lock, CHANGELOG,*.csl, main-rtl.css, *.txt, *.ini, *.po, *.mo, *.md, *.pot, *.yaml, *.yml, *.json, *.jsonl, *.xml, *.csv, *.js.map, *.less, *.scss, *.rst, *.min.js, *.ts, *.pyi, VERSIONS, **/.git/**, **/changes/**, PKG-INFO, setup.py

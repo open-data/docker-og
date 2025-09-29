@@ -55,10 +55,15 @@ server {
 
     }
 
-    location /data/ {
+    location /data/static/ {
 
-        alias /srv/ogproxy/ckan/static_files/data/;
-        autoindex off;
+        rewrite /data/(.*) /$1 last;
+
+    }
+
+    location /data/base/ {
+
+        rewrite /data/(.*) /$1 last;
 
     }
 

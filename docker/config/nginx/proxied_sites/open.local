@@ -68,18 +68,12 @@ server {
         autoindex off;
 
     }
-    
+
     location /data/static/ {
 
         alias /var/ogproxy/ckan/static_files/static/;
         autoindex off;
-
-    }
-
-    location /data/data/ {
-
-        alias /var/ogproxy/ckan/static_files/data/;
-        autoindex off;
+        break;
 
     }
 

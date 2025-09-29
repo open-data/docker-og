@@ -12,7 +12,9 @@ WORKDIR /srv/app
 RUN apt-get update -yqq \
     && apt-get install -y --no-install-recommends \
         curl \
-    && curl -sL https://deb.nodesource.com/setup_12.x | bash - \
+    && apt purge -y nodejs \
+    && sudo apt autoremove -y \
+    && curl -sL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y --no-install-recommends \
         nodejs \
         npm \
