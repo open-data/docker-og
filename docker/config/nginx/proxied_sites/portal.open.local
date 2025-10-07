@@ -55,6 +55,20 @@ server {
 
     }
 
+    location /webassets/ {
+
+        alias /var/ogproxy/ckan/storage/webassets/;
+        autoindex off;
+
+    }
+
+    location /data/webassets/ {
+
+        alias /var/ogproxy/ckan/storage/webassets/;
+        autoindex off;
+
+    }
+
     location /data/static/ {
 
         alias /var/ogproxy/ckan/static_files/static/;

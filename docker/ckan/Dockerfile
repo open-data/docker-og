@@ -13,11 +13,10 @@ RUN apt-get update -yqq \
     && apt-get install -y --no-install-recommends \
         curl \
     && apt purge -y nodejs \
-    && sudo apt autoremove -y \
+    && apt autoremove -y \
     && curl -sL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y --no-install-recommends \
         nodejs \
-        npm \
         gcc \
         supervisor \
         build-essential \
