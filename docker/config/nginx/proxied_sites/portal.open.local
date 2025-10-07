@@ -69,6 +69,20 @@ server {
 
     }
 
+    location /base/ {
+
+        alias /var/ogproxy/ckan/src/ckan/ckan/public/base/;
+        autoindex off;
+
+    }
+
+    location /data/base/ {
+
+        alias /var/ogproxy/ckan/src/ckan/ckan/public/base/;
+        autoindex off;
+
+    }
+
     location /data/static/ {
 
         alias /var/ogproxy/ckan/static_files/static/;
