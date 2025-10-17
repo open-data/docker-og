@@ -457,6 +457,64 @@ services:
 # END
 # Django
 # END
+#
+# AIA
+#
+  aia:
+    image: og-aia--${PROJECT_ID}
+    container_name: og-aia--${PROJECT_ID}
+    build:
+      context: .
+      dockerfile: docker/aia/Dockerfile
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
+      labels:
+        projectID: ${PROJECT_ID}
+    healthcheck:
+      test: ps aux | grep node || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 90s
+    working_dir: /srv/app
+    networks:
+      og-local-network:
+        ipv4_address: 172.25.${OCTET}.13
+    depends_on:
+      proxy:
+        condition: service_healthy
+    links:
+      - proxy
+    env_file:
+      - _config/docker/.docker.env
+    environment:
+      CONTAINER_ROLE: aia
+      SSH_AUTH_SOCK: /ssh-agent
+      PATH: '$PATH:/usr/local/lib'
+      APP_ROOT: /srv/app
+      WET_VERSION: v4.0.63
+      CDTS_VERSION: v4_0_28
+      CDTS_GCWEB_VERSION: v4_0_31
+      NODE_ENV: production
+      NODE_VERSION: 16
+      GCWEB_VERSION: v13.3.0
+      SSL_VERIFY: 0
+      GIT_SSL_NO_VERIFY: 1
+      NVM_NODEJS_ORG_MIRROR: http://nodejs.org/dist
+      PROJECT_ID: ${PROJECT_ID}
+      PROJECT_PORT: ${PORT}
+      ROOT_PASS: Docker!
+    volumes:
+      - ${PWD}/:/srv/app
+      - ~/.gitconfig:/etc/gitconfig:ro
+      - /opt/tbs/docker/backup:/opt/tbs/docker/backup:ro
+    user: "${USER_ID:-0}:${GROUP_ID:-0}"
+    expose:
+      - 8001
+# END
+# AIA
+# END
 
 networks:
   og-local-network:

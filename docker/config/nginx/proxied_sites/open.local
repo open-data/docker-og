@@ -23,6 +23,13 @@ server {
 
     }
 
+    if ($request_uri ~ (^/aia-eia-js/)) {
+
+        set $upstreamHost "backend_host_aia";
+        set $upstremProtocol "http://";
+
+    }
+
     location / {
 
         include conf/proxy_settings.conf;
@@ -32,6 +39,18 @@ server {
     location /data/ {
 
         rewrite /data/(.*) /$1 last;
+
+        include conf/proxy_settings.conf;
+
+    }
+
+    location = /aia-eia-js {
+
+        rewrite ^/(.*)$ /$1/ permanent;
+
+    }
+
+    location /aia-eia-js/ {
 
         include conf/proxy_settings.conf;
 

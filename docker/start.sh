@@ -412,6 +412,29 @@ elif [[ "$role" = "ckan" ]]; then
 # END
 # CKAN Registry & Portal
 # END
+elif [[ "$role" = "aia" ]]; then
+#
+# AIA
+#
+    # link aia supervisord config
+    ln -sf /etc/supervisor/conf.d-available/aia.conf /etc/supervisor/conf.d/aia.conf
+
+    # change volume ownerships
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown vuejs:vuejs -R ${APP_ROOT}"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /home/vuejs && chown vuejs:vuejs -R /home/vuejs"
+
+    # set Node version to 16
+    printf "${Green}Setting Node version to ${NODE_VERSION}${NC}${EOL}"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c ". ~/.bashrc && nvm use ${NODE_VERSION}"
+    . ~/.bashrc && nvm use ${NODE_VERSION};
+
+    # start supervisord service
+    printf "${Green}Executing supervisord${NC}${EOL}"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown vuejs:vuejs -R /etc/supervisor"
+    echo ${ROOT_PASS} | sudo -S -E /bin/bash -c "supervisord -c /etc/supervisor/supervisord.conf"
+# END
+# AIA
+# END
 elif [[ "$role" = "redis" ]]; then
 #
 # Redis

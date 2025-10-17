@@ -22,6 +22,7 @@ node_modules/
 /django/
 /drupal/
 /ckan/
+/aia/
 /solr/
 /redis/
 /postgres/

@@ -21,6 +21,7 @@ HAIR='\033[0m'
 installDrupal='false'
 installCKAN='false'
 installDjango='false'
+installAIA='false'
 installDatabases='false'
 installDatabaseCopies='false'
 
@@ -46,6 +47,10 @@ installInventory_CKAN='false'
 installApp_Django='false'
 installFiles_Django='false'
 installFilePermissions_Django='false'
+
+# aia flags
+installFilePermissions_AIA='false'
+installRepos_AIA='false'
 
 # test DB flags
 cloneDB_Drupal='false'

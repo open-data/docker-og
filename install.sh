@@ -49,6 +49,18 @@ function install_django {
 # END
 
 #
+# Install AIA
+#
+function install_aia {
+
+  . ${PWD}/docker/install/install-aia.sh
+
+}
+# END
+# Install AIA
+# END
+
+#
 # Install Databases
 #
 function install_databases {
@@ -122,6 +134,18 @@ elif [[ ${CONTAINER_ROLE} == "search" ]]; then
     "Exit"
   )
 
+elif [[ ${CONTAINER_ROLE} == "aia" ]]; then
+
+  # Options for the user to select from
+  options=(
+    "AIA"
+    "Databases (fixes missing databases, privileges, and users)"
+    "Test Databases (clones existing databases into empty ones)"
+    "Postgres Upgrade (dump and load existing databases for psql version upgrade)"
+    "All"
+    "Exit"
+  )
+
 fi
 
 # IMPORTANT: select_option will return the index of the options and not the value.
@@ -141,6 +165,9 @@ case $opt in
     elif [[ ${CONTAINER_ROLE} == "search" ]]; then
       exitScript='false'
       installDjango='true'
+    elif [[ ${CONTAINER_ROLE} == "aia" ]]; then
+      exitScript='false'
+      installAIA='true'
     fi
     ;;
 
@@ -226,6 +253,12 @@ if [[ $exitScript != "true" ]]; then
   if [[ $installDjango == "true" ]]; then
 
     install_django
+
+  fi
+
+  if [[ $installAIA == "true" ]]; then
+
+    install_aia
 
   fi
 
