@@ -14,14 +14,13 @@ RUN apt-get update -yqq \
         curl \
     && apt purge -y nodejs \
     && apt autoremove -y \
-    && curl -sL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y --no-install-recommends \
         nodejs \
         gcc \
         supervisor \
         build-essential \
-		git \
-		libzip-dev \
+		    git \
+		    libzip-dev \
         zip \
         unzip \
         wget \
@@ -49,6 +48,10 @@ RUN apt-get update -yqq \
         python3-dev \
         python3-venv \
         python3-pip \
+    && curl --insecure -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | GIT_SSL_NO_VERIFY=1 bash \
+    && . ~/.bashrc \
+    && NVM_NODEJS_ORG_MIRROR=http://nodejs.org/dist nvm install 16 \
+    && nvm use 16 \
     && npm install -g less \
     && npm install less
 # note: --enable-optimizations in the configure python
@@ -64,11 +67,12 @@ ADD docker/start.sh /usr/local/bin/start
 # Create ckan user
 RUN useradd ckan
 
-# Create root directory
+# Create root directory and home directory
 RUN mkdir -p /srv/app \
-    && mkdir -p /etc/ckan
+    && mkdir -p /home/ckan \
+    && cp -R ~/. /home/ckan/
 RUN chown -R ckan:ckan /srv/app \
-    && chown -R ckan:ckan /etc/ckan \
+    && chown -R ckan:ckan /home/ckan \
     && chmod 777 /usr/local/bin/start
 
 ARG USER_ID

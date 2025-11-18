@@ -403,6 +403,11 @@ elif [[ "$role" = "ckan" ]]; then
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "chown ckan:ckan -R ${APP_ROOT}"
     echo ${ROOT_PASS} | sudo -S /bin/bash -c "mkdir -p /home/ckan && chown ckan:ckan -R /home/ckan"
 
+    # set Node version to 16
+    printf "${Green}Setting Node version to ${NODE_VERSION}${NC}${EOL}"
+    echo ${ROOT_PASS} | sudo -S /bin/bash -c ". ~/.bashrc && nvm use ${NODE_VERSION}"
+    . ~/.bashrc && nvm use ${NODE_VERSION};
+
     # start supervisord service
     #TODO: make super fancy option to run ckan run -H 0.0.0.0 -p 5001 to allow for pdb
     printf "${Green}Executing supervisord${NC}${EOL}"
