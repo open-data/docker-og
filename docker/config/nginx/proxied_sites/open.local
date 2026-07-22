@@ -88,20 +88,6 @@ server {
 
     }
 
-    location /webassets/ {
-
-        alias /var/ogproxy/ckan/storage/webassets/;
-        autoindex off;
-
-    }
-
-    location /base/ {
-
-        alias /var/ogproxy/ckan/src/ckan/ckan/public/base/;
-        autoindex off;
-
-    }
-
     location /data/base/ {
 
         alias /var/ogproxy/ckan/src/ckan/ckan/public/base/;
