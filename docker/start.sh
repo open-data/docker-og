@@ -269,6 +269,9 @@ elif [[ "$role" = "ckan" ]]; then
     printf "${Green}Copying the test configurations file to the virtual environment${NC}${EOL}"
     cp ${APP_ROOT}/_config/ckan/test.ini ${APP_ROOT}/${ckanPath}/test.ini
 
+    # copy dev reload file
+    cp ${APP_ROOT}/reload.trigger ${APP_ROOT}/${ckanPath}/reload.trigger
+
     # copy the ckan who configs
     printf "${Green}Copying the who.ini configuration file to the virtual environment${NC}${EOL}"
     cp ${APP_ROOT}/_config/ckan/who.ini ${APP_ROOT}/${ckanPath}/who.ini

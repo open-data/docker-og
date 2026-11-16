@@ -187,6 +187,9 @@ if [[ $installRepos_CKAN == "true" ]]; then
     # copy local ckan config files
     # END
 
+    # copy dev reload file
+    cp ${APP_ROOT}/reload.trigger ${APP_ROOT}/ckan/reload.trigger
+
     # copy who config file
     cp ${APP_ROOT}/_config/ckan/who.ini ${APP_ROOT}/ckan/who.ini
     printf "${SPACER}${Cyan}${INDENT}Copying CKAN who config file to into root Python environment${NC}${SPACER}"
