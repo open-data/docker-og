@@ -1,11 +1,14 @@
 FROM ckan/ckan-dev:2.10
-FROM debian:bullseye-slim
+FROM debian:bookworm
 
 USER root
 
 RUN echo 'root:Docker!' | chpasswd
 
-ENV DEBIAN_FRONTEND=noninteractive
+ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8 \
+    PYTHONUTF8=1
 
 WORKDIR /srv/app
 
@@ -53,7 +56,21 @@ RUN apt-get update -yqq \
     && NVM_NODEJS_ORG_MIRROR=http://nodejs.org/dist nvm install 16 \
     && nvm use 16 \
     && npm install -g less \
-    && npm install less
+    && npm install less \
+    && wget https://www.python.org/ftp/python/3.9.25/Python-3.9.25.tgz \
+    && tar -xf Python-3.9.25.tgz \
+    && cd Python-3.9.25 \
+    && ./configure --enable-shared --enable-optimizations \
+    && make -j 10 \
+    && make altinstall \
+    && ldconfig /usr/local/bin/python3.9 \
+    && cd / \
+    && rm -rf Python-3.9.25 Python-3.9.25.tgz \
+    && rm -rf /var/lib/apt/lists/* \
+    && update-alternatives --install /usr/bin/python3 python3 /usr/local/bin/python3.9 1 \
+    && sudo update-alternatives --config python3 \
+    && sudo update-alternatives --install /usr/bin/python python /usr/local/bin/python3.9 1 \
+    && sudo update-alternatives --config python
 # note: --enable-optimizations in the configure python
 # runs many tests which slows the build down a lot.
 # if python is not working, add it and re-run the build.
@@ -61,6 +78,10 @@ RUN apt-get update -yqq \
 # Supervisor
 ADD docker/config/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 ADD docker/config/supervisor/conf.d/*.conf /etc/supervisor/conf.d-available/
+
+# PIP 3.9
+RUN curl https://bootstrap.pypa.io/get-pip.py | sudo python3.9
+RUN pip install supervisor
 
 ADD docker/start.sh /usr/local/bin/start
 

@@ -279,8 +279,8 @@ elif [[ "$role" = "ckan" ]]; then
     # misc instillations outside venv
     if [[ -d "${APP_ROOT}/${ckanPath}/bin" ]]; then
       printf "${Green}Installing misc global dependencies...${NC}${EOL}"
-      echo ${ROOT_PASS} | sudo -S /bin/bash -c "pip install importlib-metadata"
-      echo ${ROOT_PASS} | sudo -S /bin/bash -c "pip install supervisor==4.2.2"
+      echo ${ROOT_PASS} | sudo -S /bin/bash -c "pip install --break-system-packages importlib-metadata"
+      echo ${ROOT_PASS} | sudo -S /bin/bash -c "pip install --break-system-packages supervisor==4.2.2"
     fi;
 
     ## NOTE: uncomment if needed
